@@ -56,32 +56,6 @@
         });
       };
 
-      var flex_msg = [
-        {
-            "type": "flex",
-            "altText": "2022僅此一檔!!會員專屬染護優惠，錯過就等明年了喔~",
-            "contents": {
-                "type": "bubble",
-                "size": "giga",
-                "body": {
-                    "type": "box",
-                    "layout": "vertical",
-                    "contents": [
-                        {
-                        "type": "image",
-                        "url": "https://i.imgur.com/4SNTxby.jpg",
-                        "size": "full",
-                        "aspectMode": "cover",
-                        "gravity": "center",
-                        "aspectRatio": "1.41:1"
-                        }
-                  ],
-                    "paddingAll": "0px"
-                },
-            }
-        }
-      ];
-
       window.onload = function () {
         if (action!==null && uuid!==null) {
             liff.init({
@@ -92,8 +66,9 @@
                 } else {
                     getToken(liffId).then(function(params){
                         sendGet("https://script.google.com/macros/s/AKfycbxgEdZRX-4uRH49sp_vWxv8w4RZ0pjhvwf8_BuLwKD1z46e_SSgVr2FBTolZUk66Q_Y8A/exec"+ `?accessToken=${params.accessToken}&action=${action}&uuid=${uuid}`).then(function(response_body){
+                            console.log(response_body);
                             if (!liff.isApiAvailable('shareTargetPicker')) throw new Error('不支援 shareTargetPicker，請嘗試更新應用程式版本。');
-                            liff.shareTargetPicker(flex_msg)
+                            liff.shareTargetPicker(response_body)
                             .then(function(res) {
                                 if (res) {
                                     Swal.fire({
