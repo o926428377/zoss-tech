@@ -1,0 +1,149 @@
+<html>
+    <head>
+        <title>ZOSS 帳務系統</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=0.7, user-scalable=no">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+        <link rel="stylesheet prefetch" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/8.11.8/sweetalert2.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    </head>
+<body>
+    <div class="mx-auto align-items-center text-center m-4" style="width: 80vw;"></div>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script>
+      const liffId = "1655140508-el3Eym1Z";
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      const action = urlParams.get('action') || (urlParams.get('liff.state') ? new URLSearchParams(urlParams.get('liff.state')).get('action') : null);
+      const uuid = urlParams.get('uuid') || (urlParams.get('liff.state') ? new URLSearchParams(urlParams.get('liff.state')).get('uuid') : null);
+      function sendPost(url, _params) {
+        var form = document.createElement("form");
+        form.setAttribute("method", "post");
+        form.setAttribute("action", url);
+        for (var key in _params) {
+          var hiddenField = document.createElement("input");
+          hiddenField.setAttribute("type", "hidden");
+          hiddenField.setAttribute("name", key);
+          hiddenField.setAttribute("value", _params[key]);
+          form.appendChild(hiddenField);
+        }
+        var hiddenSubmit = document.createElement("input");
+        hiddenSubmit.setAttribute("type", "submit");
+        hiddenSubmit.setAttribute("style", "display:none;");
+        form.appendChild(hiddenSubmit);
+        document.body.appendChild(form);
+        return new Promise(function(resolve,reject){
+          $.post(url, _params).done(function(data){
+            if (data.length>0 || Object.keys(data).length>0){
+              resolve(data);
+            }  else {
+              reject('Error!');
+            }
+          }).fail(function(xhr, status, error) {
+                  reject(error    );
+              });
+        })
+      };
+
+      function getToken(liffId) {
+        return new Promise(function(resolve,reject){
+          liff.init({
+                      liffId: liffId
+                  }).then(function (data) {
+            liff.getProfile().then(function (profile) {
+              var params = {};
+              params['userId'] = profile.userId;
+              const accessToken =  liff.getAccessToken();
+              if (!accessToken) {
+                params['accessToken'] = 'Error';
+              }
+              params['accessToken'] = accessToken;
+              resolve(params);
+            }).catch(function (error) {
+              window.alert("Error getting profile: " + error);
+              reject(params);
+            });
+          });
+        });
+      };
+
+      var flex_msg = [
+        {
+            "type": "flex",
+            "altText": "2022僅此一檔!!會員專屬染護優惠，錯過就等明年了喔~",
+            "contents": {
+                "type": "bubble",
+                "size": "giga",
+                "body": {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
+                        {
+                        "type": "image",
+                        "url": "https://i.imgur.com/4SNTxby.jpg",
+                        "size": "full",
+                        "aspectMode": "cover",
+                        "gravity": "center",
+                        "aspectRatio": "1.41:1"
+                        }
+                  ],
+                    "paddingAll": "0px"
+                },
+            }
+        }
+      ];
+
+      window.onload = function () {
+        if (action!==null && uuid!==null) {
+            liff.init({
+                liffId: liffId
+            }).then(function() {
+                if (!liff.isLoggedIn()) {
+                    console.log(123);
+                    liff.login({ redirectUri: "https://script.google.com/macros/s/AKfycbxgEdZRX-4uRH49sp_vWxv8w4RZ0pjhvwf8_BuLwKD1z46e_SSgVr2FBTolZUk66Q_Y8A/exec" + `?action=${action}&uuid=${uuid}` });
+                } else {
+                    console.log(456);
+                    getToken(liffId).then(function(params){
+                        console.log(789);
+                        sendPost(`https://script.google.com/macros/s/AKfycbxgEdZRX-4uRH49sp_vWxv8w4RZ0pjhvwf8_BuLwKD1z46e_SSgVr2FBTolZUk66Q_Y8A/exec`, {...params, "action":action, "uuid":uuid}).then(function(response_body){
+                            if (!liff.isApiAvailable('shareTargetPicker')) throw new Error('不支援 shareTargetPicker，請嘗試更新應用程式版本。');
+                            liff.shareTargetPicker(flex_msg)
+                            .then(function(res) {
+                                if (res) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: '分享成功',
+                                    }).then((result) => {
+                                        liff.closeWindow();
+                                    });
+                                }
+                            }).catch(function(res) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: '系統忙碌，請重新操作',
+                                }).then((result) => {
+                                    liff.closeWindow();
+                                });
+                            });
+                        });
+                    });
+                }
+            })
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: '無效連結',
+            }).then((result) => {
+                window.close();
+            });
+        }
+        
+      };
+
+      </script>
+</body>
+</html>
