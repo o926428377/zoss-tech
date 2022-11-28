@@ -20,24 +20,9 @@
       const urlParams = new URLSearchParams(queryString);
       const action = urlParams.get('action') || (urlParams.get('liff.state') ? new URLSearchParams(urlParams.get('liff.state')).get('action') : null);
       const uuid = urlParams.get('uuid') || (urlParams.get('liff.state') ? new URLSearchParams(urlParams.get('liff.state')).get('uuid') : null);
-      function sendPost(url, _params) {
-        var form = document.createElement("form");
-        form.setAttribute("method", "post");
-        form.setAttribute("action", url);
-        for (var key in _params) {
-          var hiddenField = document.createElement("input");
-          hiddenField.setAttribute("type", "hidden");
-          hiddenField.setAttribute("name", key);
-          hiddenField.setAttribute("value", _params[key]);
-          form.appendChild(hiddenField);
-        }
-        var hiddenSubmit = document.createElement("input");
-        hiddenSubmit.setAttribute("type", "submit");
-        hiddenSubmit.setAttribute("style", "display:none;");
-        form.appendChild(hiddenSubmit);
-        document.body.appendChild(form);
+      function sendGet(url) {
         return new Promise(function(resolve,reject){
-          $.post(url, _params).done(function(data){
+          $.get(url).done(function(data){
             if (data.length>0 || Object.keys(data).length>0){
               resolve(data);
             }  else {
@@ -106,7 +91,7 @@
                     liff.login({ redirectUri: window.location.href.split('?')[0] + `?action=${action}&uuid=${uuid}` });
                 } else {
                     getToken(liffId).then(function(params){
-                        sendPost("https://script.google.com/macros/s/AKfycbxgEdZRX-4uRH49sp_vWxv8w4RZ0pjhvwf8_BuLwKD1z46e_SSgVr2FBTolZUk66Q_Y8A/exec", {...params, "action":action, "uuid":uuid}).then(function(response_body){
+                        sendGet("https://script.google.com/macros/s/AKfycbxgEdZRX-4uRH49sp_vWxv8w4RZ0pjhvwf8_BuLwKD1z46e_SSgVr2FBTolZUk66Q_Y8A/exec"+ `?accessToken=${params.accessToken}&action=${action}&uuid=${uuid}`).then(function(response_body){
                             if (!liff.isApiAvailable('shareTargetPicker')) throw new Error('不支援 shareTargetPicker，請嘗試更新應用程式版本。');
                             liff.shareTargetPicker(flex_msg)
                             .then(function(res) {
