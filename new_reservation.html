@@ -1,0 +1,383 @@
+<html>
+    <head>
+        <title>ZOSS Inventory Web App</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=0.7, user-scalable=no">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js" integrity="sha256-eTyxS0rkjpLEo16uXTS0uVCS4815lc40K2iVpWDvdSY=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.17.0/math.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+        <link rel="stylesheet prefetch" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/8.11.8/sweetalert2.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3.3.2/dist/vue-loading.css">
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js'></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue2-filters/dist/vue2-filters.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue-loading-overlay@3.4.0/dist/vue-loading.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-multiselect/2.1.6/vue-multiselect.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vue-multiselect/2.1.6/vue-multiselect.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vue-form-wizard@0.8.4/dist/vue-form-wizard.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/vue-form-wizard@0.8.4/dist/vue-form-wizard.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment-with-locales.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.zh-TW.min.js"></script>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.standalone.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/jquery-twzipcode@1.7.14/jquery.twzipcode.min.js"></script>
+        <style>
+            .wizard-card-footer {
+                max-width: 600px!important;
+                margin: auto;
+            }
+            .vue-form-wizard .wizard-tab-content {
+                padding: 0px;
+            }
+            .wizard-header {
+                display: none;
+            }
+            /* .card-header {
+                padding: 0px 12px;
+            } */
+            .datepicker>div {
+                display: flex;
+            }
+            .ui-timepicker-viewport {
+                display: flex!important;
+                flex-wrap: wrap!important;
+            }
+            .ui-menu-item {
+                width: 33%!important;
+            }
+            .datepicker td, .datepicker th {
+                padding-left: 10px;
+                padding-right: 10px;
+                padding-bottom: 5px;
+                padding-top: 5px;
+            }
+            .datepicker table {
+                font-size: 26px;
+            }
+            .zoss_ultra {
+                display: block;
+            }
+            .zoss_lite {
+                display: none;
+            }
+            .zoss-plan {
+                border-radius:1.4rem;
+                max-width:400px;
+            }
+            .zoss-border {
+                border-radius:1.4rem;
+            }
+            .zoss-svc {
+                border-top-left-radius:1.4rem;
+                max-width:200px;
+            }
+            .zoss-svc-h {
+                min-height:200px;
+            }
+            .modal-backdrop.fade {
+                z-index: 1000000 !important;
+            }
+            .modal.fade {
+                z-index: 10000000 !important;
+            }
+            .datepicker.dropdown-menu .datepicker-years td, .datepicker.dropdown-menu .datepicker-months td {
+                width:400px;
+            }
+            .dim {
+                box-shadow: inset 0 0 0 #00000073, 0 5px 0 0 #00000040, 0 10px 5px #999999;
+            }
+            .swal2-container {
+                z-index: 99999 !important;
+            }
+            @media screen and (max-width: 600px) {
+                .btn-group>.btn {
+                    font-size: 10px;
+                    padding: 4px;
+                }
+                .vue-form-wizard .wizard-tab-content {
+                    padding-left: 0px;
+                    padding-right: 0px;
+                    margin-bottom: 0px;
+                }
+                .vue-form-wizard .navbar .navbar-nav>li>a.wizard-btn, .vue-form-wizard .wizard-btn {
+                    min-width: 100px;
+                }
+                .vue-form-wizard .wizard-card-footer {
+                    padding: 0px 60px;
+                }
+                .swal2-popup {
+                    padding: 0px;
+                    padding-bottom: 20px;
+                }
+                .container.p-3, .vue-form-wizard.md {
+                    padding-bottom: 0px!important;
+                }
+                .wizard-card-footer {
+                    /* background-color: rgba(0,0,0,.4); */
+                    position: sticky;
+                    bottom: 0px;
+                    padding-bottom: 20px!important;
+                    left:0px;
+                    right:0px;
+                    z-index: 1099;
+                }
+                .wizard-tab-content {
+                    margin-bottom: 50px;
+                }
+                .zoss_ultra {
+                    display: none;
+                }
+                .zoss_lite .card-body {
+                    display: block;
+                }
+                .zoss_lite {
+                    display: grid;
+                }
+                .zoss-plan {
+                    max-width:100%;
+                }
+                .zoss-svc-h {
+                    min-height:150px;
+                    align-items: stretch!important;
+                }
+                .zoss-svc-h.mini {
+                    min-height:120px;
+                }
+                .zoss-svc {
+                    max-width: 50vw;
+                }
+                .datepicker.dropdown-menu {
+                    left:auto!important;
+                }
+                .btn.btn-outline-light.position-relative.bg-gradient.h-100.w-100 {
+                    padding: 5px;
+                }
+                .disigner_mobile {
+                    padding: 0px!important;
+                }
+                .container.text-center.mb-2 {
+                    padding-bottom: 0px!important;
+                    padding-top: 10px!important;
+                    padding-left: 20px;
+                    padding-right: 20px;    
+                }
+                .disigner_mobile_fs {
+                    font-size: xx-small;
+                }
+                .card-title.h4.text-dark.p-0 {
+                    font-size: large;
+                }
+                .card-title.h5.p-1.text-dark {
+                    font-size: medium;
+                }
+                .card-title {
+                    font-size: 1.1rem;
+                }
+            }
+
+        </style>
+    </head>
+<body>
+    <div id="vue">
+        <booking ref="report_report" :name="name" :sex="sex" :tel="tel" :email="email" :plan_dict="plan_dict" :title="title" :shop_list="shop_list" :activity="activity" :services="services" :designation="designation" :suite_questions="suite_questions" :products="products" :suites="suites"></booking>
+    </div>
+    <div id="loading">
+        <loading :active="isLoading" ref="loading"></loading>
+    </div>
+    <div id="vue_designer">
+        <vue_designer ref="vue_designer"></vue_designer>
+    </div>
+    <script>
+        var data = {
+                isLoading: false,
+                loading: false,
+                activity: "202206Activity",
+                name: "",
+                sex: "",
+                tel: "",
+                email: "",
+                plan_dict: {
+                    'a_plan': '染護套餐：精緻洗剪+精油染前隔離+資生堂玻尿酸染髮+染後水分子修護',
+                    'b_plan': '燙剪套餐：精緻洗剪+資生堂水質感燙髮(直或捲)+燙前中保養',
+                },
+                title: "限時預約",
+                shop_list: [
+                    ['Lawrence Salon (台北東區)', '忠孝敦化2號出口', 'dd806e', '台北市', '(02)2771-3880', 25.0430915,121.5533008, 'https://goo.gl/maps/uVPzvffGAkKNPphYA', '台北市大安區忠孝東路四段223巷34弄3號', '700'],
+                    // ['基隆東岸店', '近基隆火車站，循環站斜對面', '83b0da', '基隆市', '(02)2425-3523', 25.1298774,121.7401168, 'https://goo.gl/maps/XF1wsHW7BWCXmEDa9', '基隆市仁愛區仁二路261號2、3樓', '12'],
+                    ['ZOSS (台北館前店)', '台北車站Z4出口', 'dd806e', '台北市', '(02)2371-6888', 25.0454103,121.5126939, 'https://goo.gl/maps/NTz7EVnKuTNdinJU9', '台北市館前路18號3樓', '43'],
+                    ['ZOSS (台北小巨蛋店)', '小巨蛋站5號出口', 'dd806e', '台北市', '(02)2717-3310', 25.0273328,121.5126139, 'https://goo.gl/maps/tVtbxEhf2MbmYmJ1A', '台北市松山區南京東路四段103號2樓', '46'],
+                    //['敦南店', '忠孝敦化1號出口', 'dd806e', '台北市', '(02)8771-6280', 25.0438875,121.5490774, 'https://goo.gl/maps/ChCJ4vKdHpH7WBNW8', '台北市大安區忠孝東路四段181巷35弄8號2樓', '35'],
+                    ['ZOSS (忠孝店)', '忠孝復興4號出口', 'dd806e', '台北市', '(02)2775-5535', 25.0440901,121.5419569, 'https://goo.gl/maps/tEjECJ9bP4WVzfKw5', '台北市大安區大安路一段31巷3號', '34'],
+                    ['ZOSS (復興店)', '忠孝復興2號出口', 'dd806e', '台北市', '(02)8771-0005', 25.0410183,121.5397393, 'https://goo.gl/maps/JXkuffxGedmDPWBD9', '台北市大安區忠孝東路三段248巷7弄6號', '39'],
+                    ['ZOSS (中山店)', '中山站5號出口', 'dd806e', '台北市', '(02)2558-5299', 25.0533887,121.51605, 'https://goo.gl/maps/F8WxitMDSqvuG1MP6', '台北市大同區南京西路91號3樓', '36'],
+                    ['ZOSS (中山南西店)', '中山站1號出口', 'dd806e', '台北市', '(02)2550-3050', 25.0247713,121.5014089, 'https://goo.gl/maps/CoWJEQQKmuoBqtNV6', '台北市大同區南京西路22號4樓之2', '47'],
+                    // ['公館店', '公館站1號出口，近秀泰影城', 'dd806e', '台北市', '(02)2367-2388', 25.0146103,121.5323913, 'https://goo.gl/maps/PBZ9fiqCKocsXugB6', '台北市中正區汀州路三段192號2樓', '21'],
+                    ['ZOSS (公館台大店)', '公館站4號出口', 'dd806e', '台北市', '(02)2365-3337', 25.0167507,121.529724, 'https://maps.app.goo.gl/xS8JgFJ585uc8ch59', '台北市中正區羅斯福路三段274號2樓', '30'],
+                    // ['中和永安市場店', '捷運永安市場站', '83726a', '新北市', '(02)3233-2811', 25.0027351,121.509182, 'https://goo.gl/maps/ooz8bJVJ8bcpa9Qg7', '新北市中和區中和路404號2樓', '32'],
+                    // ['新埔店', '新埔站2號出口', '83726a', '新北市', '(02)2258-5227', 25.0214907,121.4662924, 'https://goo.gl/maps/S7Qef2gZf2J24xLE7', '新北市板橋區民生路二段231號2樓', '33'],
+                    //['沐 MU STYLE HAIR SALON', '近國立臺北大學', '83726a', '新北市', '(02)8970-4088', 24.9855978,121.3731605, 'https://goo.gl/maps/shdBzMbKUEkFzpuL9', '新北市樹林區學勤路589號', '600'], //https://www.facebook.com/MUSTYLE589
+                    // ['桃園站前店', '近桃園火車站', '4ac7c1', '桃園市', '(03)331-0398', 24.9906989,121.313751, 'https://maps.app.goo.gl/FEmK2LDrSUmDVBJRA', '桃園市桃園區復興路55-1號', '38'],
+                    //['桃園大湳店', '近廣豐新天地', '4ac7c1', '桃園市', '(03)366-3680', 24.9642973,121.2961741, 'https://goo.gl/maps/7UM7Cj3VaXFgEwkQ9', '桃園市八德區大智路67號', '31'],
+                    // ['中壢新生店', '近新生路寶雅', '4ac7c1', '桃園市', '(03)427-5406', 24.9583806,121.2202163, 'https://goo.gl/maps/3QqAvV7DdT64aGqK8', '桃園市中壢區新生路51號', '18'],
+                    ['ZOSS (台中一中店)', '近一中商圈', 'c7899e', '台中市', '(04)2229-0098', 24.1487129,120.6804217, 'https://maps.app.goo.gl/PHbyDhnZCmSrP9AQ6', '台中市北區太平路66號2樓', '37'],
+                    // ['台南小北店', '近小北夜市', '738b51', '台南市', '(06)251-5225', 23.0066869,120.2020227, 'https://goo.gl/maps/iPuibMiXcyvwddYH8', '台南市北區西門路四段34號', '45'],
+                    // ['高雄文橫店', '近三多商圈', 'c7bdb3', '高雄市', '(07)536-0087', 22.6171745,120.3036369, 'https://goo.gl/maps/RU4kF5xT4D8djDidA', '高雄市文橫二路87號', '41'],
+                    // ['高雄瑞豐店', '近瑞豐夜市', 'c7bdb3', '高雄市', '(07)552-8458', 22.6651188,120.297039, 'https://goo.gl/maps/HM8gfpTxet9UMAs17', '高雄市鼓山區文忠路93號1樓', '20'],
+                    // ['高雄自由店', '近義享天地', 'c7bdb3', '高雄市', '(07)556-1992', 22.6616779,120.3067502, 'https://goo.gl/maps/bmNARgoY1hviy6H67', '高雄市左營區自由二路140號2樓', '42'],
+                    // ['高雄文山特區店', '近家樂福', 'c7bdb3', '高雄市', '(07)398-0991', 22.6436221,120.3437189, 'https://goo.gl/maps/sDmryabRWkjZyejN6', '高雄市三民區澄清路575號', '23'],
+                ],
+                services: {
+                    "Q1": {"name":"您目前對頭皮感受?", "max":3, "min":1, "color":"#e9edc9", "bg_img":"dye.png", "detail": "請點選下列選項 , 最多可複選3項", "items": [
+                        {"id": "Q1_1", "name": "感覺油膩", "score": "01000"},
+                        {"id": "Q1_2", "name": "感覺頭皮乾", "score": "10001"},
+                        {"id": "Q1_3", "name": "感覺有皮屑", "score": "01000"},
+                        {"id": "Q1_4", "name": "感覺髮量變少", "score": "00110"},
+                        {"id": "Q1_5", "name": "感覺頭皮敏感", "score": "10001"},
+                        {"id": "Q1_6", "name": "感覺頭皮緊繃", "score": "10001"},
+                        {"id": "Q1_7", "name": "落髮量增加", "score": "10100"},
+                        {"id": "Q1_8", "name": "感覺頭皮常有黏膩", "score": "01000"},
+                        {"id": "Q1_9", "name": "感覺頭皮紅腫癢", "score": "11001"},
+                        {"id": "Q1_0", "name": "需要專業建議", "score": "00000"},
+                    ]},
+                    "Q2": {"name":"您目前對秀髮感受?", "max":3, "min":1, "color":"#faedcd", "bg_img":"perm.png", "detail": "請點選下列選項 , 最多可複選3項", "items": [
+                    // "perm": {"name":"燙髮", "color":"#faedcd", "bg_img":"https://i.imgur.com/KrJNMZg.png", "detail": "服務皆含洗髮，可享剪髮優惠加購價 $300(不指定設計師)。漂過頭髮的不可燙", "items": [
+                        {"id": "Q2_1", "name": "毛躁自然卷", "score": "00010"},
+                        {"id": "Q2_2", "name": "燙髮受損", "score": "10100"},
+                        {"id": "Q2_3", "name": "染後", "score": "10011"},
+                        {"id": "Q2_4", "name": "染淺色髮", "score": "10010"},
+                        {"id": "Q2_5", "name": "分岔斷裂", "score": "10111"},
+                        {"id": "Q2_6", "name": "秀髮糾結", "score": "10111"},
+                        {"id": "Q2_7", "name": "感覺扁塌", "score": "00100"},
+                        {"id": "Q2_0", "name": "需要專業建議", "score": "00000"},
+                    ]},
+                    "Q3": {"name":"您對夢想髮質的需求?", "max":3, "min":1, "color":"#e9edc9", "bg_img":"treatment.png","detail": "請點選下列選項 , 最多可複選3項", "items": [
+                    // "treatment": {"name":"護髮/頭皮", "color":"#e9edc9", "bg_img":"https://i.imgur.com/c0GaoU0.png","detail": "服務皆含洗髮", "items": [
+                        {"id": "Q3_1", "name": "深層潔淨", "score": "01001"},
+                        {"id": "Q3_2", "name": "柔順", "score": "00010"},
+                        {"id": "Q3_3", "name": "光澤", "score": "00010"},	
+                        {"id": "Q3_4", "name": "彈性", "score": "00010"},	
+                        {"id": "Q3_5", "name": "豐盈", "score": "10110"},
+                        {"id": "Q3_6", "name": "抗躁", "score": "00010"},
+                        {"id": "Q3_7", "name": "保濕", "score": "00011"},
+                        {"id": "Q3_8", "name": "抗斷", "score": "00111"},
+                        {"id": "Q3_9", "name": "持色", "score": "00011"},
+                    ]},
+                },
+                suite_questions: {
+                    "A": ["G1", "G2", "A1", "G3", "G4", "G5", "G6", "G7"],
+                    "B": ["B1","G1", "G2", "G3", "G4", "G5", "G6", "G7"],
+                    "C": ["G1", "G2", "G3", "G4", "G5", "G6", "G7"],
+                    "D": ["G1", "G2", "G3", "G4", "G5", "G6", "G7"],
+                    "E": ["E1"],
+                },
+                suites: {
+                    "A": "(A) 專業舒緩奢養",
+                    "B": "(B) 專業淨化奢養",
+                    "C": "(C) 專業豐盈奢養",
+                    "D": "(D) 高訂瞬效奢養",
+                    "E": "(E) 頂級黑鑽奢養",
+                },
+                products: {
+                    "A1": {"name":"Scalp Care頭皮護理", "color":"#e9edc9", "bg_img":"dye.png", "detail": "請點選下列選項", "items": [
+                        {"id": "A1_1", "name": "頭皮油膩 頭皮屑 頭皮舒敏", "detail": "油屑敏乾落（頭皮）", "product": "銀樺樹頭皮特效面膜"},
+                    ]},
+                    "B1": {"name":"Pre-Sampoo頭皮深層淨化", "color":"#e9edc9", "bg_img":"dye.png", "detail": "請點選下列選項", "items": [
+                        {"id": "B1_1", "name": "油膩扁塌/增加清爽度", "detail": "油膩扁塌/增加清爽度", "product": "胺基酸平衡淨化泥髮浴"},
+                        {"id": "B1_2", "name": "頭皮屑/角質化異常", "detail": "皮屑.角質代謝異常/角質代謝正常", "product": "極淨平衡頭皮凝露"},
+                        {"id": "B1_3", "name": "乾敏紅癢", "detail": "混和性皮脂及老廢角質 / 溫和淨化髒污", "product": "奇蹟去油凝霜"},
+                    ]},
+                    "E1": {"name":"Pre-Sampoo頭皮深層淨化", "color":"#e9edc9", "bg_img":"dye.png", "detail": "請點選下列選項", "items": [
+                        {"id": "E1_1", "name": "針對六大頭皮秀髮的問題", "suites": [
+                            {"detail": "一次解決頭皮舒敏、保濕、彈性3大問題", "product": "黑鑽極萃逆時淨髮浴"},
+                            {"detail": " 一次提供強韌、光澤、豐盈3大修復", "product": "黑鑽極萃逆時髮浴"},
+                            {"detail": "舒敏、加強頭皮彈性、保濕舒敏", "product": "黑鑽極萃逆時髮膜+黑鑽魚子膠囊"},
+                            {"detail": " 一次解決頭皮舒敏、保濕、彈性3大問題", "product": "黑鑽極萃逆時魚子奧秘精華"},
+                            {"detail": "一次修復光澤、強韌、豐厚三大秀髮問題", "product": "黑鑽極萃逆時聚光熱活精華"},
+                            {"detail": "黑鑽極萃逆時玫瑰香氛露", "product": "黑鑽極萃逆時玫瑰香氛露"}, 
+                        ]},
+                    ]},
+                    "G1": {"name":"Scalp Bain頭皮清潔", "color":"#e9edc9", "bg_img":"dye.png", "detail": "請問您最希望加強的頭皮清潔問題？", "items": [
+                        {"id": "G1_1", "name": "去油清爽", "detail": "油膩扁塌/增加清爽度", "product": "胺基酸平衡舒緩髮浴"},
+                        {"id": "G1_2", "name": "緩解頭皮黏膩", "detail": "皮屑.角質代謝異常/角質代謝正常", "product": "極淨平衡頭皮髮浴"},
+                        {"id": "G1_3", "name": "保濕鎮靜舒敏", "detail": "乾敏性頭皮/增加頭皮防禦力", "product": "清新舒敏髮浴"},
+                        {"id": "G1_4", "name": "預防落髮增加豐盈度", "detail": "落/細軟扁塌/增加頭髮澎鬆度", "product": "粉漾芯生髮浴清爽型"},
+                    ]},
+                    "G2": {"name":"Hair Bain秀髮清潔", "color":"#e9edc9", "bg_img":"dye.png", "detail": "請問您最想加強的秀髮清潔問題？", "items": [
+                        {"id": "G2_1", "name": "抗落蓬鬆", "detail": "細軟扁塌/增加豐盈度", "product": "粉漾芯生髮浴清爽型"},
+                        {"id": "G2_2", "name": "強韌彈性", "detail": "脆弱易斷.缺乏彈性／彈韌型", "product": "煥髮重建髮浴"},
+                        {"id": "G2_3", "name": "修復護色", "detail": "染後持色/染漂型", "product": "恆彩重生髮浴"},
+                        {"id": "G2_4", "name": "柔軟保濕", "detail": "毛躁糾結/柔順型", "product": "柔舞絲光髮浴"},
+                    ]},
+                    "G3": {"name":"Hair Care秀髮護理", "color":"#e9edc9", "bg_img":"dye.png", "detail": "請問您最想提供的秀髮修復精華？", "items": [
+                        {"id": "G3_1", "name": "強韌+96%", "detail": "", "product": "神經醯胺精華"},
+                        {"id": "G3_2", "name": "豐盈+40%", "detail": "", "product": "膠原精華"},
+                        {"id": "G3_3", "name": "滋潤+88%", "detail": "", "product": "胺基酸精華"},
+                        {"id": "G3_4", "name": "潤澤+66%", "detail": "", "product": "維生素B3精華"},
+                        {"id": "G3_5", "name": "強韌+93%", "detail": "", "product": "全效燦金精華"},
+                        {"id": "G3_0", "name": "需要專業諮詢建議", "detail": "", "product": ""},
+                    ]},
+                    "G4": {"name":"Hair Care Plus秀髮護理加強", "color":"#e9edc9", "bg_img":"dye.png", "detail": "您第二順位想要加強秀髮修復的精靈護髮：", "items": [
+                        {"id": "G4_1", "name": "修護+85%", "detail": "", "product": "蛋白質"},
+                        {"id": "G4_2", "name": "柔順+86%", "detail": "", "product": "多胜肽"},
+                        {"id": "G4_3", "name": "柔軟+64%", "detail": "", "product": "山茶花油"},
+                        {"id": "G4_4", "name": "潤澤+93%", "detail": "", "product": "乳酸"},
+                        {"id": "G4_5", "name": "滋養+85%", "detail": "", "product": "維他命E"},
+                        {"id": "G4_0", "name": "需要專業諮詢建議", "detail": "", "product": ""},
+                    ]},
+                    "G5": {"name":"Hair Care Extra秀髮深度護理", "color":"#e9edc9", "bg_img":"dye.png", "detail": "若您有第三項想要深度修復秀髮問題？", "items": [
+                        {"id": "G5_1", "name": "細軟扁塌/豐盈型", "detail": "", "product": "神經醯胺強韌保濕"},
+                        {"id": "G5_2", "name": "染後持色/染漂型", "detail": "", "product": "有機酸護色養髮科技"},
+                        {"id": "G5_3", "name": "乾燥/滋養型", "detail": "", "product": "皇家鳶尾花滋養"},
+                        {"id": "G5_4", "name": "針對六大頭皮秀髮的問題", "detail": "", "product": "黑鑽極萃逆時髮浴"},
+                        {"id": "G5_5", "name": "保濕", "detail": "", "product": "保濕強韌高光瞬效精萃露"},
+                        {"id": "G5_6", "name": "鎖護", "detail": "", "product": "高光鎖護瞬效機能水"},
+                        {"id": "G5_N", "name": "無", "detail": "", "product": ""},
+                    ]},
+                    "G6": {"name":"Scalp Serum頭皮保養", "color":"#e9edc9", "bg_img":"dye.png", "detail": "請問您最希望加強的頭皮保養需求？", "items": [
+                        {"id": "G6_1", "name": "去油保濕 打造頭皮微生態", "detail": "油膩扁塌/增加清爽度", "product": "極酵平衡頭皮精華"},
+                        {"id": "G6_2", "name": "去除頭皮屑/角質調理", "detail": "皮屑.角質代謝異常/角質代謝正常", "product": "極淨平衡頭皮精華"},
+                        {"id": "G6_3", "name": "預防落髮增加保濕豐盈", "detail": "細軟扁塌 / 增加秀髮豐盈度", "product": "粉漾芯生精華"},
+                        {"id": "G6_4", "name": "頭皮秀髮營養素", "detail": "缺乏營養素/增加秀髮生長營養素", "product": "根源新生精粹"},
+                    ]},
+                    "G7": {"name":"Leave in免沖洗護髮", "color":"#e9edc9", "bg_img":"dye.png", "detail": "您今日想要長效防護的秀髮需求？", "items": [
+                        {"id": "G7_1", "name": "保濕抗斷", "suites": [
+                            {"detail": "細軟扁塌/豐盈型", "product": "粉漾芯生熱活精華霧"},
+                            {"detail": "細軟扁塌/豐盈型", "product": "靜夜賦活精華 小紫瓶"},
+                            {"detail": "輕盈好吸收", "product": "金緻柔馭露"}]
+                        },
+                        {"id": "G7_2", "name": "柔軟持色", "suites": [
+                            {"detail": "染後持色/染漂型", "product": "恆彩重生熱活精華"},
+                            {"detail": "染後持色/染漂型", "product": "靜夜賦活精華 小紫瓶"},
+                            {"detail": "染後持色/染漂型", "product": "花漾粉金緻柔馭露"}]
+                        },
+                        {"id": "G7_3", "name": "深度滋養", "suites": [
+                            {"detail": "乾燥/滋養型", "product": "皇家鳶尾滋養熱活精華"},
+                            {"detail": "乾燥/滋養型", "product": "靜夜修護精華 小紅瓶"},
+                            {"detail": "乾燥/滋養型", "product": "燦金玻尿酸極光露"}]
+                        },
+                        {"id": "G7_4", "name": "捲度抗躁", "suites": [
+                            {"detail": "捲髮.抗躁", "product": "柔舞抗躁熱活精華"},
+                            {"detail": "捲髮.抗躁", "product": "靜夜修護精華 小紅瓶"},
+                            {"detail": "抗毛躁自然卷/柔順型", "product": "柔舞絲段露"}]
+                        },
+                    ]},
+                },
+                post_url: "https://script.google.com/macros/s/AKfycbyCigjp0tTWKw1CYCW2G87HhJyWEYMS0pKTnZzufkGH2PqveEGlWa5kBaVN0Ud4m2fA/exec",
+                // auth_host: "https://zoss-hair.appspot.com",
+                auth_host: "",
+                designation: "不指定設計師",
+        };
+        var force_continue = false;
+        </script>
+    <!-- <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script> -->
+    <script src="./new_reservation.js"></script>
+    
+</body>
+</html>
