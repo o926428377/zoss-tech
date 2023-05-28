@@ -173,7 +173,7 @@ var income_form_template = '<div class="container p-3">'+
 '<span>已依造您髮況所需，篩選三組適合的療程，請選擇其中一種</span>' +
 '</div>' +
 '</div>' +
-'<div v-else :class="chk_style(style)+\' zoss-svc-h p-0 row input-group align-items-center card\'" role="group">' +
+'<div :class="chk_style(style)+\' zoss-svc-h p-0 row input-group align-items-center card\'" role="group">' +
 '<div class="zoss_ultra card-header fs-6">' +
 '<h3 class="d-inline">請選擇療程</h3>' +
 '<span>已依造您髮況所需，篩選三組適合的療程，請選擇其中一種</span>' +
@@ -218,7 +218,7 @@ var income_form_template = '<div class="container p-3">'+
 '<span>  {{ products[question].detail }}</span>' +
 '</div>' +
 '</div>' +
-'<div v-else :class="chk_style(style)+\' zoss-svc-h p-0 row input-group align-items-center card\'" role="group">' +
+'<div :class="chk_style(style)+\' zoss-svc-h p-0 row input-group align-items-center card\'" role="group">' +
 '<div class="zoss_ultra card-header fs-6">' +
 '<h3 class="d-inline">{{ products[question].name }}</h3>' +
 '<span>  {{ products[question].detail }}</span>' +
