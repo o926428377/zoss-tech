@@ -161,7 +161,53 @@ var income_form_template = '<div class="container p-3">'+
 '</div>' +
 '</tab-content>' +
 
-'<tab-content v-if="suite!==\'E\'" title="選擇需求" :selected="true" :before-change="checkStep2" class="pb-4">' +
+
+'<tab-content title="選擇療程" :selected="true" :before-change="checkStep2" class="pb-4">' +
+'<div :class="\'mx-auto ps-4 py-4 \'" v-if="suite">' +
+'<div colspan="1" role="group" class="row input-group mb-3 align-items-center">'+
+'<template v-for="(row_style, style, style_i) in style_dict">' +
+
+'<div v-if="style===\'zoss_lite\'" class="zoss_lite col4 zoss-svc-h.mini p-0 pb-1 row input-group align-items-center card mx-0 align-self-stretch border-0" role="group">' +
+'<div class="zoss_lite card-header fs-6">' +
+'<h3 class="d-inline pb-0 mb-0">請選擇療程</h3>' +
+'<span>已依造您髮況所需，篩選三組適合的療程，請選擇其中一種</span>' +
+'</div>' +
+'</div>' +
+'<div v-else :class="chk_style(style)+\' zoss-svc-h p-0 row input-group align-items-center card\'" role="group">' +
+'<div class="zoss_ultra card-header fs-6">' +
+'<h3 class="d-inline">請選擇療程</h3>' +
+'<span>已依造您髮況所需，篩選三組適合的療程，請選擇其中一種</span>' +
+'</div>' +
+'<div :class="style+\' card-body py-1 px-3\'">' +
+'<div :class="\'row \'+row_style+\' justify-content-start\'" role="group">' +
+'<div class="col p-2" v-for="(_suite_id, index) in top_suites()">'+
+'<div class="w-100 h-100 border border-3 border-dark btn btn-outline-light position-relative bg-gradient dim align-items-center justify-content-center" :style="\'--bs-border-opacity: .15;display: flex;;min-height:80px;\'" @click="errorMsg=\'\';select_suite(_suite_id);">' +
+'<input type="radio" class="btn-check" name="suite" :id="_suite_id" autocomplete="off" :value="_suite_id">' +
+'<label role="button" class="w-100" :for="_suite_id" @click="errorMsg=\'\';select_suite(_suite_id);">' +
+'<p class="card-title h5 text-dark p-0">{{ suites[_suite_id] }}</p>' +
+// '<span class="font-italic fs-5 text-danger">{{ item.price ? "$"+item.price:"" }}</span>' +
+'<p class="card-text text-secondary fs-6"><u>{{ suites[_suite_id] }}</u></p>' +
+'<div v-if="_suite_id !== suite" class="h-100 position-absolute top-0">' +
+// '<h4 class="card-title text-light"></h4>' +
+'</div>' +
+'<div v-else class="w-100 h-100 position-absolute top-0 btn" style="left: 0;background-color: rgb(33,37,41,0.6);">' +
+'<h5 class="card-title text-light position-absolute top-50 start-50 translate-middle"><i style="font-size:80px;" class="fa fa-check-circle text-light opacity-50" aria-hidden="true"></i></h5>' +
+'</div>' +
+'</label>' +
+'</div>' +
+'</div>' +
+'</div>' +
+'</div>' +
+'</div>' +
+'</template>' +
+'</div>' +
+'</div>' +
+'</tab-content>' +
+
+'<tab-content title="選擇需求" :selected="true" :before-change="checkStep3" class="pb-4">' +
+'<div class="mx-auto mt-4 ps-4 py-4 alert alert-info w-50" v-if="suite===\'E\'"">' +
+'<p>針對您的髮況，我們已為您規劃『(E) 頂級黑鑽奢養』，可以針對六大頭皮秀髮的問題進行改善，請點選『下一步』了解使用之產品內容</p>' +
+'</div>' +
 '<div :class="\'mx-auto ps-4 py-4 bg-\'+products[question].bg" v-if="suite && products[question].items.length > 1" v-for="(question, index) in suite_questions[suite]">' +
 '<div colspan="1" role="group" class="row input-group mb-3 align-items-center">'+
 '<template v-for="(row_style, style, style_i) in style_dict">' +
@@ -172,7 +218,7 @@ var income_form_template = '<div class="container p-3">'+
 '<span>  {{ products[question].detail }}</span>' +
 '</div>' +
 '</div>' +
-'<div :class="chk_style(style)+\' zoss-svc-h p-0 row input-group align-items-center card\'" role="group">' +
+'<div v-else :class="chk_style(style)+\' zoss-svc-h p-0 row input-group align-items-center card\'" role="group">' +
 '<div class="zoss_ultra card-header fs-6">' +
 '<h3 class="d-inline">{{ products[question].name }}</h3>' +
 '<span>  {{ products[question].detail }}</span>' +
@@ -203,7 +249,7 @@ var income_form_template = '<div class="container p-3">'+
 '</div>' +
 '</tab-content>' +
 
-'<tab-content title="療程建議" class="mt-4" :before-change="checkStep3">' +
+'<tab-content title="療程內容" class="mt-4" :before-change="checkStep4">' +
 '<div class="mx-auto px-3" style="max-width: 400px;">' +
 '<div class="row input-group mb-3 align-items-center card border-success" role="group">' +
 '<div class="card-header fs-6">' +
@@ -289,12 +335,7 @@ Vue.component('booking', {
             } else if (this.target_svc[svc_id].length < this.services[svc_id].max) {
                 this.target_svc[svc_id].push(item.id);
             }
-            this.suite = this.chk_suite();
-            if (this.suite === '') {
-                self.target_products = [];
-            } else {
-                self.target_products = self.suite_questions[this.suite].filter(x => self.products[x].items.length === 1).map(x => self.products[x].items[0].id);
-            }
+            this.select_suite(this.chk_suite());  
         },
         select_product: function (question_id, item) {
             var self = this;
@@ -307,7 +348,16 @@ Vue.component('booking', {
             //     self.target_products = self.target_products.filter(x => x !== item.id);
             // }
         },
-        chk_suite: function() {
+        select_suite: function(suite_id) {
+            var self = this;
+            this.suite = suite_id;
+            if (this.suite === '') {
+                self.target_products = [];
+            } else {
+                self.target_products = self.suite_questions[this.suite].filter(x => self.products[x].items.length === 1).map(x => self.products[x].items[0].id);
+            }
+        },
+        top_suites: function() {
             var self = this;
             var suites = "ABCDE".split('');
             var result = Array(suites.length).fill(0);
@@ -321,11 +371,15 @@ Vue.component('booking', {
                     })
                 }
             })
-            if (Math.max(...result) === 0) {
-                return '';
-            } else {
-                return suites[result.indexOf(Math.max(...result))];
-            }
+            top_suite = suites.map(function(el, i) {return { index: i, value: el };});
+            top_suite.sort(function(a, b) {return result[a.index] - result[b.index];});
+            console.log(top_suite.map(x => x.value).reverse().slice(0,3));
+            console.log(result);
+            return top_suite.map(x => x.value).reverse().slice(0,3);
+            //this.suite = suite_id;
+        },
+        chk_suite: function() {
+            return this.top_suites()[0]
         },
         onChangeRegion: function (event) {
             console.log(this.region);
@@ -376,6 +430,18 @@ Vue.component('booking', {
         checkStep2: function(){
             var self = this;
             return new Promise((resolve, reject) => {
+                if (self.suite === "") {
+                    // $('body')[0].scrollIntoView();
+                    reject('需選擇一項療程！');
+                    // this.scrollTop();
+                } else {
+                    resolve(true);
+                }
+             })
+        },
+        checkStep3: function(){
+            var self = this;
+            return new Promise((resolve, reject) => {
                 if (self.target_products.length !== self.suite_questions[this.suite].length) {
                     // $('body')[0].scrollIntoView();
                     reject('每一需求至少選擇一項！');
@@ -385,7 +451,7 @@ Vue.component('booking', {
                 }
              })
         },
-        checkStep3: function(){
+        checkStep4: function(){
             var self = this;
             $('#form-chk').addClass('was-validated');
             return new Promise((resolve, reject) => {
