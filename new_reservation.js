@@ -103,12 +103,12 @@ var income_form_template = '<div class="container p-3">'+
 // '<div class="text-center" style="width:100%;padding-bottom: 12%; padding-top: 6%;;background-image: url(\'shiseido.png\'); background-repeat: no-repeat;background-attachment: inherit;background-size: 100% auto;">' +
 
 // '<iframe width="60%" style="aspect-ratio: 16 / 9;" src="https://www.youtube.com/embed/ZC97SOmdWZU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>' +
-'<form-wizard ref="form_wizard" id="wizard-title" color="#fcba03" @on-error="handleErrorMessage" @on-complete="submit_record" :start-index="0" @on-change="scroll_to_top" @on-validate="errorMsg=\'\';">' +
+'<form-wizard ref="form_wizard" id="wizard-title" color="black" @on-error="handleErrorMessage" @on-complete="submit_record" :start-index="0" @on-change="scroll_to_top" @on-validate="errorMsg=\'\';">' +
 '<h2 slot="title" class="text-info" style="position:relative;"></h2>' +
 '<div v-show="errorMsg" class="text-center pt-5 pb-3" id="message">'+
 '<span class="alert alert-danger" role="alert">{{errorMsg}}</span>'+
 '</div>'+
-'<tab-content title="髮況自我評估" :before-change="checkStep1" :after-change="scroll_to_top">' +
+'<tab-content title="線上諮詢檢測" :before-change="checkStep1" :after-change="scroll_to_top">' +
 // '<div :class="\'mx-auto p-4 bg-\'+svc_dict.bg" v-for="(svc_dict, svc_id, index) in services">' +
 '<div :class="\'mx-auto ps-4 py-4 bg-\'+svc_dict.bg" v-for="(svc_dict, svc_id, index) in services">' +
 '<div colspan="1" role="group" class="row input-group mb-3 align-items-center">'+
@@ -162,7 +162,7 @@ var income_form_template = '<div class="container p-3">'+
 '</tab-content>' +
 
 
-'<tab-content title="選擇療程" :selected="true" :before-change="checkStep2" class="pb-4">' +
+'<tab-content title="療程建議" :selected="true" :before-change="checkStep2" class="pb-4">' +
 '<div :class="\'mx-auto ps-4 py-4 \'" v-if="suite">' +
 '<div colspan="1" role="group" class="row input-group mb-3 align-items-center">'+
 '<template v-for="(row_style, style, style_i) in style_dict">' +
@@ -179,14 +179,15 @@ var income_form_template = '<div class="container p-3">'+
 '<span>已依造您髮況所需，篩選三組適合的療程，請選擇其中一種</span>' +
 '</div>' +
 '<div :class="style+\' card-body py-1 px-3\'">' +
-'<div :class="\'row \'+row_style+\' justify-content-start\'" role="group">' +
+'<div :class="\'row \'+(style===\'zoss_lite\'?\'row-cols-1\':row_style)+\' justify-content-start\'" role="group">' +
 '<div class="col p-2" v-for="(_suite_id, index) in top_suites()">'+
 '<div class="w-100 h-100 border border-3 border-dark btn btn-dark position-relative bg-gradient dim align-items-center justify-content-center" :style="\'--bs-border-opacity: .15;display: flex;;min-height:80px;\'" @click="errorMsg=\'\';select_suite(_suite_id);">' +
 '<input type="radio" class="btn-check" name="suite" :id="_suite_id" autocomplete="off" :value="_suite_id">' +
 '<label role="button" class="w-100" :for="_suite_id" @click="errorMsg=\'\';select_suite(_suite_id);">' +
-'<p class="card-title h5 text-light p-0">{{ suites[_suite_id] }}</p>' +
+'<p class="h3 text-light p-0">{{ suites[_suite_id].name }}</p>' +
+'<img class="card-img-top" :src="suites[_suite_id].bg_img" alt="Card image cap" style="object-fit: cover;"></img>' +
 // '<span class="font-italic fs-5 text-danger">{{ item.price ? "$"+item.price:"" }}</span>' +
-'<p class="card-text text-secondary fs-6"><u>{{ suites[_suite_id] }}</u></p>' +
+'<p class="card-text text-light fs-6 p-3" style="min-height:130px;" v-html="suites[_suite_id].detail"></p>' +
 '<div v-if="_suite_id !== suite" class="h-100 position-absolute top-0">' +
 // '<h4 class="card-title text-light"></h4>' +
 '</div>' +
@@ -204,7 +205,7 @@ var income_form_template = '<div class="container p-3">'+
 '</div>' +
 '</tab-content>' +
 
-'<tab-content title="選擇需求" :selected="true" :before-change="checkStep3" class="pb-4">' +
+'<tab-content title="個人化訂製" :selected="true" :before-change="checkStep3" class="pb-4">' +
 '<div class="mx-auto mt-4 ps-4 py-4 alert alert-info w-50" v-if="suite===\'E\'"">' +
 '<p>針對您的髮況，我們已為您規劃『(E) 頂級黑鑽奢養』，可以針對六大頭皮秀髮的問題進行改善，請點選『下一步』了解使用之產品內容</p>' +
 '</div>' +
@@ -249,11 +250,12 @@ var income_form_template = '<div class="container p-3">'+
 '</div>' +
 '</tab-content>' +
 
-'<tab-content title="療程內容" class="mt-4" :before-change="checkStep4">' +
+'<tab-content title="奢養療程" class="mt-4" :before-change="checkStep4">' +
 '<div class="mx-auto px-3" style="max-width: 400px;">' +
 '<div class="row input-group mb-3 align-items-center card border-success" role="group">' +
 '<div class="card-header fs-6">' +
-'您的專屬療程為: {{ suites[suite] }}' +
+'您的專屬療程為: {{ suites[suite]?suites[suite].name:"" }}' +
+'<img class="card-img-top" :src="suites[suite]?suites[suite].bg_img:\'\'" alt="Card image cap" style="object-fit: cover;"></img>' +
 '</div>' +
 '<div class="card-body">' +
 '<blockquote class="blockquote mb-0 p-0 border-0">' +
@@ -262,9 +264,14 @@ var income_form_template = '<div class="container p-3">'+
 '<br>&emsp;◎{{ suggestion }}'+
 '</template>'+
 '</p>' +
-'<footer class="text-secondary fs-6">療程使用之產品如下：'+
+'<footer class="text-secondary fs-6"><span class="fw-bolder fs-4">療程使用之產品如下：</span>'+
 '<template v-for="(product, product_index) in selected_products()">'+
-'<br>&emsp;◎{{ product }}'+
+
+// html.push('<blockquote class="blockquote mb-0">');
+// html.push(`<p class="text-secondary fs-6 text-start" style="white-space: pre-line">${description}</p>`);
+// html.push('</blockquote>');
+
+'<br><span v-html="product"></span>'+
 '</template>'+
 '</footer>' +
 '<div class="card-footer bg-transparent text-center fs-6"><input type="checkbox" class="form-check-input" v-model="understood" @focus="errorMsg=\'\'" required><span @focus="errorMsg=\'\'" @click="understood=!understood"> 我同意</span></input>' +
@@ -407,8 +414,8 @@ Vue.component('booking', {
             var self = this;
             var ids = self.target_products.filter(x => !["0", "N"].includes(x.substr(x.length - 1)))
             ids.sort(function(a, b) {return self.suite_questions[self.suite].indexOf(a.slice(0,2)) - self.suite_questions[self.suite].indexOf(b.slice(0,2));});
-            var prod = ids.map(x => self.products[x.slice(0,2)].items.filter(y => y.id === x)[0]);
-            var names = [].concat(...prod.map(x => x.product?[x.product]:x.suites.map(y => y.product)));
+            var prod = ids.map(x => {return {...self.products[x.slice(0,2)].items.filter(y => y.id === x)[0], "func_name": self.products[x.slice(0,2)].name}});
+            var names = [].concat(...prod.map(x => x.product?[`<span class="pt-1 fw-bold d-inline-block">◎${x.func_name}:</span>`,`&emsp;・${x.product}`]:[`<span class="pt-1 fw-bold d-inline-block">◎${x.func_name}:</span>`,...x.suites.map(y => `&emsp;・${y.product}`)]));
             return names
         },
         need_suggestions: function() {

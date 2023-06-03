@@ -76,7 +76,7 @@
             }
             .zoss-svc {
                 border-top-left-radius:1.4rem;
-                max-width:200px;
+                max-width:250px;
             }
             .zoss-svc-h {
                 min-height:200px;
@@ -184,7 +184,7 @@
 
         </style>
     </head>
-<body style="background-color: lightgray;">
+<body>
     <div id="vue">
         <booking ref="report_report" :name="name" :sex="sex" :tel="tel" :email="email" :plan_dict="plan_dict" :title="title" :shop_list="shop_list" :activity="activity" :services="services" :designation="designation" :suite_questions="suite_questions" :products="products" :suites="suites"></booking>
     </div>
@@ -234,7 +234,7 @@
                     // ['高雄文山特區店', '近家樂福', 'c7bdb3', '高雄市', '(07)398-0991', 22.6436221,120.3437189, 'https://goo.gl/maps/sDmryabRWkjZyejN6', '高雄市三民區澄清路575號', '23'],
                 ],
                 services: {
-                    "Q1": {"name":"您目前對頭皮感受?", "max":3, "min":1, "color":"#e9edc9", "bg_img":"dye.png", "detail": "請點選下列選項 , 最多可複選3項", "items": [
+                    "Q1": {"name":"您目前對頭皮感受?", "max":3, "min":1, "color":"#e9edc9", "bg_img":"Q1.jpg", "detail": "請點選下列選項 , 最多可複選3項", "items": [
                         {"id": "Q1_1", "name": "感覺油膩", "score": "01000"},
                         {"id": "Q1_2", "name": "感覺頭皮乾", "score": "10001"},
                         {"id": "Q1_3", "name": "感覺有皮屑", "score": "01000"},
@@ -246,7 +246,7 @@
                         {"id": "Q1_9", "name": "感覺頭皮紅腫癢", "score": "11001"},
                         {"id": "Q1_0", "name": "需要專業建議", "score": "00000"},
                     ]},
-                    "Q2": {"name":"您目前對秀髮感受?", "max":3, "min":1, "color":"#faedcd", "bg_img":"perm.png", "detail": "請點選下列選項 , 最多可複選3項", "items": [
+                    "Q2": {"name":"您目前對秀髮感受?", "max":3, "min":1, "color":"#faedcd", "bg_img":"Q2.jpg", "detail": "請點選下列選項 , 最多可複選3項", "items": [
                     // "perm": {"name":"燙髮", "color":"#faedcd", "bg_img":"https://i.imgur.com/KrJNMZg.png", "detail": "服務皆含洗髮，可享剪髮優惠加購價 $300(不指定設計師)。漂過頭髮的不可燙", "items": [
                         {"id": "Q2_1", "name": "毛躁自然卷", "score": "00010"},
                         {"id": "Q2_2", "name": "燙髮受損", "score": "10100"},
@@ -257,7 +257,7 @@
                         {"id": "Q2_7", "name": "感覺扁塌", "score": "00100"},
                         {"id": "Q2_0", "name": "需要專業建議", "score": "00000"},
                     ]},
-                    "Q3": {"name":"您對夢想髮質的需求?", "max":3, "min":1, "color":"#e9edc9", "bg_img":"treatment.png","detail": "請點選下列選項 , 最多可複選3項", "items": [
+                    "Q3": {"name":"您對夢想髮質的需求?", "max":3, "min":1, "color":"#e9edc9", "bg_img":"Q3.jpg","detail": "請點選下列選項 , 最多可複選3項", "items": [
                     // "treatment": {"name":"護髮/頭皮", "color":"#e9edc9", "bg_img":"https://i.imgur.com/c0GaoU0.png","detail": "服務皆含洗髮", "items": [
                         {"id": "Q3_1", "name": "深層潔淨", "score": "01001"},
                         {"id": "Q3_2", "name": "柔順", "score": "00010"},
@@ -278,11 +278,11 @@
                     "E": ["E1"],
                 },
                 suites: {
-                    "A": "(A) 專業舒緩奢養",
-                    "B": "(B) 專業淨化奢養",
-                    "C": "(C) 專業豐盈奢養",
-                    "D": "(D) 高訂瞬效奢養",
-                    "E": "(E) 頂級黑鑽奢養",
+                    "A": {"name":"(A) 專業舒緩奢養", "bg_img":"A_suite.jpg", "detail":"・極致舒緩頭皮敏感緊繃<br>・釋放秀髮活力再現"},
+                    "B": {"name":"(B) 專業淨化奢養", "bg_img":"B_suite.jpg", "detail":"・專業頭皮打擊油膩及老廢角質<br>・打造控油平衡清爽髮感"},
+                    "C": {"name":"(C) 專業豐盈奢養", "bg_img":"C_suite.jpg", "detail":"・全效修護對抗頭皮落髮<br>・再現秀髮豐盈髮感"},
+                    "D": {"name":"(D) 高訂瞬效奢養", "bg_img":"D_suite.jpg", "detail":"・客製30款秀髮配方<br>・1秒滲透奢養<br>・30天完美續航"},
+                    "E": {"name":"(E) 頂級黑鑽奢養", "bg_img":"E_suite.jpg", "detail":"・極致奢養享受<br>・擊退六大老化徵兆<br>・頭皮緊緻潤澤保濕<br>・秀髮強韌光澤豐盈"},
                 },
                 products: {
                     "A1": {"name":"Scalp Care頭皮護理", "color":"#e9edc9", "bg_img":"dye.png", "detail": "請點選下列選項", "items": [
