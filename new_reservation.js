@@ -136,7 +136,7 @@ var income_form_template = '<div class="container p-3">'+
 '<div :class="style+\' card-body py-1 px-3\'">' +
 '<div :class="\'row \'+row_style+\' justify-content-start\'" role="group">' +
 '<div v-for="(item, items_index) in svc_dict.items" class="col p-2">'+
-'<div class="w-100 h-100 border border-3 border-dark btn btn-dark position-relative bg-gradient dim align-items-center justify-content-center" :style="\'--bs-border-opacity: .15;display: flex;;min-height:80px;\'" @click="errorMsg=\'\';select_svc(svc_id, item);">' +
+'<div class="w-100 h-100 btn btn-dark position-relative align-items-center justify-content-center" :style="\'--bs-border-opacity: .15;display: flex;;min-height:80px;\'" @click="errorMsg=\'\';select_svc(svc_id, item);">' +
 '<input type="radio" class="btn-check" :name="svc_id" :id="item.id" autocomplete="off" :value="item.id">' +
 '<label role="button" class="w-100" :for="item.id" @click="errorMsg=\'\';select_svc(svc_id, item);">' +
 '<p class="card-title h5 text-light p-0">{{ item.name }}</p>' +
@@ -181,7 +181,7 @@ var income_form_template = '<div class="container p-3">'+
 '<div :class="style+\' card-body py-1 px-3\'">' +
 '<div :class="\'row \'+(style===\'zoss_lite\'?\'row-cols-1\':row_style)+\' justify-content-start\'" role="group">' +
 '<div class="col p-2" v-for="(_suite_id, index) in top_suites()">'+
-'<div class="w-100 h-100 border border-3 border-dark btn btn-dark position-relative bg-gradient dim align-items-center justify-content-center" :style="\'--bs-border-opacity: .15;display: flex;;min-height:80px;\'" @click="errorMsg=\'\';select_suite(_suite_id);">' +
+'<div class="w-100 h-100 btn btn-dark position-relative align-items-center justify-content-center" :style="\'--bs-border-opacity: .15;display: flex;;min-height:80px;\'" @click="errorMsg=\'\';select_suite(_suite_id);">' +
 '<input type="radio" class="btn-check" name="suite" :id="_suite_id" autocomplete="off" :value="_suite_id">' +
 '<label role="button" class="w-100" :for="_suite_id" @click="errorMsg=\'\';select_suite(_suite_id);">' +
 '<p class="h3 text-light p-0">{{ suites[_suite_id].name }}</p>' +
@@ -227,7 +227,7 @@ var income_form_template = '<div class="container p-3">'+
 '<div :class="style+\' card-body py-1 px-3\'">' +
 '<div :class="\'row \'+row_style+\' justify-content-start\'" role="group">' +
 '<div v-for="(item, items_index) in products[question].items" class="col p-2">'+
-'<div class="w-100 h-100 border border-3 border-dark btn btn-dark position-relative bg-gradient dim align-items-center justify-content-center" :style="\'--bs-border-opacity: .15;display: flex;;min-height:80px;\'" @click="errorMsg=\'\';select_product(question, item);">' +
+'<div class="w-100 h-100 btn btn-dark position-relative align-items-center justify-content-center" :style="\'--bs-border-opacity: .15;display: flex;;min-height:80px;\'" @click="errorMsg=\'\';select_product(question, item);">' +
 '<input type="radio" class="btn-check" :name="question" :id="item.id" autocomplete="off" :value="item.id">' +
 '<label role="button" class="w-100" :for="item.id" @click="errorMsg=\'\';select_product(question, item);">' +
 '<p class="card-title h5 text-light p-0">{{ item.name }}</p>' +
