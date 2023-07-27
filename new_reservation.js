@@ -162,7 +162,53 @@ var income_form_template = '<div class="container p-3">'+
 '</tab-content>' +
 
 
-'<tab-content title="療程建議" :selected="true" :before-change="checkStep2" class="pb-4">' +
+'<tab-content title="個人化訂製" :selected="true" :before-change="checkStep2" class="pb-4">' +
+// '<div class="mx-auto mt-4 ps-4 py-4 alert alert-info w-50" v-if="suite===\'E\'"">' +
+// '<p>針對您的髮況，我們已為您規劃『(E) 頂級黑鑽奢養』，可以針對六大頭皮秀髮的問題進行改善，請點選『下一步』了解使用之產品內容</p>' +
+// '</div>' +
+'<div :class="\'mx-auto ps-4 py-4 bg-\'+products[question].bg" v-if="(top_suites().includes(\'B\')||question !== \'B1\') && suite && products[question].items.length > 1" v-for="(question, index) in suite_questions[\'B\']">' +
+// '<div :class="\'mx-auto ps-4 py-4 bg-\'+products[question].bg" v-if="suite && products[question].items.length > 1" v-for="(question, index) in suite_questions[suite]">' +
+'<div colspan="1" role="group" class="row input-group mb-3 align-items-center">'+
+'<template v-for="(row_style, style, style_i) in style_dict">' +
+
+'<div v-if="style===\'zoss_lite\'" class="zoss_lite col4 zoss-svc-h.mini p-0 pb-1 row input-group align-items-center card mx-0 align-self-stretch border-0" role="group">' +
+'<div class="zoss_lite card-header fs-6">' +
+'<h3 class="d-inline pb-0 mb-0">{{ products[question].name }}</h3>' +
+'<span>  {{ products[question].detail }}</span>' +
+'</div>' +
+'</div>' +
+'<div :class="chk_style(style)+\' zoss-svc-h p-0 row input-group align-items-center card\'" role="group">' +
+'<div class="zoss_ultra card-header fs-6">' +
+'<h3 class="d-inline">{{ products[question].name }}</h3>' +
+'<span>  {{ products[question].detail }}</span>' +
+'</div>' +
+'<div :class="style+\' card-body py-1 px-3\'">' +
+'<div :class="\'row \'+row_style+\' justify-content-start\'" role="group">' +
+'<div v-for="(item, items_index) in products[question].items" class="col p-2">'+
+'<div class="w-100 h-100 btn btn-dark position-relative align-items-center justify-content-center" :style="\'--bs-border-opacity: .15;display: flex;;min-height:80px;\'" @click="errorMsg=\'\';select_product(question, item);">' +
+'<input type="radio" class="btn-check" :name="question" :id="item.id" autocomplete="off" :value="item.id">' +
+'<label role="button" class="w-100" :for="item.id" @click="errorMsg=\'\';select_product(question, item);">' +
+'<p class="card-title h5 text-light p-0">{{ item.name }}</p>' +
+// '<span class="font-italic fs-5 text-danger">{{ item.price ? "$"+item.price:"" }}</span>' +
+// '<p class="card-text text-secondary fs-6"><u>{{ item.detail }}</u></p>' +
+'<div v-if="!target_products.includes(item.id)" class="h-100 position-absolute top-0">' +
+// '<h4 class="card-title text-light"></h4>' +
+'</div>' +
+'<div v-else class="w-100 h-100 position-absolute top-0 btn" style="left: 0;background-color: rgb(33,37,41,0.6);">' +
+'<h5 class="card-title text-light position-absolute top-50 start-50 translate-middle"><i style="font-size:80px;" class="fa fa-check-circle text-light opacity-50" aria-hidden="true"></i></h5>' +
+'</div>' +
+'</label>' +
+'</div>' +
+'</div>' +
+'</div>' +
+'</div>' +
+'</div>' +
+'</template>' +
+'</div>' +
+'</div>' +
+'</tab-content>' +
+
+'<tab-content title="療程建議" :selected="true" :before-change="checkStep3" class="pb-4">' +
 '<div :class="\'mx-auto ps-4 py-4 \'" v-if="suite">' +
 '<div colspan="1" role="group" class="row input-group mb-3 align-items-center">'+
 '<template v-for="(row_style, style, style_i) in style_dict">' +
@@ -189,51 +235,6 @@ var income_form_template = '<div class="container p-3">'+
 // '<span class="font-italic fs-5 text-danger">{{ item.price ? "$"+item.price:"" }}</span>' +
 '<p class="card-text text-light fs-6 p-3" style="min-height:130px;" v-html="suites[_suite_id].detail"></p>' +
 '<div v-if="_suite_id !== suite" class="h-100 position-absolute top-0">' +
-// '<h4 class="card-title text-light"></h4>' +
-'</div>' +
-'<div v-else class="w-100 h-100 position-absolute top-0 btn" style="left: 0;background-color: rgb(33,37,41,0.6);">' +
-'<h5 class="card-title text-light position-absolute top-50 start-50 translate-middle"><i style="font-size:80px;" class="fa fa-check-circle text-light opacity-50" aria-hidden="true"></i></h5>' +
-'</div>' +
-'</label>' +
-'</div>' +
-'</div>' +
-'</div>' +
-'</div>' +
-'</div>' +
-'</template>' +
-'</div>' +
-'</div>' +
-'</tab-content>' +
-
-'<tab-content title="個人化訂製" :selected="true" :before-change="checkStep3" class="pb-4">' +
-'<div class="mx-auto mt-4 ps-4 py-4 alert alert-info w-50" v-if="suite===\'E\'"">' +
-'<p>針對您的髮況，我們已為您規劃『(E) 頂級黑鑽奢養』，可以針對六大頭皮秀髮的問題進行改善，請點選『下一步』了解使用之產品內容</p>' +
-'</div>' +
-'<div :class="\'mx-auto ps-4 py-4 bg-\'+products[question].bg" v-if="suite && products[question].items.length > 1" v-for="(question, index) in suite_questions[suite]">' +
-'<div colspan="1" role="group" class="row input-group mb-3 align-items-center">'+
-'<template v-for="(row_style, style, style_i) in style_dict">' +
-
-'<div v-if="style===\'zoss_lite\'" class="zoss_lite col4 zoss-svc-h.mini p-0 pb-1 row input-group align-items-center card mx-0 align-self-stretch border-0" role="group">' +
-'<div class="zoss_lite card-header fs-6">' +
-'<h3 class="d-inline pb-0 mb-0">{{ products[question].name }}</h3>' +
-'<span>  {{ products[question].detail }}</span>' +
-'</div>' +
-'</div>' +
-'<div :class="chk_style(style)+\' zoss-svc-h p-0 row input-group align-items-center card\'" role="group">' +
-'<div class="zoss_ultra card-header fs-6">' +
-'<h3 class="d-inline">{{ products[question].name }}</h3>' +
-'<span>  {{ products[question].detail }}</span>' +
-'</div>' +
-'<div :class="style+\' card-body py-1 px-3\'">' +
-'<div :class="\'row \'+row_style+\' justify-content-start\'" role="group">' +
-'<div v-for="(item, items_index) in products[question].items" class="col p-2">'+
-'<div class="w-100 h-100 btn btn-dark position-relative align-items-center justify-content-center" :style="\'--bs-border-opacity: .15;display: flex;;min-height:80px;\'" @click="errorMsg=\'\';select_product(question, item);">' +
-'<input type="radio" class="btn-check" :name="question" :id="item.id" autocomplete="off" :value="item.id">' +
-'<label role="button" class="w-100" :for="item.id" @click="errorMsg=\'\';select_product(question, item);">' +
-'<p class="card-title h5 text-light p-0">{{ item.name }}</p>' +
-// '<span class="font-italic fs-5 text-danger">{{ item.price ? "$"+item.price:"" }}</span>' +
-// '<p class="card-text text-secondary fs-6"><u>{{ item.detail }}</u></p>' +
-'<div v-if="!target_products.includes(item.id)" class="h-100 position-absolute top-0">' +
 // '<h4 class="card-title text-light"></h4>' +
 '</div>' +
 '<div v-else class="w-100 h-100 position-absolute top-0 btn" style="left: 0;background-color: rgb(33,37,41,0.6);">' +
@@ -336,7 +337,7 @@ Vue.component('booking', {
         },
         select_svc: function (svc_id, item) {
             var self = this;
-            this.suite = '';
+            // this.suite = '';
             if (this.target_svc[svc_id].includes(item.id)) {
                 this.target_svc[svc_id] = this.target_svc[svc_id].filter(_id => _id !== item.id);
             } else if (this.target_svc[svc_id].length < this.services[svc_id].max) {
@@ -357,12 +358,15 @@ Vue.component('booking', {
         },
         select_suite: function(suite_id) {
             var self = this;
-            this.suite = suite_id;
             if (this.suite === '') {
-                self.target_products = [];
-            } else {
-                self.target_products = self.suite_questions[this.suite].filter(x => self.products[x].items.length === 1).map(x => self.products[x].items[0].id);
+                self.target_products = ["B1", ...self.suite_questions["A"], ...self.suite_questions["E"]].filter(x => self.products[x].items.length === 1).map(x => self.products[x].items[0].id);
             }
+            this.suite = suite_id;
+            // if (this.suite === '') {
+            //     self.target_products = [];
+            // } else {
+            //     self.target_products = self.suite_questions[this.suite].filter(x => self.products[x].items.length === 1).map(x => self.products[x].items[0].id);
+            // }
         },
         top_suites: function() {
             var self = this;
@@ -380,8 +384,8 @@ Vue.component('booking', {
             })
             top_suite = suites.map(function(el, i) {return { index: i, value: el };});
             top_suite.sort(function(a, b) {return result[a.index] - result[b.index];});
-            console.log(top_suite.map(x => x.value).reverse().slice(0,3));
-            console.log(result);
+            // console.log(top_suite.map(x => x.value).reverse().slice(0,3));
+            // console.log(result);
             return top_suite.map(x => x.value).reverse().slice(0,3);
             //this.suite = suite_id;
         },
@@ -412,7 +416,7 @@ Vue.component('booking', {
         },
         selected_products: function() {
             var self = this;
-            var ids = self.target_products.filter(x => !["0", "N"].includes(x.substr(x.length - 1)))
+            var ids = self.target_products.filter(x => self.suite_questions[this.suite].includes(x.slice(0,2))).filter(x => !["0", "N"].includes(x.substr(x.length - 1)))
             ids.sort(function(a, b) {return self.suite_questions[self.suite].indexOf(a.slice(0,2)) - self.suite_questions[self.suite].indexOf(b.slice(0,2));});
             var prod = ids.map(x => {return {...self.products[x.slice(0,2)].items.filter(y => y.id === x)[0], "func_name": self.products[x.slice(0,2)].name}});
             var names = [].concat(...prod.map(x => x.product?[`<span class="pt-1 fw-bold d-inline-block">◎${x.func_name}:</span>`,`&emsp;・${x.product}`]:[`<span class="pt-1 fw-bold d-inline-block">◎${x.func_name}:</span>`,...x.suites.map(y => `&emsp;・${y.product}`)]));
@@ -436,7 +440,7 @@ Vue.component('booking', {
                 }
              })
         },
-        checkStep2: function(){
+        checkStep3: function(){
             var self = this;
             return new Promise((resolve, reject) => {
                 if (self.suite === "") {
@@ -448,10 +452,13 @@ Vue.component('booking', {
                 }
              })
         },
-        checkStep3: function(){
+        checkStep2: function(){
             var self = this;
             return new Promise((resolve, reject) => {
-                if (self.target_products.length !== self.suite_questions[this.suite].length) {
+                console.log(["B1", ...self.suite_questions["A"], ...self.suite_questions["E"]].filter(x => self.top_suites().includes("B")||x !== "B1").length);
+                console.log(self.target_products.length);
+                // if (self.target_products.length !== self.suite_questions[this.suite].length) {
+                if (self.target_products.filter(x => self.top_suites().includes("B")|| x.slice(0,2) !== "B1").length < ["B1", ...self.suite_questions["A"], ...self.suite_questions["E"]].filter(x => self.top_suites().includes("B")||x !== "B1").length) {
                     // $('body')[0].scrollIntoView();
                     reject('每一需求至少選擇一項！');
                     // this.scrollTop();

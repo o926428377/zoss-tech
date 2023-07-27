@@ -271,10 +271,10 @@
                     ]},
                 },
                 suite_questions: {
-                    "A": ["G1", "G2", "A1", "G3", "G4", "G5", "G6", "G7", "G8"],
-                    "B": ["B1","G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8"],
-                    "C": ["G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8"],
-                    "D": ["G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8"],
+                    "A": ["G1", "G2", "A1", "G3", "G4", "G5", "G6", "G7"],
+                    "B": ["B1","G1", "G2", "G3", "G4", "G5", "G6", "G7"],
+                    "C": ["G1", "G2", "G3", "G4", "G5", "G6", "G7"],
+                    "D": ["G1", "G2", "G3", "G4", "G5", "G6", "G7"],
                     "E": ["E1", "E2", "E3", "E4", "E5", "E6"],
                 },
                 suites: {
@@ -315,68 +315,65 @@
                         ]},
                     ]},
                     "G1": {"name":"Scalp Bain頭皮清潔", "color":"#e9edc9", "bg_img":"dye.png", "detail": "請問您最希望加強的頭皮清潔問題？", "items": [
-                        {"id": "G1_1", "name": "去油清爽", "detail": "油膩扁塌/增加清爽度", "product": "胺基酸平衡舒緩髮浴"},
-                        {"id": "G1_2", "name": "緩解頭皮黏膩", "detail": "皮屑.角質代謝異常/角質代謝正常", "product": "極淨平衡頭皮髮浴"},
-                        {"id": "G1_3", "name": "保濕鎮靜舒敏", "detail": "乾敏性頭皮/增加頭皮防禦力", "product": "清新舒敏髮浴"},
-                        {"id": "G1_4", "name": "預防落髮增加豐盈度", "detail": "落/細軟扁塌/增加頭髮澎鬆度", "product": "粉漾芯生髮浴清爽型"},
+                        {"id": "G1_1", "name": "防止落髮", "detail": "落/細軟扁塌/增加頭髮澎鬆度", "product": "粉漾芯生髮浴清爽型"},
+                        {"id": "G1_2", "name": "去油抗屑", "detail": "油膩扁塌/增加清爽度", "product": "胺基酸平衡舒緩髮浴"},
+                        {"id": "G1_3", "name": "鎮靜舒緩", "detail": "乾敏性頭皮/增加頭皮防禦力", "product": "清新舒敏髮浴"},
+                        {"id": "G1_4", "name": "蓬鬆清爽", "detail": "皮屑.角質代謝異常/角質代謝正常", "product": "極淨平衡頭皮髮浴"},
                     ]},
                     "G2": {"name":"Hair Bain秀髮清潔", "color":"#e9edc9", "bg_img":"dye.png", "detail": "請問您最想加強的秀髮清潔問題？", "items": [
-                        {"id": "G2_1", "name": "抗落蓬鬆", "detail": "細軟扁塌/增加豐盈度", "product": "粉漾芯生髮浴清爽型"},
-                        {"id": "G2_2", "name": "強韌彈性", "detail": "脆弱易斷.缺乏彈性／彈韌型", "product": "煥髮重建髮浴"},
-                        {"id": "G2_3", "name": "修復護色", "detail": "染後持色/染漂型", "product": "恆彩重生髮浴"},
-                        {"id": "G2_4", "name": "柔軟保濕", "detail": "毛躁糾結/柔順型", "product": "柔舞絲光髮浴"},
+                        {"id": "G2_1", "name": "蓬鬆抗落", "detail": "細軟扁塌/增加豐盈度", "product": "粉漾芯生髮浴清爽型"},
+                        {"id": "G2_2", "name": "保濕滑順", "detail": "毛躁糾結/柔順型", "product": "柔舞絲光髮浴"},
+                        {"id": "G2_3", "name": "護色光澤", "detail": "染後持色/染漂型", "product": "恆彩重生髮浴"},
+                        {"id": "G2_4", "name": "強韌彈性", "detail": "脆弱易斷.缺乏彈性／彈韌型", "product": "煥髮重建髮浴"},
                     ]},
-                    "G3": {"name":"Hair Care秀髮護理", "color":"#e9edc9", "bg_img":"dye.png", "detail": "請問您最想提供的秀髮修復精華？", "items": [
-                        {"id": "G3_1", "name": "強韌+96%", "detail": "", "product": "神經醯胺精華"},
-                        {"id": "G3_2", "name": "豐盈+40%", "detail": "", "product": "膠原精華"},
-                        {"id": "G3_3", "name": "滋潤+88%", "detail": "", "product": "胺基酸精華"},
-                        {"id": "G3_4", "name": "潤澤+66%", "detail": "", "product": "維生素B3精華"},
-                        {"id": "G3_5", "name": "強韌+93%", "detail": "", "product": "全效燦金精華"},
+                    "G3": {"name":"Custom Hair Care客製化護理", "color":"#e9edc9", "bg_img":"dye.png", "detail": "(內在結構)", "items": [
+                        {"id": "G3_1", "name": "強韌", "detail": "", "product": "神經醯胺精華"},
+                        {"id": "G3_2", "name": "豐盈", "detail": "", "product": "膠原精華"},
+                        {"id": "G3_3", "name": "護色", "detail": "", "product": "維生素B3精華"},
+                        {"id": "G3_4", "name": "滋潤", "detail": "", "product": "胺基酸精華"},
+                        {"id": "G3_5", "name": "柔軟", "detail": "", "product": "全效燦金精華"},
                         {"id": "G3_0", "name": "需要專業諮詢建議", "detail": "", "product": ""},
                     ]},
-                    "G4": {"name":"Hair Care Plus秀髮護理加強", "color":"#e9edc9", "bg_img":"dye.png", "detail": "您第二順位想要加強秀髮修復的精靈護髮：", "items": [
-                        {"id": "G4_1", "name": "修護+85%", "detail": "", "product": "蛋白質"},
-                        {"id": "G4_2", "name": "柔順+86%", "detail": "", "product": "多胜肽"},
-                        {"id": "G4_3", "name": "柔軟+64%", "detail": "", "product": "山茶花油"},
-                        {"id": "G4_4", "name": "潤澤+93%", "detail": "", "product": "乳酸"},
-                        {"id": "G4_5", "name": "滋養+85%", "detail": "", "product": "維他命E"},
+                    "G4": {"name":"Custom Hair Care客製化護理", "color":"#e9edc9", "bg_img":"dye.png", "detail": "(外在)", "items": [
+                        {"id": "G4_1", "name": "抗躁", "detail": "", "product": "蛋白質"},
+                        {"id": "G4_2", "name": "柔順", "detail": "", "product": "多胜肽"},
+                        {"id": "G4_3", "name": "彈性", "detail": "", "product": "山茶花油"},
+                        {"id": "G4_4", "name": "光澤", "detail": "", "product": "乳酸"},
+                        {"id": "G4_5", "name": "滋養", "detail": "", "product": "維他命E"},
                         {"id": "G4_0", "name": "需要專業諮詢建議", "detail": "", "product": ""},
                     ]},
-                    "G5": {"name":"Hair Care Extra秀髮深度護理", "color":"#e9edc9", "bg_img":"dye.png", "detail": "若您有第三項想要深度修復秀髮問題？", "items": [
-                        {"id": "G5_1", "name": "細軟扁塌/豐盈型", "detail": "", "product": "神經醯胺強韌保濕"},
-                        {"id": "G5_2", "name": "染後持色/染漂型", "detail": "", "product": "有機酸護色養髮科技"},
+                    "G5": {"name":"Hair Care Extra加強護理", "color":"#e9edc9", "bg_img":"dye.png", "detail": "請點選下列選項", "items": [
+                        {"id": "G5_1", "name": "細軟扁塌髮型", "detail": "", "product": "神經醯胺強韌保濕"},
+                        {"id": "G5_2", "name": "染後持色/漂", "detail": "", "product": "有機酸護色養髮科技"},
                         {"id": "G5_3", "name": "乾燥/滋養型", "detail": "", "product": "皇家鳶尾花滋養"},
                         {"id": "G5_4", "name": "針對六大頭皮秀髮的問題", "detail": "", "product": "黑鑽極萃逆時髮浴"},
+                        {"id": "G5_5", "name": "保濕", "detail": "", "product": "保濕強韌高光瞬效精萃露"},
+                        {"id": "G5_6", "name": "鎖色", "detail": "", "product": "高光鎖護瞬效機能水"},
                         {"id": "G5_N", "name": "無", "detail": "", "product": ""},
                     ]},
-                    "G6": {"name":"Hair Care Extra秀髮深度護理", "color":"#e9edc9", "bg_img":"dye.png", "detail": "您是否需要增加鍍光膜鎖護成份以達到長效防護？", "items": [
-                        {"id": "G6_5", "name": "保濕", "detail": "", "product": "保濕強韌高光瞬效精萃露"},
-                        {"id": "G6_6", "name": "鎖護", "detail": "", "product": "高光鎖護瞬效機能水"},
-                        {"id": "G6_N", "name": "無", "detail": "", "product": ""},
+                    "G6": {"name":"Scalp Serum頭皮保養", "color":"#e9edc9", "bg_img":"dye.png", "detail": "請問您最希望加強的頭皮保養需求？", "items": [
+                        {"id": "G6_1", "name": "去油保濕 打造頭皮微生態", "detail": "油膩扁塌/增加清爽度", "product": "極酵平衡頭皮精華"},
+                        {"id": "G6_2", "name": "去除頭皮屑/角質調理", "detail": "皮屑.角質代謝異常/角質代謝正常", "product": "極淨平衡頭皮精華"},
+                        {"id": "G6_3", "name": "預防落髮增加保濕豐盈", "detail": "細軟扁塌 / 增加秀髮豐盈度", "product": "粉漾芯生精華"},
+                        {"id": "G6_4", "name": "頭皮秀髮營養素", "detail": "缺乏營養素/增加秀髮生長營養素", "product": "根源新生精粹"},
                     ]},
-                    "G7": {"name":"Scalp Serum頭皮保養", "color":"#e9edc9", "bg_img":"dye.png", "detail": "請問您最希望加強的頭皮保養需求？", "items": [
-                        {"id": "G7_1", "name": "去油保濕 打造頭皮微生態", "detail": "油膩扁塌/增加清爽度", "product": "極酵平衡頭皮精華"},
-                        {"id": "G7_2", "name": "去除頭皮屑/角質調理", "detail": "皮屑.角質代謝異常/角質代謝正常", "product": "極淨平衡頭皮精華"},
-                        {"id": "G7_3", "name": "預防落髮增加保濕豐盈", "detail": "細軟扁塌 / 增加秀髮豐盈度", "product": "粉漾芯生精華"},
-                        {"id": "G7_4", "name": "頭皮秀髮營養素", "detail": "缺乏營養素/增加秀髮生長營養素", "product": "根源新生精粹"},
-                    ]},
-                    "G8": {"name":"Leave in免沖洗護髮", "color":"#e9edc9", "bg_img":"dye.png", "detail": "您今日想要長效防護的秀髮需求？", "items": [
-                        {"id": "G8_1", "name": "保濕抗斷", "suites": [
+                    "G7": {"name":"Leave in免沖洗護髮", "color":"#e9edc9", "bg_img":"dye.png", "detail": "您今日想要長效防護的秀髮需求？", "items": [
+                        {"id": "G7_1", "name": "保濕抗斷", "suites": [
                             {"detail": "細軟扁塌/豐盈型", "product": "粉漾芯生熱活精華霧"},
                             {"detail": "細軟扁塌/豐盈型", "product": "靜夜賦活精華 小紫瓶"},
                             {"detail": "輕盈好吸收", "product": "金緻柔馭露"}]
                         },
-                        {"id": "G8_2", "name": "柔軟持色", "suites": [
+                        {"id": "G7_2", "name": "柔軟持色", "suites": [
                             {"detail": "染後持色/染漂型", "product": "恆彩重生熱活精華"},
                             {"detail": "染後持色/染漂型", "product": "靜夜賦活精華 小紫瓶"},
                             {"detail": "染後持色/染漂型", "product": "花漾粉金緻柔馭露"}]
                         },
-                        {"id": "G8_3", "name": "深度滋養", "suites": [
+                        {"id": "G7_3", "name": "深度滋養", "suites": [
                             {"detail": "乾燥/滋養型", "product": "皇家鳶尾滋養熱活精華"},
                             {"detail": "乾燥/滋養型", "product": "靜夜修護精華 小紅瓶"},
                             {"detail": "乾燥/滋養型", "product": "燦金玻尿酸極光露"}]
                         },
-                        {"id": "G8_4", "name": "捲度抗躁", "suites": [
+                        {"id": "G7_4", "name": "捲度抗躁", "suites": [
                             {"detail": "捲髮.抗躁", "product": "柔舞抗躁熱活精華"},
                             {"detail": "捲髮.抗躁", "product": "靜夜修護精華 小紅瓶"},
                             {"detail": "抗毛躁自然卷/柔順型", "product": "柔舞絲緞露"}]
