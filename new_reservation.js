@@ -349,6 +349,9 @@ Vue.component('booking', {
             var self = this;
             self.target_products = self.target_products.filter(p => !self.products[question_id].items.map((x) => x.id).includes(p));
             self.target_products.push(item.id);
+            if (question_id==="G9") {
+                self.select_suite(self.chk_suite());
+            }
             // var chk = this.target_products.some(function (element) {return self.products[question_id].items.map((x) => x.id).includes(element);});
             // if (!chk) {
             //     self.target_products.push(item.id);
@@ -382,6 +385,9 @@ Vue.component('booking', {
                     })
                 }
             })
+            if (self.target_products.includes("G9_Y")) {
+                result[2] += 10;
+            }
             top_suite = suites.map(function(el, i) {return { index: i, value: el };});
             top_suite.sort(function(a, b) {return result[a.index] - result[b.index];});
             // console.log(top_suite.map(x => x.value).reverse().slice(0,3));
@@ -416,7 +422,7 @@ Vue.component('booking', {
         },
         selected_products: function() {
             var self = this;
-            var ids = self.target_products.filter(x => self.suite_questions[this.suite].includes(x.slice(0,2))).filter(x => !["0", "N"].includes(x.substr(x.length - 1)))
+            var ids = self.target_products.filter(x => self.suite_questions[this.suite].includes(x.slice(0,2))).filter(x => !["0", "N", "Y"].includes(x.substr(x.length - 1)))
             ids.sort(function(a, b) {return self.suite_questions[self.suite].indexOf(a.slice(0,2)) - self.suite_questions[self.suite].indexOf(b.slice(0,2));});
             var prod = ids.map(x => {return {...self.products[x.slice(0,2)].items.filter(y => y.id === x)[0], "func_name": self.products[x.slice(0,2)].name}});
             var names = [].concat(...prod.map(x => x.product?[`<span class="pt-1 fw-bold d-inline-block">◎${x.func_name}:</span>`,`&emsp;・${x.product}`]:[`<span class="pt-1 fw-bold d-inline-block">◎${x.func_name}:</span>`,...x.suites.map(y => `&emsp;・${y.product}`)]));
