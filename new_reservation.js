@@ -231,6 +231,7 @@ var income_form_template = '<div class="container p-3">'+
 '<input type="radio" class="btn-check" name="suite" :id="_suite_id" autocomplete="off" :value="_suite_id">' +
 '<label role="button" class="w-100" :for="_suite_id" @click="errorMsg=\'\';select_suite(_suite_id);">' +
 '<p class="h3 text-light p-0">{{ suites[_suite_id].name }}</p>' +
+'<p class="h3 text-light p-0">{{ suites[_suite_id].price }}</p>' +
 '<img class="card-img-top" :src="suites[_suite_id].bg_img" alt="Card image cap" style="object-fit: cover;"></img>' +
 // '<span class="font-italic fs-5 text-danger">{{ item.price ? "$"+item.price:"" }}</span>' +
 '<p class="card-text text-light fs-6 p-3" style="min-height:130px;" v-html="suites[_suite_id].detail"></p>' +
@@ -255,7 +256,7 @@ var income_form_template = '<div class="container p-3">'+
 '<div class="mx-auto px-3" style="max-width: 400px;">' +
 '<div class="row input-group mb-3 align-items-center card border-success" role="group">' +
 '<div class="card-header fs-6">' +
-'您的專屬療程為: {{ suites[suite]?suites[suite].name:"" }}' +
+'您的專屬療程為: {{ suites[suite]?(suites[suite].name + " " + suites[suite].price):"" }}' +
 '<img class="card-img-top" :src="suites[suite]?suites[suite].bg_img:\'\'" alt="Card image cap" style="object-fit: cover;"></img>' +
 '</div>' +
 '<div class="card-body">' +
@@ -387,6 +388,8 @@ Vue.component('booking', {
             })
             if (self.target_products.includes("G9_Y")) {
                 result[2] += 10;
+            } else if (self.target_products.includes("G7_2")) {
+                result[1] += 10;
             }
             top_suite = suites.map(function(el, i) {return { index: i, value: el };});
             top_suite.sort(function(a, b) {return result[a.index] - result[b.index];});

@@ -235,15 +235,15 @@
                 ],
                 services: {
                     "Q1": {"name":"您目前對頭皮感受?", "max":3, "min":1, "color":"#e9edc9", "bg_img":"Q1.jpg", "detail": "請點選下列選項 , 最多可複選3項", "items": [
-                        {"id": "Q1_1", "name": "感覺油膩", "score": "01000"},
-                        {"id": "Q1_2", "name": "感覺頭皮乾", "score": "10001"},
-                        {"id": "Q1_3", "name": "感覺有皮屑", "score": "01000"},
-                        {"id": "Q1_4", "name": "感覺髮量變少", "score": "00110"},
-                        {"id": "Q1_5", "name": "感覺頭皮敏感", "score": "10001"},
-                        {"id": "Q1_6", "name": "感覺頭皮緊繃", "score": "10001"},
+                        // {"id": "Q1_1", "name": "油膩", "score": "01000"},
+                        {"id": "Q1_2", "name": "頭皮乾", "score": "10001"},
+                        {"id": "Q1_3", "name": "有皮屑", "score": "01000"},
+                        // {"id": "Q1_4", "name": "髮量變少", "score": "00110"},
+                        {"id": "Q1_5", "name": "頭皮敏感", "score": "10001"},
+                        {"id": "Q1_6", "name": "頭皮緊繃", "score": "10001"},
                         {"id": "Q1_7", "name": "落髮量增加", "score": "10100"},
-                        {"id": "Q1_8", "name": "感覺頭皮常有黏膩", "score": "01000"},
-                        {"id": "Q1_9", "name": "感覺頭皮紅腫癢", "score": "11001"},
+                        {"id": "Q1_8", "name": "頭皮常有黏膩", "score": "01000"},
+                        {"id": "Q1_9", "name": "頭皮紅腫癢", "score": "11001"},
                         {"id": "Q1_0", "name": "需要專業建議", "score": "00000"},
                     ]},
                     "Q2": {"name":"您目前對秀髮感受?", "max":3, "min":1, "color":"#faedcd", "bg_img":"Q2.jpg", "detail": "請點選下列選項 , 最多可複選3項", "items": [
@@ -255,6 +255,7 @@
                         {"id": "Q2_5", "name": "分岔斷裂", "score": "10111"},
                         {"id": "Q2_6", "name": "秀髮糾結", "score": "10111"},
                         {"id": "Q2_7", "name": "感覺扁塌", "score": "00100"},
+                        {"id": "Q2_8", "name": "乾燥", "score": "10001"},
                         {"id": "Q2_0", "name": "需要專業建議", "score": "00000"},
                     ]},
                     "Q3": {"name":"您對夢想髮質的需求?", "max":3, "min":1, "color":"#e9edc9", "bg_img":"Q3.jpg","detail": "請點選下列選項 , 最多可複選3項", "items": [
@@ -273,16 +274,23 @@
                 suite_questions: {
                     "A": ["G1", "G2", "A1", "G3", "G4", "G5", "G6", "G7", "G8", "G9"],
                     "B": ["B1","G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9"],
-                    "C": ["G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9"],
+                    // "C": ["G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9"],
+                    "C": ["G1", "G2", "G3", "G4", "C1", "G6", "G7", "G8", "G9"],
                     "D": ["G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9"],
-                    "E": ["E1", "E2", "E3", "E4", "E5", "E6"],
+                    // "E": ["E1", "E2", "E3", "E4", "E5", "E6"],
+                    "E": ["E1", "E3", "E4", "E5", "E6"],
                 },
                 suites: {
-                    "A": {"name":"(A) 專業舒緩奢養", "bg_img":"A_suite.jpg", "detail":"・極致舒緩頭皮敏感緊繃<br>・釋放秀髮活力再現"},
-                    "B": {"name":"(B) 專業淨化奢養", "bg_img":"B_suite.jpg", "detail":"・專業頭皮打擊油膩及老廢角質<br>・打造控油平衡清爽髮感"},
-                    "C": {"name":"(C) 專業豐盈奢養", "bg_img":"C_suite.jpg", "detail":"・全效修護對抗頭皮落髮<br>・再現秀髮豐盈髮感"},
-                    "D": {"name":"(D) 高訂瞬效奢養", "bg_img":"D_suite.jpg", "detail":"・客製30款秀髮配方<br>・1秒滲透奢養<br>・30天完美續航"},
-                    "E": {"name":"(E) 頂級黑鑽奢養", "bg_img":"E_suite.jpg", "detail":"・極致奢養享受<br>・擊退六大老化徵兆<br>・頭皮緊緻潤澤保濕<br>・秀髮強韌光澤豐盈"},
+                    "A": {"name":"(A) 專業舒緩奢養", "price":"$3,999", "bg_img":"A_suite.jpg", "detail":"・緩解頭皮乾燥及敏感<br>・打造秀髮滑順感"},
+                    "B": {"name":"(B) 專業淨化奢養", "price":"$4,299", "bg_img":"B_suite.jpg", "detail":"・解決頭皮油膩感及角質問題<br>・打造清爽秀髮"},
+                    "C": {"name":"(C) 專業豐盈奢養", "price":"$4,299", "bg_img":"C_suite.jpg", "detail":"・對抗落髮問題<br>・增加秀髮支撐力<br>・打造強韌秀髮"},
+                    "D": {"name":"(D) 高訂瞬效奢養", "price":"$4,599", "bg_img":"D_suite.jpg", "detail":"・制定專屬護髮加強結構<br>・打造客製化秀髮手感"},
+                    "E": {"name":"(E) 頂級黑鑽奢養", "price":"$5,999", "bg_img":"E_suite.jpg", "detail":"・對抗6大老化問題<br>・維持頭皮及秀髮的健康"},
+                    //"A": {"name":"(A) 專業舒緩奢養", "bg_img":"A_suite.jpg", "detail":"・極致舒緩頭皮敏感緊繃<br>・釋放秀髮活力再現"},
+                    //"B": {"name":"(B) 專業淨化奢養", "bg_img":"B_suite.jpg", "detail":"・專業頭皮打擊油膩及老廢角質<br>・打造控油平衡清爽髮感"},
+                    //"C": {"name":"(C) 專業豐盈奢養", "bg_img":"C_suite.jpg", "detail":"・全效修護對抗頭皮落髮<br>・再現秀髮豐盈髮感"},
+                    //"D": {"name":"(D) 高訂瞬效奢養", "bg_img":"D_suite.jpg", "detail":"・客製30款秀髮配方<br>・1秒滲透奢養<br>・30天完美續航"},
+                    //"E": {"name":"(E) 頂級黑鑽奢養", "bg_img":"E_suite.jpg", "detail":"・極致奢養享受<br>・擊退六大老化徵兆<br>・頭皮緊緻潤澤保濕<br>・秀髮強韌光澤豐盈"},
                 },
                 products: {
                     "A1": {"name":"Scalp Care頭皮護理", "color":"#e9edc9", "bg_img":"dye.png", "detail": "請點選下列選項", "items": [
@@ -292,6 +300,9 @@
                         {"id": "B1_1", "name": "油膩扁塌/增加清爽度", "detail": "油膩扁塌/增加清爽度", "product": "胺基酸平衡淨化泥髮浴"},
                         {"id": "B1_2", "name": "頭皮屑/角質化異常", "detail": "皮屑.角質代謝異常/角質代謝正常", "product": "極淨平衡頭皮凝露"},
                         {"id": "B1_3", "name": "乾敏紅癢", "detail": "混和性皮脂及老廢角質 / 溫和淨化髒污", "product": "奇蹟去油凝霜"},
+                    ]},
+                    "C1": {"name":"Hair Care Extra加強護理", "color":"#e9edc9", "bg_img":"dye.png", "detail": "（加強修護效果，打造柔順髮絲：髮膜需額外加價）", "items": [
+                        {"id": "C1_1", "name": "滋養頭皮/增加支撐力", "detail": "", "product": "白金賦活髮膜"},
                     ]},
                     "E1": {"name":"Deep Cleansing頭皮深層淨化", "color":"#e9edc9", "bg_img":"dye.png", "detail": "請點選下列選項", "items": [
                         {"id": "E1_1", "name": "黑鑽極萃逆時淨髮浴", "detail": "一次解決頭皮舒敏、保濕、彈性3大問題", "product": "黑鑽極萃逆時淨髮浴"},
@@ -354,7 +365,7 @@
                     ]},
                     "G6": {"name":"Hair Care Extra加強護理", "color":"#e9edc9", "bg_img":"dye.png", "detail": "（鎖住養分，延長修護效果：鍍膜需額外加價）", "items": [
                         {"id": "G6_1", "name": "護色，加強光澤度", "detail": "", "product": "恆彩重生瞬效精華露"},
-                        {"id": "G6_2", "name": "口加強光澤度，撫平毛躁", "detail": "", "product": "超光速瞬效護"},
+                        {"id": "G6_2", "name": "加強光澤度，撫平毛躁", "detail": "", "product": "超光速瞬效護"},
                         {"id": "G6_0", "name": "讓專業髮療師評估", "detail": "", "product": ""},
                         {"id": "G6_N", "name": "目前沒有需求", "detail": "", "product": ""},
                     ]},
