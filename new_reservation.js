@@ -166,7 +166,7 @@ var income_form_template = '<div class="container p-3">'+
 // '<div class="mx-auto mt-4 ps-4 py-4 alert alert-info w-50" v-if="suite===\'E\'"">' +
 // '<p>針對您的髮況，我們已為您規劃『(E) 頂級黑鑽奢養』，可以針對六大頭皮秀髮的問題進行改善，請點選『下一步』了解使用之產品內容</p>' +
 // '</div>' +
-'<div :class="\'mx-auto ps-4 py-4 bg-\'+products[question].bg" v-if="(top_suites().includes(\'B\')||question !== \'B1\') && suite && products[question].items.length > 1" v-for="(question, index) in suite_questions[\'B\']">' +
+'<div :class="\'mx-auto ps-4 py-4 bg-\'+products[question].bg" v-if="(top_suites().includes(\'B\')||question !== \'B1\') && suite && products[question].items.length > 1" v-for="(question, index) in [\'B1\',\'G1\', \'G2\', \'G3\', \'G4\', \'G5\', \'G6\', \'G7\', \'G8\', \'G9\']">' +
 // '<div :class="\'mx-auto ps-4 py-4 bg-\'+products[question].bg" v-if="suite && products[question].items.length > 1" v-for="(question, index) in suite_questions[suite]">' +
 '<div colspan="1" role="group" class="row input-group mb-3 align-items-center">'+
 '<template v-for="(row_style, style, style_i) in style_dict">' +
@@ -363,7 +363,7 @@ Vue.component('booking', {
         select_suite: function(suite_id) {
             var self = this;
             if (this.suite === '') {
-                self.target_products = ["B1", ...self.suite_questions["A"], ...self.suite_questions["E"]].filter(x => self.products[x].items.length === 1).map(x => self.products[x].items[0].id);
+                self.target_products = ["B1", "C1", ...self.suite_questions["A"], ...self.suite_questions["E"]].filter(x => self.products[x].items.length === 1).map(x => self.products[x].items[0].id);
             }
             this.suite = suite_id;
             // if (this.suite === '') {
@@ -467,8 +467,9 @@ Vue.component('booking', {
                 console.log(["B1", ...self.suite_questions["A"], ...self.suite_questions["E"]].filter(x => self.top_suites().includes("B")||x !== "B1").length);
                 console.log(self.target_products.length);
                 // if (self.target_products.length !== self.suite_questions[this.suite].length) {
-                if (self.target_products.filter(x => self.top_suites().includes("B")|| x.slice(0,2) !== "B1").length < ["B1", ...self.suite_questions["A"], ...self.suite_questions["E"]].filter(x => self.top_suites().includes("B")||x !== "B1").length) {
-                    // $('body')[0].scrollIntoView();
+                // if (self.target_products.filter(x => self.top_suites().includes("B")|| x.slice(0,2) !== "B1").length < ["B1", ...self.suite_questions["A"], ...self.suite_questions["E"]].filter(x => self.top_suites().includes("B")||x !== "B1").length) {
+                if (self.target_products.length < ["B1","G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9"].length) {
+                // $('body')[0].scrollIntoView();
                     reject('每一需求至少選擇一項！');
                     // this.scrollTop();
                 } else {
