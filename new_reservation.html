@@ -185,30 +185,6 @@
         </style>
     </head>
 <body>
-    <script>
-      window.fbAsyncInit = function() {
-        FB.init({
-          appId      : '306819598662525',
-          xfbml      : true,
-          version    : 'v18.0'
-        });
-        FB.AppEvents.logPageView();
-      };
-    
-      (function(d, s, id){
-         var js, fjs = d.getElementsByTagName(s)[0];
-         if (d.getElementById(id)) {return;}
-         js = d.createElement(s); js.id = id;
-         js.src = "https://connect.facebook.net/en_US/sdk.js";
-         fjs.parentNode.insertBefore(js, fjs);
-       }(document, 'script', 'facebook-jssdk'));
-    </script>
-    <div
-      class="fb-like"
-      data-share="true"
-      data-width="450"
-      data-show-faces="true">
-    </div>
     <div id="vue">
         <booking ref="report_report" :name="name" :sex="sex" :tel="tel" :email="email" :plan_dict="plan_dict" :title="title" :shop_list="shop_list" :activity="activity" :services="services" :designation="designation" :suite_questions="suite_questions" :products="products" :suites="suites"></booking>
     </div>
