@@ -166,7 +166,7 @@ var income_form_template = '<div class="container p-3">'+
 // '<div class="mx-auto mt-4 ps-4 py-4 alert alert-info w-50" v-if="suite===\'E\'"">' +
 // '<p>針對您的髮況，我們已為您規劃『(E) 頂級黑鑽奢養』，可以針對六大頭皮秀髮的問題進行改善，請點選『下一步』了解使用之產品內容</p>' +
 // '</div>' +
-'<div :class="\'mx-auto ps-4 py-4 bg-\'+products[question].bg" v-if="(top_suites().includes(\'B\')||question !== \'B1\') && suite && products[question].items.length > 1" v-for="(question, index) in [\'B1\',\'G1\', \'G2\', \'G3\', \'G4\', \'G5\', \'G6\', \'G7\', \'G8\', \'G9\']">' +
+'<div :class="\'mx-auto ps-4 py-4 bg-\'+products[question].bg" v-if="(top_suites().includes(\'B\')||question !== \'B1\') && suite && products[question].items.length > 1" v-for="(question, index) in [\'B1\',\'G1\', \'G2\', \'G3\', \'G4\', \'G7\', \'G9\']">' +
 // '<div :class="\'mx-auto ps-4 py-4 bg-\'+products[question].bg" v-if="suite && products[question].items.length > 1" v-for="(question, index) in suite_questions[suite]">' +
 '<div colspan="1" role="group" class="row input-group mb-3 align-items-center">'+
 '<template v-for="(row_style, style, style_i) in style_dict">' +
@@ -257,6 +257,8 @@ var income_form_template = '<div class="container p-3">'+
 '<div class="row input-group mb-3 align-items-center card border-success" role="group">' +
 '<div class="card-header fs-6">' +
 '您的專屬療程為: {{ suites[suite]?(suites[suite].name + " " + suites[suite].price):"" }}' +
+'<span v-if="extra_1"> +【加購】髮膜 $999</span>'+
+'<span v-if="extra_2"> +【加購】鍍膜 $999</span>'+
 '<img class="card-img-top" :src="suites[suite]?suites[suite].bg_img:\'\'" alt="Card image cap" style="object-fit: cover;"></img>' +
 '</div>' +
 '<div class="card-body">' +
@@ -275,6 +277,8 @@ var income_form_template = '<div class="container p-3">'+
 
 '<br><span v-html="product"></span>'+
 '</template>'+
+'<br><input type="checkbox" class="form-check-input" v-model="extra_1"><span> 【加購】髮膜($999)</span></input>' +
+'<br><input type="checkbox" class="form-check-input" v-model="extra_2"><span> 【加購】鍍膜($999)</span></input>' +
 '</footer>' +
 '<div class="card-footer bg-transparent text-center fs-6"><input type="checkbox" class="form-check-input" v-model="understood" @focus="errorMsg=\'\'" required><span @focus="errorMsg=\'\'" @click="understood=!understood"> 我同意</span></input>' +
 '<div class="invalid-feedback invalid-tooltip position-relative text-center">未勾選</div></div>' +
@@ -313,6 +317,8 @@ Vue.component('booking', {
             plan: "",
             note: "",
             understood: false,
+            extra_1: false,
+            extra_2: false,
             show_sort_btn: true,
             target_svc: Object.assign({}, ...Object.keys(data.services).map((x, idx) => ({[x]: []}))),
             target_products: [],
@@ -468,7 +474,7 @@ Vue.component('booking', {
                 console.log(self.target_products.length);
                 // if (self.target_products.length !== self.suite_questions[this.suite].length) {
                 // if (self.target_products.filter(x => self.top_suites().includes("B")|| x.slice(0,2) !== "B1").length < ["B1", ...self.suite_questions["A"], ...self.suite_questions["E"]].filter(x => self.top_suites().includes("B")||x !== "B1").length) {
-                if (self.target_products.length < ["B1","G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9"].length) {
+                if (self.target_products.length < ["B1","G1", "G2", "G3", "G4", "G7", "G9"].length) {
                 // $('body')[0].scrollIntoView();
                     reject('每一需求至少選擇一項！');
                     // this.scrollTop();
