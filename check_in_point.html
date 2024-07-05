@@ -91,9 +91,10 @@
                     sendPost(gas_url, {...params, "point_id":point_id}).then(function(response_body){
                         Swal.fire({
                             icon: 'success',
-                            title: `巡邏點(${})簽到完成`,
+                            title: `巡邏點(${response_body.point_name})簽到完成`,
+                            timer: 3000,
                         }).then((result) => {
-                            liff.closeWindow(response_body.point_name);
+                            liff.closeWindow();
                         });
 
                     }).catch(function(res) {
