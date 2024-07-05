@@ -21,7 +21,7 @@
       const point_id = urlParams.get('point_id') || (urlParams.get('liff.state') ? new URLSearchParams(urlParams.get('liff.state')).get('point_id') : null);
       const liffId = urlParams.get('liff_id') || (urlParams.get('liff.state') ? new URLSearchParams(urlParams.get('liff.state')).get('liff_id') : null);
       const gas_id = urlParams.get('gas_id') || (urlParams.get('liff.state') ? new URLSearchParams(urlParams.get('liff.state')).get('gas_id') : "");
-      const gas_url = `"https://script.google.com/macros/s/${gas_id}/exec"`;
+      const gas_url = `https://script.google.com/macros/s/${gas_id}/exec`;
       
       
 
