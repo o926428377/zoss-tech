@@ -16,13 +16,14 @@
     <div class="mx-auto align-items-center text-center m-4" style="width: 80vw;"></div>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
+      const queryString = window.location.search;
       const urlParams = new URLSearchParams(queryString);
       const point_id = urlParams.get('point_id') || (urlParams.get('liff.state') ? new URLSearchParams(urlParams.get('liff.state')).get('point_id') : null);
       const liffId = urlParams.get('liff_id') || (urlParams.get('liff.state') ? new URLSearchParams(urlParams.get('liff.state')).get('liff_id') : null);
       const gas_id = urlParams.get('gas_id') || (urlParams.get('liff.state') ? new URLSearchParams(urlParams.get('liff.state')).get('gas_id') : "");
       const gas_url = `"https://script.google.com/macros/s/${gas_id}/exec"`;
       
-      const queryString = window.location.search;
+      
 
       function sendPost(url, _params) {
         var form = document.createElement("form");
