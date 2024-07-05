@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+    <head>
+        <title>宜家村巡邏系統</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=0.7, user-scalable=no">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+        <link rel="stylesheet prefetch" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/8.11.8/sweetalert2.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    </head>
+<body>
+    <div class="mx-auto align-items-center text-center m-4" style="width: 80vw;"></div>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script>
+      const urlParams = new URLSearchParams(queryString);
+      const point_id = urlParams.get('point_id') || (urlParams.get('liff.state') ? new URLSearchParams(urlParams.get('liff.state')).get('point_id') : null);
+      const liffId = urlParams.get('liff_id') || (urlParams.get('liff.state') ? new URLSearchParams(urlParams.get('liff.state')).get('liff_id') : null);
+      const gas_id = urlParams.get('gas_id') || (urlParams.get('liff.state') ? new URLSearchParams(urlParams.get('liff.state')).get('gas_id') : "");
+      const gas_url = `"https://script.google.com/macros/s/${gas_id}/exec"`;
+      
+      const queryString = window.location.search;
+
+      function sendPost(url, _params) {
+        var form = document.createElement("form");
+        form.setAttribute("method", "post");
+        form.setAttribute("action", url);
+        for (var key in _params) {
+          var hiddenField = document.createElement("input");
+          hiddenField.setAttribute("type", "hidden");
+          hiddenField.setAttribute("name", key);
+          hiddenField.setAttribute("value", _params[key]);
+          form.appendChild(hiddenField);
+        }
+        var hiddenSubmit = document.createElement("input");
+        hiddenSubmit.setAttribute("type", "submit");
+        hiddenSubmit.setAttribute("style", "display:none;");
+        form.appendChild(hiddenSubmit);
+        document.body.appendChild(form);
+        return new Promise(function(resolve,reject){
+          $.post(url, _params).done(function(data){
+            if (data.length>0 || Object.keys(data).length>0){
+              resolve(data);
+            }  else {
+              reject('Error!');
+            }
+          }).fail(function(xhr, status, error) {
+                  reject(error    );
+              });
+        })
+      };
+
+      function getToken(liffId) {
+        return new Promise(function(resolve,reject){
+          liff.init({
+                      liffId: liffId
+                  }).then(function (data) {
+            liff.getProfile().then(function (profile) {
+              var params = {};
+              params['userId'] = profile.userId;
+              const accessToken =  liff.getAccessToken();
+              if (!accessToken) {
+                params['accessToken'] = 'Error';
+              }
+              params['accessToken'] = accessToken;
+              resolve(params);
+            }).catch(function (error) {
+              window.alert("Error getting profile: " + error);
+              reject(params);
+            });
+          });
+        });
+      };
+
+
+      window.onload = function () {
+        liff.init({
+            liffId: liffId
+        }).then(function() {
+            if (!liff.isLoggedIn()) {
+                console.log(123);
+                liff.login({ redirectUri: window.location.href});
+            } else {
+                console.log(456);
+                getToken(liffId).then(function(params){
+                    console.log(789);
+                    params.point_id = point_id;
+                    sendPost(gas_url, {...params, "point_id":point_id}).then(function(response_body){
+                        Swal.fire({
+                            icon: 'success',
+                            title: '巡邏點簽到完成',
+                        }).then((result) => {
+                            liff.closeWindow();
+                        });
+
+                    }).catch(function(res) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '系統忙碌，請重新操作',
+                        }).then((result) => {
+                            liff.closeWindow();
+                        });
+                    });
+                });
+            }
+        });
+      };
+
+      </script>
+</body>
+</html>
