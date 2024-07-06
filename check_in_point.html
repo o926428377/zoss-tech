@@ -90,8 +90,7 @@
                     console.log(789);
                     if (uuid) {
                         params.uuid = uuid;
-                        sendPost(gas_url, {...params, "point_id":point_id}).then(function(response_body){
-                            params.name = name;
+                        sendPost(gas_url, params).then(function(response_body){
                             Swal.fire({
                                 title: "人員新增",
                                 text: "請輸入姓名:",
@@ -99,7 +98,8 @@
                                 showCancelButton: true        
                             }).then((result) => {
                                 if (result.value) {
-                                    sendPost(gas_url, {...params, "point_id":point_id}).then(function(response_body){
+                                    params.name = result.value;
+                                    sendPost(gas_url, params).then(function(response_body){
                                         Swal.fire({
                                             icon: 'success',
                                             title: `人員新增完成`,
@@ -132,7 +132,7 @@
                         });
                     } else {
                         params.point_id = point_id;
-                        sendPost(gas_url, {...params, "point_id":point_id}).then(function(response_body){
+                        sendPost(gas_url, params).then(function(response_body){
                             Swal.fire({
                                 icon: 'success',
                                 title: `巡邏點(${response_body.point_name})簽到完成`,
