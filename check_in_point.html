@@ -19,6 +19,8 @@
       const urlParams = new URLSearchParams(queryString);
       const point_id = urlParams.get('point_id') || (urlParams.get('liff.state') ? new URLSearchParams(urlParams.get('liff.state')).get('point_id') : null);
       const liffId = urlParams.get('liff_id') || (urlParams.get('liff.state') ? new URLSearchParams(urlParams.get('liff.state')).get('liff_id') : null);
+      const name = urlParams.get('name') || (urlParams.get('liff.state') ? new URLSearchParams(urlParams.get('liff.state')).get('name') : null);
+      const uuid = urlParams.get('uuid') || (urlParams.get('liff.state') ? new URLSearchParams(urlParams.get('liff.state')).get('uuid') : null);
       const gas_id = urlParams.get('gas_id') || (urlParams.get('liff.state') ? new URLSearchParams(urlParams.get('liff.state')).get('gas_id') : "");
       const gas_url = `https://script.google.com/macros/s/${gas_id}/exec`;
       
@@ -87,24 +89,69 @@
                 console.log(456);
                 getToken(liffId).then(function(params){
                     console.log(789);
-                    params.point_id = point_id;
-                    sendPost(gas_url, {...params, "point_id":point_id}).then(function(response_body){
-                        Swal.fire({
-                            icon: 'success',
-                            title: `巡邏點(${response_body.point_name})簽到完成`,
-                            timer: 3000,
-                        }).then((result) => {
-                            liff.closeWindow();
-                        });
+                    if (name & uuid) {
+                        params.uuid = uuid;
+                        sendPost(gas_url, {...params, "point_id":point_id}).then(function(response_body){
+                            params.name = name;
+                            Swal.fire({
+                                title: "人員新增",
+                                text: "請輸入姓名:",
+                                input: 'text',
+                                showCancelButton: true        
+                            }).then((result) => {
+                                if (result.value) {
+                                    sendPost(gas_url, {...params, "point_id":point_id}).then(function(response_body){
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: `人員新增完成`,
+                                            timer: 3000,
+                                        }).then((result) => {
+                                            liff.closeWindow();
+                                        });
+                                    }).catch(function(res) {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: '系統錯誤，請重新操作',
+                                            timer: 3000,
+                                        }).then((result) => {
+                                            liff.closeWindow();
+                                        });
+                                    });
+                                } else {
+                                    liff.closeWindow();
+                                }
+                            });
 
-                    }).catch(function(res) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: '系統忙碌，請重新操作',
-                        }).then((result) => {
-                            liff.closeWindow();
+                        }).catch(function(res) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: '系統忙碌，請重新操作',
+                                timer: 3000,
+                            }).then((result) => {
+                                liff.closeWindow();
+                            });
                         });
-                    });
+                    } else {
+                        params.point_id = point_id;
+                        sendPost(gas_url, {...params, "point_id":point_id}).then(function(response_body){
+                            Swal.fire({
+                                icon: 'success',
+                                title: `巡邏點(${response_body.point_name})簽到完成`,
+                                timer: 3000,
+                            }).then((result) => {
+                                liff.closeWindow();
+                            });
+    
+                        }).catch(function(res) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: '系統錯誤，請重新操作',
+                                timer: 3000,
+                            }).then((result) => {
+                                liff.closeWindow();
+                            });
+                        });
+                    }
                 });
             }
         });
