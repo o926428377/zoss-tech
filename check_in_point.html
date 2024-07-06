@@ -19,7 +19,6 @@
       const urlParams = new URLSearchParams(queryString);
       const point_id = urlParams.get('point_id') || (urlParams.get('liff.state') ? new URLSearchParams(urlParams.get('liff.state')).get('point_id') : null);
       const liffId = urlParams.get('liff_id') || (urlParams.get('liff.state') ? new URLSearchParams(urlParams.get('liff.state')).get('liff_id') : null);
-      const name = urlParams.get('name') || (urlParams.get('liff.state') ? new URLSearchParams(urlParams.get('liff.state')).get('name') : null);
       const uuid = urlParams.get('uuid') || (urlParams.get('liff.state') ? new URLSearchParams(urlParams.get('liff.state')).get('uuid') : null);
       const gas_id = urlParams.get('gas_id') || (urlParams.get('liff.state') ? new URLSearchParams(urlParams.get('liff.state')).get('gas_id') : "");
       const gas_url = `https://script.google.com/macros/s/${gas_id}/exec`;
@@ -89,7 +88,7 @@
                 console.log(456);
                 getToken(liffId).then(function(params){
                     console.log(789);
-                    if (name & uuid) {
+                    if (uuid) {
                         params.uuid = uuid;
                         sendPost(gas_url, {...params, "point_id":point_id}).then(function(response_body){
                             params.name = name;
