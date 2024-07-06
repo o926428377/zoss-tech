@@ -126,7 +126,7 @@
                     } else if (action==="subscribe" && client_id) {
                         params.action = "subscribe_check";
                         var redirect_url = encodeURIComponent(`${window.location.href}`);
-                        var sub_url = `https://notify-bot.line.me/oauth/authorize?response_type=code&scope=notify&response_mode=form_post&client_id=${client_id}&redirect_uri=${redirect_url}&state=${params.accessToken}`;
+                        var sub_url = `https://notify-bot.line.me/oauth/authorize?response_type=code&scope=notify&client_id=${client_id}&redirect_uri=${redirect_url}&state=${params.accessToken}`;
                         sendPost(gas_url, params).then(function(response_body){
                             window.location = sub_url;
                         }).catch(function(res) {
