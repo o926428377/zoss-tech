@@ -145,8 +145,8 @@
 
     function redeem_process() {
         getToken(liffId).then(function(params){
-            liff.scanCodeV2().then((result) => {
-                sendPost(`${url}?role=prize_check`, params).then(function(response){
+            liff.scanCodeV2().then((sn) => {
+                sendPost(`${url}?role=prize_redeem`, {"sn":sn, ...params}).then(function(response){
                     if (typeof response.msg !== "undefined") {
                         sys_error();
                     } else {
