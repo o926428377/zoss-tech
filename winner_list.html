@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <title>HAPPY HAIR 抽獎活動</title>   
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+      .col {
+          height: 37.5vh;
+      }
+    </style>
+  </head>
+  <body class="px-4 pt-4" style="overflow: hidden;background-color: #bc0102;height:100vh;">
+  <div id="loading" class="w-100 h-100 position-absolute bg-dark" style="opacity: 0.9;z-index: 999;left: 0px;top: 0px;">
+    <div class="position-absolute top-50 start-50 translate-middle" style="text-align: center;"\>
+    <div class="spinner-border text-primary" id="spinner" role="status" style="width: 5rem;height: 5rem;">
+    <span class="sr-only"></span>
+    </div>
+    <div class="fs-1 text-white">登入中...</div>
+    </div>
+  </div>
+  <div style="width:100%;height:15%;" class="d-flex flex-row justify-content-center">
+  <!-- <div style="width:100%;height:15%;" class="d-flex flex-row"> -->
+  <img src="https://i.imgur.com/OgTIHcU.jpg" style="height:100%"></img>
+  <div class="fs-1" style="font-weight: bold;color:#dfc175;align-self: center;text-align: center;">待    領    獎    名    單</div>
+  <!-- <div class="fs-1" style="width: 100%;align-self: center;text-align: center;">待    領    獎    名    單</div> -->
+
+  </div>
+
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  <div class="col">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title badge bg-success fs-5">第一桶</h5>
+		<div id="carouselExampleSlidesOnly-一" class="carousel slide" data-bs-ride="carousel" data-bs-interval="15000" data-bs-keyboard="false" data-bs-pause="false" data-bs-ride="carousel">
+		<div class="carousel-inner">
+		
+	  </div>
+    </div>
+  </div>
+ </div>
+ </div>
+ 
+ 
+
+  <div class="col">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title badge bg-success fs-5">第二桶</h5>
+		<div id="carouselExampleSlidesOnly-二" class="carousel slide" data-bs-ride="carousel" data-bs-interval="15000" data-bs-keyboard="false" data-bs-pause="false" data-bs-ride="carousel">
+		<div class="carousel-inner">
+		
+	  </div>
+    </div>
+  </div>
+ </div>
+ </div>
+  
+
+  <div class="col">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title badge bg-success fs-5">第三桶</h5>
+		<div id="carouselExampleSlidesOnly-三" class="carousel slide" data-bs-ride="carousel" data-bs-interval="15000" data-bs-keyboard="false" data-bs-pause="false">
+		<div class="carousel-inner">
+		
+	  </div>
+    </div>
+  </div>
+ </div>
+ </div>
+  
+  
+
+  <div class="col">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title badge bg-success fs-5">第四桶</h5>
+		<div id="carouselExampleSlidesOnly-四" class="carousel slide" data-bs-ride="carousel" data-bs-interval="15000" data-bs-keyboard="false" data-bs-pause="false">
+		<div class="carousel-inner">
+		
+	  </div>
+    </div>
+  </div>
+ </div>
+ </div>
+  
+  
+  <div class="col">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title badge bg-success fs-5">第五桶</h5>
+		<div id="carouselExampleSlidesOnly-五" class="carousel slide" data-bs-ride="carousel" data-bs-interval="15000" data-bs-keyboard="false" data-bs-pause="false">
+		<div class="carousel-inner">
+		
+	  </div>
+    </div>
+  </div>
+ </div>
+ </div>
+  
+
+  <div class="col">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title badge bg-success fs-5">第六桶</h5>
+		<div id="carouselExampleSlidesOnly-六" class="carousel slide" data-bs-ride="carousel" data-bs-interval="15000" data-bs-keyboard="false" data-bs-pause="false">
+		<div class="carousel-inner">
+		
+	  </div>
+    </div>
+  </div>
+ </div>
+ </div>
+
+</div>
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script>
+      function getToken(liffId) {
+        return new Promise(function(resolve,reject){
+          liff.init({
+                      liffId: liffId,
+                      withLoginOnExternalBrowser: true
+                  }).then(function (data) {
+              liff.getProfile().then(function (profile) {
+                var params = {};
+                params['userId'] = profile.userId;
+                const accessToken =  liff.getAccessToken();
+                if (!accessToken) {
+                  params['accessToken'] = 'Error';
+                }
+                params['accessToken'] = accessToken;
+                //console.log(params);
+                resolve(params);
+              }).catch(function (error) {
+                window.alert("Error getting profile: " + error);
+                reject(params);
+              });
+            // }
+          });
+        });
+      };
+
+      function sendPost(url, _params) {
+        
+        var form = document.createElement("form");
+        // 設定表單的一些屬性，包含網頁接收伺服器回應的頁面或框架
+        form.setAttribute("method", "post");
+        form.setAttribute("action", url);
+        //form.setAttribute("target", "Iframe1");
+      
+        // 建立隱藏的表單控制項
+        for (var key in _params) {
+          var hiddenField = document.createElement("input");
+          hiddenField.setAttribute("type", "hidden");
+          hiddenField.setAttribute("name", key);
+          hiddenField.setAttribute("value", _params[key]);
+          form.appendChild(hiddenField);
+          //console.log(key);
+        }
+      
+        // 隱藏的submit按鈕，預防瀏覽器不支援模糊的表單設計。（可不用）
+        var hiddenSubmit = document.createElement("input");
+        hiddenSubmit.setAttribute("type", "submit");
+        hiddenSubmit.setAttribute("style", "display:none;");
+        form.appendChild(hiddenSubmit);
+      
+        // 將表單加入網頁中
+        document.body.appendChild(form);
+      
+        // 送出請求
+        //form.submit();
+        return new Promise(function(resolve,reject){
+          fetch(`${url}`, {
+            method: "POST",
+            redirect: "follow", 
+            // mode: "no-cors", 
+            // cache: "no-cache",
+            headers: {
+              "Content-Type": "text/plain",
+            },
+            // credentials: "include",
+            body: JSON.stringify(
+              _params
+              // {"to_add": result.map(x=> [x, prize_target])}
+            )
+          })
+          .then(response => response.text())
+          .then(context => {
+            var data = JSON.parse(context);
+            resolve(data);
+          });
+      
+        })
+      };
+
+      var params = new URL(document.location.toString()).searchParams;
+      if (params.has("liffRedirectUri")) {
+        params = new URL(decodeURIComponent(params.get("liffRedirectUri"))).searchParams;
+      }
+      if (!params.has("liff") || !params.has("sid")) {
+        Swal.fire({
+                title: '系統錯誤',
+                text: "無效參數",
+                icon: "error"
+        });
+        pause
+      }
+
+      var liffId = params.get("liff");
+      var url = `https://script.google.com/macros/s/${params.get("sid")}/exec`;
+
+      var winner_list = {};
+      t_s = `<div class="carousel-item active">
+      <table class="table table-striped">
+      <thead>
+      <tr>
+      <th scope="col">#</th>
+      <th scope="col">店名</th>
+      <th scope="col">姓名</th>
+      <th scope="col">身分證</th>
+      <th scope="col">獎項</th>
+      </tr>
+      </thead>
+      <tbody>`;
+      t_m = `</tbody>
+      </table>
+      </div>
+      <div class="carousel-item">
+      <table class="table table-striped">
+      <thead>
+      <tr>
+      <th scope="col">#</th>
+      <th scope="col">店名</th>
+      <th scope="col">姓名</th>
+      <th scope="col">身分證</th>
+      <th scope="col">獎項</th>
+      </tr>
+      </thead>
+      <tbody>`;
+      t_e = `</tbody>
+      </table>
+      </div>`;
+      t_i = function (item) {return `<tr>
+      <th scope="row">${item[0]}</th>
+      <td>${item[1]}</td>
+      <td>${item[2]}</td>
+      <td>${item[3]}</td>
+      <td>${item[4]}</td>
+      </tr>`};
+
+      function gen_winner_list(target) {
+        var output = t_s;
+        if (winner_list[`第${target}桶`]) {
+          for(let i = 0; i < winner_list[`第${target}桶`].length; i++) {
+            if (i>0 && i%5===0) {
+              output += t_m;
+            }
+            output += t_i([`${i+1}`,...winner_list[`第${target}桶`][i]]);
+          }
+        }
+        output += t_e;
+        var input = document.querySelector(`#carouselExampleSlidesOnly-${target} > div`);
+        input.innerHTML = output;
+      }
+
+      function update_winner_list(_list) {
+        var lines = _list.split("\n").map(x=> x.split(","));
+        var line;
+        var temp = {};
+        var force_update = [];
+        for(let i = 0; i < lines.length; i++) {
+          line = lines[i];
+          if (!temp[line[0]]) {
+            temp[line[0]] = [];
+          }
+          temp[line[0]].push(line.slice(1));
+        }
+        if (Object.keys(winner_list).length > 0) {
+          Object.keys(winner_list).forEach(xx=>{
+            if (winner_list[xx].length<=5) {
+              force_update.push(xx[1]);
+            }
+          })
+        }
+        
+        Object.keys(temp).forEach(xx=>{
+          temp[xx].sort(function (a, b) {
+            if (a[0] < b[0]) {
+              return -1;
+            }
+            if (a[0] > b[0]) {
+              return 1;
+            }
+            return 0;
+          });
+        });
+        winner_list = temp;
+        if (force_update.length > 0) {
+          force_update.forEach(xx=>{
+            gen_winner_list(xx);
+          });
+        }
+      }
+
+    window.onload = async function (e) {
+        // load_config();
+        getToken(liffId).then(function(params){
+            sendPost(`${url}?role=winner_list`, params).then(function(response){
+                if (typeof response.msg !== "undefined") {
+                    Swal.fire({
+                            title: '系統錯誤',
+                            text: "請重新整理",
+                            icon: "error",
+                            timer: 5000
+                    }).then(function(){
+                        window.location = `https://liff.line.me/${liffId}`;
+                    })
+                } else {
+                  if (response.result==="NoPermission") {
+                    Swal.fire({
+                      title: "權限錯誤",
+                      text: "您無存取權限，請聯繫管理員開通或登入其他帳號",
+                                icon: "error",
+                      showDenyButton: true,
+                      showCancelButton: true,
+                      cancelButtonText: "關閉",
+                      confirmButtonText: "重新整理",
+                      denyButtonText: `登入其他帳號`
+                    }).then((result) => {
+                      /* Read more about isConfirmed, isDenied below */
+                      if (result.isConfirmed) {
+                        window.location = `https://liff.line.me/${liffId}`;
+                      } else if (result.isDenied) {
+                        liff.logout();
+                        window.location = `https://liff.line.me/${liffId}`;
+                      }
+                    });
+                  } else if (response.result==="OK") {
+                    update_winner_list(response.winner_list);
+                    ["一","二","三","四","五","六"].forEach((i) => {
+                      gen_winner_list(i);
+                      document.getElementById(`carouselExampleSlidesOnly-${i}`).addEventListener('slide.bs.carousel', function () {
+                        if (document.getElementById(`carouselExampleSlidesOnly-${i}`).children[0].lastChild.className === "carousel-item active") {
+                          document.getElementById(`carouselExampleSlidesOnly-${i}`).children[0].lastChild.setAttribute("reload","true");
+                          // gen_winner_list(i);
+                        }
+                      });
+                      document.getElementById(`carouselExampleSlidesOnly-${i}`).addEventListener('slid.bs.carousel', function () {
+                        if (document.getElementById(`carouselExampleSlidesOnly-${i}`).children[0].firstChild.className === "carousel-item active") {
+                          if (document.getElementById(`carouselExampleSlidesOnly-${i}`).children[0].lastChild.getAttribute("reload")==="true") {
+                            document.getElementById(`carouselExampleSlidesOnly-${i}`).children[0].lastChild.setAttribute("reload","false");
+                            gen_winner_list(i);
+                          }
+                        }
+                      });
+                    });
+					          document.getElementById("loading").style.display = "none";
+                  }
+                }
+            });
+        }).catch(function (error) {
+          Swal.fire({
+                  title: '系統錯誤',
+                  text: "請重新整理",
+                  icon: "error",
+                  timer: 5000
+          }).then(function(){
+              window.location = url;
+          })
+			});
+      };
+
+      window.setInterval(function(){
+        getToken(liffId).then(function(params){
+          sendPost(`${url}?role=winner_list`, params).then(function(response){
+            if (response.result==="OK") {
+              update_winner_list(response.winner_list);
+            }
+          });
+        });
+      }, 60000); 
+
+
+</script>
+  </body>
+</html>
