@@ -14,7 +14,7 @@
     <div class="spinner-border text-primary" id="spinner" role="status" style="width: 5rem;height: 5rem;">
     <span class="sr-only"></span>
     </div>
-    <div class="fs-1 text-white">查詢中...</div>
+    <div id="mask" class="fs-1 text-white">查詢中...</div>
     </div>
   </div>
   <div style="width:100%;height:15%;" class="justify-content-center">
@@ -145,6 +145,8 @@
     function redeem_process() {
         getToken(liffId).then(function(params){
             liff.scanCodeV2().then((sn) => {
+                document.getElementById("mask").textContent = "核銷中...";
+                document.getElementById("loading").style.display = "inline";
                 sendPost(`${url}?role=prize_redeem`, {"sn":sn.value, ...params}).then(function(response){
                     if (typeof response.msg !== "undefined") {
                         sys_error();
@@ -168,13 +170,25 @@
                                 showDenyButton: false,
                                 showCancelButton: false,
                                 confirmButtonText: "關閉"
+                            }).then(function() {
+                                document.getElementById("loading").style.display = "none";
                             });
                         } else if (response.result==="OK") {
-                            var element = document.getElementById("redeem");
-                            element.textContent = `已核銷`;
-                            element.classList.remove("btn-primary");
-                            element.classList.add("btn-secondary");
-                            element.disabled=true;
+                            Swal.fire({
+                                title: "核銷完成",
+                                icon: "successful",
+                                showDenyButton: false,
+                                showCancelButton: false,
+                                timer: 5000,
+                                confirmButtonText: "關閉"
+                            }).then(function() {
+                                var element = document.getElementById("redeem");
+                                element.textContent = `已核銷`;
+                                element.classList.remove("btn-primary");
+                                element.classList.add("btn-secondary");
+                                element.disabled=true;
+                                document.getElementById("loading").style.display = "none";
+                            });
                         }
                     }
                 });
