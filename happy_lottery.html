@@ -1958,7 +1958,7 @@
             prize_target = Object.values(last_winner_list)[0]['獎項編號'];
             document.getElementById("drawn").style.display = "inline";
             var span = document.getElementById("prize_name");
-            span.innerText = span.textContent = prizes[prize_target]["獎項"] + '-中獎名單';
+            span.innerText = span.textContent = prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,') + '-中獎名單';
             var drawn_list = document.getElementById("drawn_list");
             drawn_list.innerHTML = gen_list(Object.keys(last_winner_list), false);
             last_winner_list = {};
@@ -2000,9 +2000,9 @@
           var option = document.createElement("option");
           option.value = _prize;
           if (quota > used) {
-            option.innerHTML = `${_prize} (名額:${quota}，已抽:${used})`;
+            option.innerHTML = `${_prize.replace(/(\d)(?=(\d{3})+$)/g, '$1,')} (名額:${quota}，已抽:${used})`;
           } else {
-            option.innerHTML = `${_prize} (名額:${quota}，完成抽獎)`;
+            option.innerHTML = `${_prize.replace(/(\d)(?=(\d{3})+$)/g, '$1,')} (名額:${quota}，完成抽獎)`;
             option.disabled = true;
           }
           
@@ -2103,12 +2103,12 @@
 				document.getElementById("drawn").style.display = "inline";
 				var span = document.getElementById("prize_name");
                 if (prizes[prize_target]["獎項編號"][0]!=="L") {
-                    span.innerText = span.textContent = `${prizes[prize_target]["獎項"]}(${prizes[prize_target]["桶別"]})-中獎名單`;
+                    span.innerText = span.textContent = `${prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,')}(${prizes[prize_target]["桶別"]})-中獎名單`;
                     var drawn_list = document.getElementById("drawn_list");
                     console.log(result);
                     drawn_list.innerHTML = gen_list(result, false);
                 } else {
-                    span.innerText = span.textContent = `${prizes[prize_target]["獎項"]}(威力彩)-中獎名單`;
+                    span.innerText = span.textContent = `${prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,')}(威力彩)-中獎名單`;
                     var drawn_list = document.getElementById("drawn_list");
                     console.log(result);
                     drawn_list.innerHTML = gen_list(result, true);
@@ -2238,7 +2238,7 @@
               load_config();
               document.getElementById("drawn").style.display = "inline";
               var span = document.getElementById("prize_name");
-              span.innerText = span.textContent = prizes[prize_target]["獎項"] + '-中獎名單';
+              span.innerText = span.textContent = prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,') + '-中獎名單';
               var drawn_list = document.getElementById("drawn_list");
               console.log(prize_result);
               drawn_list.innerHTML = gen_list(prize_result);
