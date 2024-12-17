@@ -150,84 +150,86 @@
     function redeem_process(_type) {
         getToken(liffId).then(function(params){
             liff.scanCodeV2().then((sn) => {
-                document.getElementById("mask").textContent = "核銷中...";
-                document.getElementById("loading").style.display = "inline";
-                sendPost(`${url}?role=prize_redeem`, {"sn":sn.value.replace(/\n/g, ''), "type":_type, ...params}).then(function(response){
-                    if (typeof response.msg !== "undefined") {
-                        sys_error();
-                    } else {
-                        if (response.result==="NoPrize") {
-                            Swal.fire({
-                                title: "系統錯誤",
-                                text: "查無您的中獎紀錄，請使用中獎者本人手機查詢(需完成福利社LINE@綁定)。",
-                                icon: "error",
-                                showDenyButton: false,
-                                showCancelButton: false,
-                                confirmButtonText: "關閉"
-                            }).then(function() {
-                                liff.closeWindow();
-                            });
-                        } else if (response.result==="PrizeNoError") {
-                            Swal.fire({
-                                title: "獎項錯誤",
-                                text: "此獎項序號無法與帳號匹配，請洽工作人員處理。",
-                                icon: "error",
-                                showDenyButton: false,
-                                showCancelButton: false,
-                                confirmButtonText: "關閉"
-                            }).then(function() {
-                                document.getElementById("loading").style.display = "none";
-                            });
-                        } else if (response.result==="Redeemed") {
-                            Swal.fire({
-                                title: "重複核銷",
-                                text: "已有核銷紀錄，請勿重複核銷。",
-                                icon: "info",
-                                showDenyButton: false,
-                                showCancelButton: false,
-                                confirmButtonText: "關閉"
-                            }).then(function() {
-                                document.getElementById("loading").style.display = "none";
-                            });
-                        } else if (response.result==="IncorrectType") {
-                            Swal.fire({
-                                title: "核銷類型不匹配",
-                                text: "請使用正確的核銷按鈕。",
-                                icon: "info",
-                                showDenyButton: false,
-                                showCancelButton: false,
-                                confirmButtonText: "關閉"
-                            }).then(function() {
-                                document.getElementById("loading").style.display = "none";
-                            });
-                        } else if (response.result==="OK") {
-                            Swal.fire({
-                                title: "核銷完成",
-                                icon: "success",
-                                showDenyButton: false,
-                                showCancelButton: false,
-                                timer: 5000,
-                                confirmButtonText: "關閉"
-                            }).then(function() {
-                                if (_type==="prize") {
-                                    var element = document.getElementById("prize_redeem");
-                                    element.textContent = `已核銷`;
-                                    element.classList.remove("btn-primary");
-                                    element.classList.add("btn-secondary");
-                                    element.disabled=true;
-                                }
-                                if (_type==="lottery") {
-                                    var element = document.getElementById("lottery_redeem");
-                                    element.textContent = `已核銷`;
-                                    element.classList.remove("btn-primary");
-                                    element.classList.add("btn-secondary");
-                                    element.disabled=true;
-                                }
-                                document.getElementById("loading").style.display = "none";
-                            });
+                if (sn.value) {
+                    document.getElementById("mask").textContent = "核銷中...";
+                    document.getElementById("loading").style.display = "inline";
+                    sendPost(`${url}?role=prize_redeem`, {"sn":sn.value.replace(/\n/g, ''), "type":_type, ...params}).then(function(response){
+                        if (typeof response.msg !== "undefined") {
+                            sys_error();
+                        } else {
+                            if (response.result==="NoPrize") {
+                                Swal.fire({
+                                    title: "系統錯誤",
+                                    text: "查無您的中獎紀錄，請使用中獎者本人手機查詢(需完成福利社LINE@綁定)。",
+                                    icon: "error",
+                                    showDenyButton: false,
+                                    showCancelButton: false,
+                                    confirmButtonText: "關閉"
+                                }).then(function() {
+                                    liff.closeWindow();
+                                });
+                            } else if (response.result==="PrizeNoError") {
+                                Swal.fire({
+                                    title: "獎項錯誤",
+                                    text: "此獎項序號無法與帳號匹配，請洽工作人員處理。",
+                                    icon: "error",
+                                    showDenyButton: false,
+                                    showCancelButton: false,
+                                    confirmButtonText: "關閉"
+                                }).then(function() {
+                                    document.getElementById("loading").style.display = "none";
+                                });
+                            } else if (response.result==="Redeemed") {
+                                Swal.fire({
+                                    title: "重複核銷",
+                                    text: "已有核銷紀錄，請勿重複核銷。",
+                                    icon: "info",
+                                    showDenyButton: false,
+                                    showCancelButton: false,
+                                    confirmButtonText: "關閉"
+                                }).then(function() {
+                                    document.getElementById("loading").style.display = "none";
+                                });
+                            } else if (response.result==="IncorrectType") {
+                                Swal.fire({
+                                    title: "核銷類型不匹配",
+                                    text: "請使用正確的核銷按鈕。",
+                                    icon: "info",
+                                    showDenyButton: false,
+                                    showCancelButton: false,
+                                    confirmButtonText: "關閉"
+                                }).then(function() {
+                                    document.getElementById("loading").style.display = "none";
+                                });
+                            } else if (response.result==="OK") {
+                                Swal.fire({
+                                    title: "核銷完成",
+                                    icon: "success",
+                                    showDenyButton: false,
+                                    showCancelButton: false,
+                                    timer: 5000,
+                                    confirmButtonText: "關閉"
+                                }).then(function() {
+                                    if (_type==="prize") {
+                                        var element = document.getElementById("prize_redeem");
+                                        element.textContent = `已核銷`;
+                                        element.classList.remove("btn-primary");
+                                        element.classList.add("btn-secondary");
+                                        element.disabled=true;
+                                    }
+                                    if (_type==="lottery") {
+                                        var element = document.getElementById("lottery_redeem");
+                                        element.textContent = `已核銷`;
+                                        element.classList.remove("btn-primary");
+                                        element.classList.add("btn-secondary");
+                                        element.disabled=true;
+                                    }
+                                    document.getElementById("loading").style.display = "none";
+                                });
+                            }
                         }
-                    }
-                });
+                    });
+                }
             })
             .catch((error) => {
                 console.log("error", error);
