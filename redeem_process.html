@@ -178,10 +178,21 @@
                             }).then(function() {
                                 document.getElementById("loading").style.display = "none";
                             });
-                        } else if (response.result==="PrizeNoError") {
+                        } else if (response.result==="Redeemed") {
                             Swal.fire({
                                 title: "重複核銷",
                                 text: "已有核銷紀錄，請勿重複核銷。",
+                                icon: "info",
+                                showDenyButton: false,
+                                showCancelButton: false,
+                                confirmButtonText: "關閉"
+                            }).then(function() {
+                                document.getElementById("loading").style.display = "none";
+                            });
+                        } else if (response.result==="IncorrectType") {
+                            Swal.fire({
+                                title: "核銷類型不匹配",
+                                text: "請使用正確的核銷按鈕。",
                                 icon: "info",
                                 showDenyButton: false,
                                 showCancelButton: false,
