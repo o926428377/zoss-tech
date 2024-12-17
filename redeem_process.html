@@ -152,7 +152,7 @@
             liff.scanCodeV2().then((sn) => {
                 document.getElementById("mask").textContent = "核銷中...";
                 document.getElementById("loading").style.display = "inline";
-                sendPost(`${url}?role=prize_redeem`, {"sn":sn.value, "type":_type, ...params}).then(function(response){
+                sendPost(`${url}?role=prize_redeem`, {"sn":sn.value.replace(/\n/g, ''), "type":_type, ...params}).then(function(response){
                     if (typeof response.msg !== "undefined") {
                         sys_error();
                     } else {
