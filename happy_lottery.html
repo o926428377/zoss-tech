@@ -1913,7 +1913,7 @@
       function load_config() {
         lines = text.split("\n");
         for(i=0;i<lines.length;i++){
-          if (lines[i].match(/^\[prizes|shop_list|winner_list|name_list\]$/g)) {
+          if (lines[i].match(/^\[prizes|shop_list|winner_list|name_list|lottery_buyer_list\]$/g)) {
             target = lines[i];
             headers = null;
           } else if (lines[i] === "") {
