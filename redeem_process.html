@@ -211,7 +211,7 @@
                             }).then(function() {
                                 if (_type==="prize") {
                                     document.getElementById("prize_card").style.display = "inline";
-                                    document.getElementById("prize_name").textContent = response.prize.name;
+                                    document.getElementById("prize_name").textContent = response.prize.name.replace(/(\d)(?=(\d{3})+$)/g, '$1,');
                                     document.getElementById("prize_no").textContent = response.prize.no;
                                     if ( response.prize.redeem!=="") {
                                         var element = document.getElementById("prize_redeem");
@@ -223,7 +223,7 @@
                                 }
                                 if (_type==="lottery") {
                                     document.getElementById("lottery_card").style.display = "inline";
-                                    document.getElementById("lottery_name").textContent = response.lottery.name;
+                                    document.getElementById("lottery_name").textContent = response.lottery.name.replace(/(\d)(?=(\d{3})+$)/g, '$1,');
                                     document.getElementById("lottery_no").textContent = response.lottery.no;
                                     if ( response.lottery.redeem!=="") {
                                         var element = document.getElementById("lottery_redeem");
@@ -270,7 +270,7 @@
                       document.getElementById("shop").textContent = response.shop;
                       if (response.prize) {
                         document.getElementById("prize_card").style.display = "inline";
-                        document.getElementById("prize_name").textContent = response.prize.name;
+                        document.getElementById("prize_name").textContent = response.prize.name.replace(/(\d)(?=(\d{3})+$)/g, '$1,');
                         document.getElementById("prize_no").textContent = response.prize.no;
                         if ( response.prize.redeem!=="") {
                             var element = document.getElementById("prize_redeem");
@@ -282,7 +282,7 @@
                       }
                       if (response.lottery) {
                         document.getElementById("lottery_card").style.display = "inline";
-                        document.getElementById("lottery_name").textContent = response.lottery.name;
+                        document.getElementById("lottery_name").textContent = response.lottery.name.replace(/(\d)(?=(\d{3})+$)/g, '$1,');
                         document.getElementById("lottery_no").textContent = response.lottery.no;
                         if ( response.lottery.redeem!=="") {
                             var element = document.getElementById("lottery_redeem");
