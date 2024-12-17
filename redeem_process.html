@@ -203,35 +203,25 @@
                         } else if (response.result==="OK") {
                             Swal.fire({
                                 title: "核銷完成",
-                                icon: "successful",
+                                icon: "success",
                                 showDenyButton: false,
                                 showCancelButton: false,
                                 timer: 5000,
                                 confirmButtonText: "關閉"
                             }).then(function() {
                                 if (_type==="prize") {
-                                    document.getElementById("prize_card").style.display = "inline";
-                                    document.getElementById("prize_name").textContent = response.prize.name.replace(/(\d)(?=(\d{3})+$)/g, '$1,');
-                                    document.getElementById("prize_no").textContent = response.prize.no;
-                                    if ( response.prize.redeem!=="") {
-                                        var element = document.getElementById("prize_redeem");
-                                        element.textContent = `已核銷`;
-                                        element.classList.remove("btn-primary");
-                                        element.classList.add("btn-secondary");
-                                        element.disabled=true;
-                                    }
+                                    var element = document.getElementById("prize_redeem");
+                                    element.textContent = `已核銷`;
+                                    element.classList.remove("btn-primary");
+                                    element.classList.add("btn-secondary");
+                                    element.disabled=true;
                                 }
                                 if (_type==="lottery") {
-                                    document.getElementById("lottery_card").style.display = "inline";
-                                    document.getElementById("lottery_name").textContent = response.lottery.name.replace(/(\d)(?=(\d{3})+$)/g, '$1,');
-                                    document.getElementById("lottery_no").textContent = response.lottery.no;
-                                    if ( response.lottery.redeem!=="") {
-                                        var element = document.getElementById("lottery_redeem");
-                                        element.textContent = `已核銷`;
-                                        element.classList.remove("btn-primary");
-                                        element.classList.add("btn-secondary");
-                                        element.disabled=true;
-                                    }
+                                    var element = document.getElementById("lottery_redeem");
+                                    element.textContent = `已核銷`;
+                                    element.classList.remove("btn-primary");
+                                    element.classList.add("btn-secondary");
+                                    element.disabled=true;
                                 }
                                 document.getElementById("loading").style.display = "none";
                             });
