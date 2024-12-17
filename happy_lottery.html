@@ -2151,7 +2151,7 @@
           const draw_limit = parseInt(prizes[prize_target]["已抽獎數"]);
           //抽獎中
           const qty = quota - draw_limit;
-          if (prize_sn[0]==="L") {
+          if (prize_target[0]==="L") {
             const target_list = Object.keys(lottery_buyer_list).filter(x=> !Object.keys(winner_list).filter(y=> winner_list[x]["獎項編號"][0]==="L").includes(lottery_buyer_list[x]));
             document.getElementById("drawing_single").style.display = "inline";
             choose([target_list, ...toggle.slice(1)], ["序號","店名","中獎人"]);
