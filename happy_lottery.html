@@ -1867,7 +1867,7 @@
         return new Promise((resolve, reject) => {
           // const rr = this[Math.floor(Math.random()*this.length)];
           const rr = shuffle(this).slice(0,qty);
-          sleep(3000).then(() => {
+          sleep(300).then(() => {
             resolve(rr);
           });
         });
