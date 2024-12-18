@@ -1875,19 +1875,23 @@
 
       Array.prototype.random_lottery = function(qty){
         return new Promise((resolve, reject) => {
-          const rr = shuffle(this);
-          var result = {};
-          for(i=0;i<rr.length;i++){
-            if (!result[lottery_buyer_list[rr[i]]]) {
-                result[lottery_buyer_list[rr[i]]] = rr[i];
-            }
-            if (Object.keys(result).length===qty) {
-                break
-            }
-          }
-          sleep(3000).then(() => {
-            resolve(Object.values(result));
+          const rr = shuffle(this).slice(0,qty);
+	  sleep(300).then(() => {
+            resolve(rr);
           });
+          // const rr = shuffle(this);
+          // var result = {};
+          // for(i=0;i<rr.length;i++){
+          //   if (!result[lottery_buyer_list[rr[i]]]) {
+          //       result[lottery_buyer_list[rr[i]]] = rr[i];
+          //   }
+          //   if (Object.keys(result).length===qty) {
+          //       break
+          //   }
+          // }
+          // sleep(3000).then(() => {
+          //   resolve(Object.values(result));
+          // });
         });
       }
       
@@ -2153,7 +2157,8 @@
           const qty = quota - draw_limit;
           if (prize_target[0]==="L") {
             const lottery_winner = Object.keys(winner_list).filter(y=> winner_list[y]["獎項編號"][0]==="L");
-            const target_list = Object.keys(lottery_buyer_list).filter(x=> !lottery_winner.includes(lottery_buyer_list[x]));
+            // const target_list = Object.keys(lottery_buyer_list).filter(x=> !lottery_winner.includes(lottery_buyer_list[x]));
+            const target_list = Object.keys(lottery_buyer_list).filter(x=> !lottery_winner.includes(x));
             document.getElementById("drawing_single").style.display = "inline";
             choose([target_list, ...toggle.slice(1)], ["序號","店名","中獎人"]);
             target_list.random_lottery(qty).then(x=> { onSuccess(x); });
