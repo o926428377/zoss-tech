@@ -1794,6 +1794,11 @@
               <option value="" selected disabled>請選擇箱別</option>
             </select>
             </div>
+            <div class="col-auto w-25">
+              <div class="btn-group btn-group-lg  btn-light" id="draw_qty" role="group" aria-label="Basic radio toggle button group">
+               
+              </div>
+            </div>
             </div>
             <div id="container6" style="height:80vh;width: 100vw">
             <!-- <div id="container6" style="height:60vh;width: 100vw;"> -->
@@ -1992,9 +1997,14 @@
         select.appendChild(_option);
       }
 
+      function remove_draw_qty_options() {
+        document.getElementById("draw_qty").innerHTML="";
+      }
+
       function gen_prizes_options() {
         remove_prizes_options();
         remove_box_options();
+        remove_draw_qty_options();
         var select = document.getElementById("prize_sn");
         var tmp;
         Object.keys(prizes_dict).forEach(_prize => {
@@ -2039,6 +2049,25 @@
           select.appendChild(option);
           document.getElementById("shoot").disabled=true;
         });
+        gen_draw_qty_options();
+
+      }
+
+      function gen_draw_qty_options() {
+        var temp = '<input type="radio" class="btn-check" name="btnradio" id="draw_all" autocomplete="off" value="999" checked>' +
+        '<label class="btn btn-outline-primary" for="draw_all">全抽</label>';
+        const quota = parseInt(prizes[prize_target]["名額"]);
+        const draw_limit = parseInt(prizes[prize_target]["已抽獎數"]);
+        const avaible_qty = quota - draw_limit;
+        var target_qty = [...Array(21).keys().slice(1).map(x=> 5*x), 4, 3, 2, 1];
+        target_qty.sort(function(a, b) {
+          return b - a;
+        });
+        target_qty.filter(x=>x<avaible_qty).forEach(qty => {
+          temp += `<input type="radio" class="btn-check" name="btnradio" id="draw_${qty}" autocomplete="off" value="${qty}" checked>` +
+          `<label class="btn btn-outline-primary" for="draw_${qty}">${qty}</label>`;
+        });
+        document.getElementById("draw_qty").innerHTML = temp;
       }
 
       function gen_list(result, is_lottery) {
