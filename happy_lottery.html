@@ -2363,7 +2363,9 @@
       document.addEventListener('keydown', function(event){
           console.log(event.button);
           if (event.key==="s") {
-            is_ready = true;
+            if (document.getElementById("box_no").value!==''){
+              is_ready = true;
+            }
           } else if (event.key==="e") {
             is_ready = false;
           }
@@ -2372,6 +2374,7 @@
       document.addEventListener('click', function(event){
         if (event.button===0 && is_ready && document.getElementById("box_no").value!=='') {
           lucky_draw();
+          is_ready = false;
         }
       });
     };
