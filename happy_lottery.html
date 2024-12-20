@@ -2373,8 +2373,8 @@
 
       document.addEventListener('click', function(event){
         if (event.button===0 && is_ready && document.getElementById("box_no").value!=='') {
-          lucky_draw();
           is_ready = false;
+          lucky_draw();
         }
       });
     };
