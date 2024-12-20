@@ -1846,6 +1846,7 @@
     </div>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
+      var is_ready = false;
       var params = new URL(document.location.toString()).searchParams;
       if (params.has("liffRedirectUri")) {
         params = new URL(decodeURIComponent(params.get("liffRedirectUri"))).searchParams;
@@ -2028,6 +2029,7 @@
 
       function gen_box_options() {
         remove_box_options();
+        remove_draw_qty_options();
         var prize = document.getElementById("prize_sn").value;
         var select = document.getElementById("box_no");
         Object.values(prizes_dict[prize]).forEach(box => {
@@ -2306,7 +2308,7 @@
       //     load_config();
       // };
 
-      window.onload = async function (e) {
+    window.onload = async function (e) {
         // load_config();
         getToken(liffId).then(function(params){
             sendPost(`${url}?role=login`, params).then(function(response){
@@ -2358,7 +2360,16 @@
               window.location = url;
           })
 			});
-      };
+      document.addEventListener('keydown', function(event){
+          if (event.key==="s") {
+            is_ready = true;
+          } else if (event.key==="e") {
+            is_ready = false;
+          } else if (event.button===0 && is_ready && document.getElementById("box_no").value!=='') {
+            lucky_draw();
+          }
+      } );
+    };
 
     </script>
   </body>
