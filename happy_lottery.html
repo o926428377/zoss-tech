@@ -1785,17 +1785,17 @@
             <div id='output'></div>
             <div class="row g-2">
             <div class="col-auto w-25">
-            <select name="prize_sn" id="prize_sn" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onclick="is_ready = false;cacel_ready();" onchange="gen_box_options();">
+            <select name="prize_sn" id="prize_sn" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onclick="cancel_ready();" onchange="gen_box_options();">
                 <option value="" selected disabled>請選擇獎項</option>
             </select>
             </div>
             <div class="col-auto w-25">
-            <select name="box_no" id="box_no" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onclick="is_ready = false;cacel_ready();" onchange="document.getElementById('shoot').disabled = false;document.getElementById('drawn').style.display = 'none';gen_draw_qty_options();">
+            <select name="box_no" id="box_no" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onclick="cancel_ready();" onchange="document.getElementById('shoot').disabled = false;document.getElementById('drawn').style.display = 'none';gen_draw_qty_options();">
               <option value="" selected disabled>請選擇箱別</option>
             </select>
             </div>
             <div class="col-auto w-50">
-              <div class="btn-group btn-group-lg" id="draw_qty" role="group" onclick="is_ready = false;cacel_ready();" aria-label="Basic radio toggle button group">
+              <div class="btn-group btn-group-lg" id="draw_qty" role="group" onclick="cancel_ready();" aria-label="Basic radio toggle button group">
                
               </div>
             </div>
@@ -2308,6 +2308,11 @@
       //     load_config();
       // };
 
+    function cancel_ready() {
+      is_ready = false;
+      document.getElementById("shoot").classList.remove("text-danger");
+    }
+
     window.onload = async function (e) {
         // load_config();
         getToken(liffId).then(function(params){
@@ -2361,11 +2366,6 @@
           })
 			});
 
-      function cacel_ready() {
-        is_ready = false;
-        document.getElementById("shoot").classList.remove("text-danger");
-      }
-
       document.addEventListener('keydown', function(event){
           console.log(event.button);
           if (event.key==="s") {
@@ -2374,13 +2374,13 @@
               document.getElementById("shoot").classList.add("text-danger");
             }
           } else if (event.key==="e") {
-            cacel_ready();
+            cancel_ready();
           }
       } );
 
       document.addEventListener('click', function(event){
         if (event.button===0 && is_ready && document.getElementById("box_no").value!=='') {
-          cacel_ready();
+          cancel_ready();
           lucky_draw();
         }
       });
