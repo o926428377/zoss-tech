@@ -2065,7 +2065,7 @@
           return b - a;
         });
         target_qty.filter(x=> x<=avaible_qty).forEach(qty => {
-          temp += `<input type="radio" class="btn-check" name="btnradio" id="draw_${qty}" autocomplete="off" value="${qty}" checked>` +
+          temp += `<input type="radio" class="btn-check" name="btnradio" id="draw_${qty}" autocomplete="off" value="${qty}">` +
           `<label class="btn btn-outline-primary" for="draw_${qty}">${qty}</label>`;
         });
         document.getElementById("draw_qty").innerHTML = temp;
