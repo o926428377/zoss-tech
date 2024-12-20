@@ -1784,7 +1784,7 @@
         <div class="p-4 bd-highlight justify-content-center">         
             <div id='output'></div>
             <div class="row g-2">
-            <div class="col-auto w-50">
+            <div class="col-auto w-25">
             <select name="prize_sn" id="prize_sn" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onchange="gen_box_options();">
                 <option value="" selected disabled>請選擇獎項</option>
             </select>
@@ -1794,8 +1794,8 @@
               <option value="" selected disabled>請選擇箱別</option>
             </select>
             </div>
-            <div class="col-auto w-25">
-              <div class="btn-group btn-group-lg  btn-light" id="draw_qty" role="group" aria-label="Basic radio toggle button group">
+            <div class="col-auto w-50">
+              <div class="btn-group btn-group-lg  btn-light" role="group" aria-label="Basic radio toggle button group">
                
               </div>
             </div>
@@ -2054,7 +2054,7 @@
       }
 
       function gen_draw_qty_options() {
-        var temp = '<input type="radio" class="btn-check" name="btnradio" id="draw_all" autocomplete="off" value="999" checked>' +
+        var temp = '<input type="radio" class="btn-check" name="qty" id="draw_all" autocomplete="off" value="999" checked>' +
         '<label class="btn btn-outline-primary" for="draw_all">全抽</label>';
         const prize_target = document.getElementById("box_no").selectedOptions[0].value;
         const quota = parseInt(prizes[prize_target]["名額"]);
@@ -2065,7 +2065,7 @@
           return b - a;
         });
         target_qty.filter(x=> x<=avaible_qty).forEach(qty => {
-          temp += `<input type="radio" class="btn-check" name="btnradio" id="draw_${qty}" autocomplete="off" value="${qty}">` +
+          temp += `<input type="radio" class="btn-check" name="qty" id="draw_${qty}" autocomplete="off" value="${qty}">` +
           `<label class="btn btn-outline-primary" for="draw_${qty}">${qty}</label>`;
         });
         document.getElementById("draw_qty").innerHTML = temp;
@@ -2101,19 +2101,19 @@
       function onSuccess(result) {
         const prize_target = document.getElementById("box_no").selectedOptions[0].value;
         getToken(liffId).then(function(params){
-			fetch(url, {
-			  method: "POST",
-			  redirect: "follow", 
-			  // mode: "cors", 
-			  //cache: "no-cache",
-			  headers: {
-				"Content-Type": "text/plain",
-			  },
-			  // credentials: "include",
-			  body: JSON.stringify(
-				{"to_add": result.map(x=> [x, prize_target]),...params}
-			  )
-			})
+        fetch(url, {
+          method: "POST",
+          redirect: "follow", 
+          // mode: "cors", 
+          //cache: "no-cache",
+          headers: {
+          "Content-Type": "text/plain",
+          },
+          // credentials: "include",
+          body: JSON.stringify(
+          {"to_add": result.map(x=> [x, prize_target]),...params}
+          )
+        })
 			.then(response => response.text())
 			.then(context => {
 			  //抽獎中
@@ -2183,8 +2183,9 @@
           const quota = parseInt(prizes[prize_target]["名額"]);
           const draw_all = prizes[prize_target]["桶別"]==="全體";
           const draw_limit = parseInt(prizes[prize_target]["已抽獎數"]);
+          var _qty = parseInt(document.querySelector('input[name="btnradio"]:checked').value);
           //抽獎中
-          const qty = quota - draw_limit;
+          const qty = Math.min(_qty, quota - draw_limit);
           if (prize_target[0]==="L") {
             const lottery_winner = Object.keys(winner_list).filter(y=> winner_list[y]["獎項編號"][0]==="L");
             // const target_list = Object.keys(lottery_buyer_list).filter(x=> !lottery_winner.includes(lottery_buyer_list[x]));
