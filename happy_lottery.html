@@ -2055,7 +2055,7 @@
 
       function gen_draw_qty_options() {
         var temp = '<input type="radio" class="btn-check" name="qty" id="draw_all" autocomplete="off" value="999" checked>' +
-        '<label class="btn btn-light btn-outline-primary" for="draw_all">全抽</label>';
+        '<label class="btn btn-light btn-outline-dark" for="draw_all">全抽</label>';
         const prize_target = document.getElementById("box_no").selectedOptions[0].value;
         const quota = parseInt(prizes[prize_target]["名額"]);
         const draw_limit = parseInt(prizes[prize_target]["已抽獎數"]);
@@ -2066,7 +2066,7 @@
         });
         target_qty.filter(x=> x<=avaible_qty).forEach(qty => {
           temp += `<input type="radio" class="btn-check" name="qty" id="draw_${qty}" autocomplete="off" value="${qty}">` +
-          `<label class="btn btn-light btn-outline-primary" for="draw_${qty}">${qty}</label>`;
+          `<label class="btn btn-light btn-outline-dark" for="draw_${qty}">${qty}</label>`;
         });
         document.getElementById("draw_qty").innerHTML = temp;
       }
