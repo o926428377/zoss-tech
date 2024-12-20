@@ -1790,7 +1790,7 @@
             </select>
             </div>
             <div class="col-auto w-25">
-            <select name="box_no" id="box_no" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onchange="document.getElementById('shoot').disabled = false;document.getElementById('drawn').style.display = 'none';">
+            <select name="box_no" id="box_no" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onchange="document.getElementById('shoot').disabled = false;document.getElementById('drawn').style.display = 'none';gen_draw_qty_options();">
               <option value="" selected disabled>請選擇箱別</option>
             </select>
             </div>
@@ -2049,7 +2049,7 @@
           select.appendChild(option);
           document.getElementById("shoot").disabled=true;
         });
-        gen_draw_qty_options();
+        
 
       }
 
@@ -2060,7 +2060,7 @@
         const quota = parseInt(prizes[prize_target]["名額"]);
         const draw_limit = parseInt(prizes[prize_target]["已抽獎數"]);
         const avaible_qty = quota - draw_limit;
-        var target_qty = [...Array(21).keys().slice(1).map(x=> 5*x), 4, 3, 2, 1];
+        var target_qty = [...Array.from(Array(21).keys()).slice(1).map(x=> 5*x), 4, 3, 2, 1];
         target_qty.sort(function(a, b) {
           return b - a;
         });
