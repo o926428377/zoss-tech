@@ -1785,17 +1785,17 @@
             <div id='output'></div>
             <div class="row g-2">
             <div class="col-auto w-25">
-            <select name="prize_sn" id="prize_sn" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onchange="gen_box_options();">
+            <select name="prize_sn" id="prize_sn" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onclick="is_ready=false;" onchange="gen_box_options();">
                 <option value="" selected disabled>請選擇獎項</option>
             </select>
             </div>
             <div class="col-auto w-25">
-            <select name="box_no" id="box_no" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onchange="document.getElementById('shoot').disabled = false;document.getElementById('drawn').style.display = 'none';gen_draw_qty_options();">
+            <select name="box_no" id="box_no" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onclick="is_ready=false;" onchange="document.getElementById('shoot').disabled = false;document.getElementById('drawn').style.display = 'none';gen_draw_qty_options();">
               <option value="" selected disabled>請選擇箱別</option>
             </select>
             </div>
             <div class="col-auto w-50">
-              <div class="btn-group btn-group-lg" id="draw_qty" role="group" aria-label="Basic radio toggle button group">
+              <div class="btn-group btn-group-lg" id="draw_qty" role="group" onclick="is_ready=false;" aria-label="Basic radio toggle button group">
                
               </div>
             </div>
