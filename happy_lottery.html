@@ -2361,14 +2361,19 @@
           })
 			});
       document.addEventListener('keydown', function(event){
+          console.log(event.button);
           if (event.key==="s") {
             is_ready = true;
           } else if (event.key==="e") {
             is_ready = false;
-          } else if (event.button===0 && is_ready && document.getElementById("box_no").value!=='') {
-            lucky_draw();
           }
       } );
+
+      document.addEventListener('click', function(event){
+        if (event.button===0 && is_ready && document.getElementById("box_no").value!=='') {
+          lucky_draw();
+        }
+      });
     };
 
     </script>
