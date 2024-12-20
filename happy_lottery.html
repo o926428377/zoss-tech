@@ -2183,7 +2183,7 @@
           const quota = parseInt(prizes[prize_target]["名額"]);
           const draw_all = prizes[prize_target]["桶別"]==="全體";
           const draw_limit = parseInt(prizes[prize_target]["已抽獎數"]);
-          var _qty = parseInt(document.querySelector('input[name="btnradio"]:checked').value);
+          var _qty = parseInt(document.querySelector('input[name="qty"]:checked').value);
           //抽獎中
           const qty = Math.min(_qty, quota - draw_limit);
           if (prize_target[0]==="L") {
