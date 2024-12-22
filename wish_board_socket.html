@@ -214,11 +214,13 @@
       return new Promise(function(resolve,reject){
         liff.init({
                     liffId: liffId,
-                    withLoginOnExternalBrowser: true
+                    // withLoginOnExternalBrowser: true
                 }).then(function (data) {
-          // if (!liff.isLoggedIn()) {
-          //   window.location="https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=2006657937&redirect_uri=https%3A%2F%2Fscript.google.com%2Fmacros%2Fs%2FAKfycbzlbEDgSYeBRV2l27H4_gn4eITQGDoJzRPlFbGCnxzO1IvmCjCUqlI0KgN4THTEHTJN%2Fexec&state=2025&scope=profile%20openid";
-          // } else {
+          if (!liff.isLoggedIn()) {
+            liff.login({ redirectUri: window.location });
+
+            // window.location="https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=2006657937&redirect_uri=https%3A%2F%2Fscript.google.com%2Fmacros%2Fs%2FAKfycbzlbEDgSYeBRV2l27H4_gn4eITQGDoJzRPlFbGCnxzO1IvmCjCUqlI0KgN4THTEHTJN%2Fexec&state=2025&scope=profile%20openid";
+          } else {
             liff.getProfile().then(function (profile) {
               var params = {};
               params['userId'] = profile.userId;
@@ -233,14 +235,15 @@
               window.alert("Error getting profile: " + error);
               reject(params);
             });
-          // }
+          }
         });
       });
     };
         var params = new URL(document.location.toString()).searchParams;
         if (params.has("liffRedirectUri")) {
             params = new URL(decodeURIComponent(params.get("liffRedirectUri"))).searchParams;
-        } else if (params.has("liff.state")) {
+        }
+        if (params.has("liff.state")) {
             const tmp = getAllUrlParams(decodeURIComponent(params.get("liff.state")));
             if (tmp.ws_server) {
                 params.append("ws_server", tmp.ws_server);
