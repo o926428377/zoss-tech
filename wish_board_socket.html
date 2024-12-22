@@ -240,7 +240,12 @@
         var params = new URL(document.location.toString()).searchParams;
         if (params.has("liffRedirectUri")) {
             params = new URL(decodeURIComponent(params.get("liffRedirectUri"))).searchParams;
-        }
+        } else if (params.has("liff.state")) {
+            const tmp = new URL(decodeURIComponent(params.get("liff.state"))).searchParams;
+            if (tmp.has("ws_server")) {
+                params.append("ws_server", tmp.get("ws_server"));
+            }
+        } 
         if (!params.has("liff") || !params.has("sid") || !params.has("ws_server")) {
             Swal.fire({
                     title: '系統錯誤',
