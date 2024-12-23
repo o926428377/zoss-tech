@@ -22,20 +22,10 @@
     <div class="fs-1" style="font-weight: bold;color:#dfc175;align-self: center;text-align: center;">中獎查詢</div>
   </div>
   <div class="justify-content-center">
-    <div class="position-absolute top-50 start-50 translate-middle card text-dark bg-light mb-3" style="width: 18rem;">
+    <div id="prizes" class="position-absolute top-50 start-50 translate-middle card text-dark bg-light mb-3" style="width: 18rem;">
         <div class="card-header">
             <h2 class="card-title text-center">恭喜您中獎</h2>
             <h6 class="card-subtitle mb-2 text-muted text-center"><span id="group">桶別</span> - <span id="shop">分店</span></h6>
-        </div>
-        <div id="prize_card" class="card-body" style="display:none;">
-            <div>獎項：<span class="text-reset" id="prize_name">某個獎</span></div>
-            <div>序號：<span class="text-reset" id="prize_no">999</span></div>
-            <button id="prize_redeem" type="button" class="mt-3 btn btn-primary w-100" onclick="redeem_process('prize')">掃碼核銷</button>
-        </div>
-        <div id="lottery_card" class="card-body" style="display:none;">
-            <div>獎項：<span class="text-reset" id="lottery_name">某個獎</span></div>
-            <div>序號：<span class="text-reset" id="lottery_no">999</span></div>
-            <button id="lottery_redeem" type="button" class="mt-3 btn btn-primary w-100" onclick="redeem_process('lottery')">掃碼核銷</button>
         </div>
     </div>
   </div>
@@ -147,13 +137,13 @@
         });
     }
 
-    function redeem_process(_type) {
+    function redeem_process(_type, prize_no) {
         getToken(liffId).then(function(params){
             liff.scanCodeV2().then((sn) => {
                 if (sn.value) {
                     document.getElementById("mask").textContent = "核銷中...";
                     document.getElementById("loading").style.display = "inline";
-                    sendPost(`${url}?role=prize_redeem`, {"sn":sn.value.replace(/\n/g, ''), "type":_type, ...params}).then(function(response){
+                    sendPost(`${url}?role=prize_redeem`, {"sn":sn.value.replace(/\n/g, ''), "type":_type, "prize_no":prize_no, ...params}).then(function(response){
                         if (typeof response.msg !== "undefined") {
                             sys_error();
                         } else {
@@ -210,20 +200,11 @@
                                     timer: 5000,
                                     confirmButtonText: "關閉"
                                 }).then(function() {
-                                    if (_type==="prize") {
-                                        var element = document.getElementById("prize_redeem");
-                                        element.textContent = `已核銷`;
-                                        element.classList.remove("btn-primary");
-                                        element.classList.add("btn-secondary");
-                                        element.disabled=true;
-                                    }
-                                    if (_type==="lottery") {
-                                        var element = document.getElementById("lottery_redeem");
-                                        element.textContent = `已核銷`;
-                                        element.classList.remove("btn-primary");
-                                        element.classList.add("btn-secondary");
-                                        element.disabled=true;
-                                    }
+                                    var element = document.getElementById(`${_type}_redeem_${prize_no}`);
+                                    element.textContent = `已核銷`;
+                                    element.classList.remove("btn-primary");
+                                    element.classList.add("btn-secondary");
+                                    element.disabled=true;
                                     document.getElementById("loading").style.display = "none";
                                 });
                             }
@@ -237,6 +218,24 @@
         }).catch(function (error) {
             sys_error();
         });
+    }
+
+    function add_prize(prize, prize_type) {
+        var _name = prize.name.replace(/(\d)(?=(\d{3})+$)/g, '$1,');
+        var _style = "btn-primary";
+        var _btn = "掃碼核銷";
+        var _disabled = "";
+        if ( response.lottery.redeem!=="") {
+            _style = "btn-secondary";
+            _btn = "已核銷";
+            _disabled = "disabled";
+        }
+        document.getElementById("prizes").innerHTML += 
+        `<div class="card-body">
+            <div>獎項：<span class="text-reset" id="prize_name">${_name}</span></div>
+            <div>序號：<span class="text-reset" id="prize_no">${prize.no}</span></div>
+            <button id="${prize_type}_redeem_${prize.no}" type="button" class="mt-3 btn ${_style} w-100" onclick="redeem_process('${prize_type}', '${prize.no}'')" ${_disabled}>${_btn}</button>
+        </div>`;
     }
 
     window.onload = async function (e) {
@@ -261,28 +260,14 @@
                       document.getElementById("loading").style.display = "none";
                       document.getElementById("group").textContent = response.group;
                       document.getElementById("shop").textContent = response.shop;
+
                       if (response.prize) {
-                        document.getElementById("prize_card").style.display = "inline";
-                        document.getElementById("prize_name").textContent = response.prize.name.replace(/(\d)(?=(\d{3})+$)/g, '$1,');
-                        document.getElementById("prize_no").textContent = response.prize.no;
-                        if ( response.prize.redeem!=="") {
-                            var element = document.getElementById("prize_redeem");
-                            element.textContent = `已核銷`;
-                            element.classList.remove("btn-primary");
-                            element.classList.add("btn-secondary");
-                            element.disabled=true;
-                        }
+                        add_prize(prize, "prize");
                       }
                       if (response.lottery) {
-                        document.getElementById("lottery_card").style.display = "inline";
-                        document.getElementById("lottery_name").textContent = response.lottery.name.replace(/(\d)(?=(\d{3})+$)/g, '$1,');
-                        document.getElementById("lottery_no").textContent = response.lottery.no;
-                        if ( response.lottery.redeem!=="") {
-                            var element = document.getElementById("lottery_redeem");
-                            element.textContent = `已核銷`;
-                            element.classList.remove("btn-primary");
-                            element.classList.add("btn-secondary");
-                            element.disabled=true;
+                        add_prize(prize, "lottery");
+                        for(i=0;i<response.lottery.length;i++){
+                            add_prize(response.lottery[i], "lottery");
                         }
                       }
                       
