@@ -262,10 +262,9 @@
                       document.getElementById("shop").textContent = response.shop;
 
                       if (response.prize) {
-                        add_prize(prize, "prize");
+                        add_prize(response.prize, "prize");
                       }
                       if (response.lottery) {
-                        add_prize(prize, "lottery");
                         for(i=0;i<response.lottery.length;i++){
                             add_prize(response.lottery[i], "lottery");
                         }
