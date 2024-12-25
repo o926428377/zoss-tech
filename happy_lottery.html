@@ -1784,20 +1784,22 @@
         <div class="p-4 bd-highlight justify-content-center">         
             <div id='output'></div>
             <div class="row g-2">
-            <div class="col-auto w-25">
+            <div class="col-auto w-30">
             <select name="prize_sn" id="prize_sn" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onclick="cancel_ready();" onchange="gen_box_options();">
                 <option value="" selected disabled>請選擇獎項</option>
             </select>
             </div>
-            <div class="col-auto w-25">
+            <div class="col-auto w-20">
             <select name="box_no" id="box_no" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onclick="cancel_ready();" onchange="document.getElementById('shoot').disabled = false;document.getElementById('drawn').style.display = 'none';gen_draw_qty_options();">
               <option value="" selected disabled>請選擇箱別</option>
             </select>
             </div>
-            <div class="col-auto w-50">
+            <div class="col-auto">
               <div class="btn-group btn-group-lg" id="draw_qty" role="group" onclick="cancel_ready();" aria-label="Basic radio toggle button group">
-               
               </div>
+            </div>
+	    <div class="col-auto">
+                   <button id="shoot" class="btn btn-dark btn-lg" type="button" onclick="lucky_draw();" disabled>開始抽獎</button>
             </div>
             </div>
             <div id="container6" style="height:80vh;width: 100vw">
@@ -1828,9 +1830,9 @@
                 </div>
             </div>
             <br>
-            <div class="d-grid gap-2">
+<!--             <div class="d-grid gap-2">
                    <button id="shoot" class="btn btn-primary" type="button" onclick="lucky_draw();" disabled>開始抽獎</button>
-            </div>
+            </div> -->
             
             <!-- <form target="hidden_submit" action="<?!= ScriptApp.getService().getUrl(); ?>" method="post" id="happy-lottery-form" name="happy-lottery-form" class="validate"> -->
             <!-- <form target="_self" action="<?!= ScriptApp.getService().getUrl(); ?>" method="post" id="happy-lottery-form" name="happy-lottery-form" class="validate">
@@ -2066,7 +2068,7 @@
         target_qty.sort(function(a, b) {
           return b - a;
         });
-        target_qty.filter(x=> x<=avaible_qty).forEach(qty => {
+        target_qty.filter(x=> x<avaible_qty).forEach(qty => {
           temp += `<input type="radio" class="btn-check" name="qty" id="draw_${qty}" autocomplete="off" value="${qty}">` +
           `<label class="btn btn-light btn-outline-dark" for="draw_${qty}">${qty}</label>`;
         });
