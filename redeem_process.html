@@ -8,7 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   </head>
-  <body class="m-4" style="height:100vh;background-image: url('https://i.imgur.com/F0nAnwj.png');background-size: 100% auto;background-repeat: repeat-y;">
+  <body class="p-4" style="height:100vh;background-image: url('https://i.imgur.com/F0nAnwj.png');background-size: 100% auto;background-repeat: repeat-y;">
   <div id="loading" class="w-100 position-absolute bg-dark" style="z-index: 999;left: 0px;top: 0px;height: 105vh;">
     <div class="position-absolute top-50 start-50 translate-middle" style="text-align: center;"\>
     <div class="spinner-border text-primary" id="spinner" role="status" style="width: 5rem;height: 5rem;">
@@ -17,19 +17,23 @@
     <div id="mask" class="fs-1 text-white">查詢中...</div>
     </div>
   </div>
-  <div style="width:100%;height:15%;" class="justify-content-center">
+  <div style="width:100%;height:10.5%;" class="justify-content-center">
     <img src="https://i.imgur.com/XAfuktm.png" style="width:100%"></img>
 <!--     <div class="fs-1" style="font-weight: bold;color:#dfc175;align-self: center;text-align: center;">中獎查詢</div> -->
   </div>
-  <div class="justify-content-center">
-    <div id="prizes" class="position-absolute top-50 start-50 translate-middle card text-dark bg-light mb-3" style="width: 18rem;opacity: 0.85;">
+  <div style="height: 76%;">
+<!--     <div id="prizes" class="position-absolute top-50 start-50 translate-middle card text-dark bg-light mb-3" style="width: 18rem;opacity: 0.85;"> -->
+    <div id="prizes" class="card text-dark bg-light mb-3" style="height: 100%;opacity: 0.85;overflow: auto;">
         <div class="card-header">
             <h2 class="card-title text-center">恭喜您中獎</h2>
             <h6 class="card-subtitle mb-2 text-muted text-center"><span id="group">桶別</span> - <span id="shop">分店</span></h6>
         </div>
     </div>
   </div>
-
+  <div style="width:100%;height:10%;" class="justify-content-center">
+    <img src="https://i.imgur.com/YsAKWQX.png" style="width:100%"></img>
+<!--     <div class="fs-1" style="font-weight: bold;color:#dfc175;align-self: center;text-align: center;">中獎查詢</div> -->
+  </div>
 
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script>
