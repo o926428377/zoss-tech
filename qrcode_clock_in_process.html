@@ -186,14 +186,16 @@
       if (params.has("liffRedirectUri")) {
         params = new URL(decodeURIComponent(params.get("liffRedirectUri"))).searchParams;
       }
-      if (!params.has("liff") || !params.has("sid") || !params.has("otp")) {
+      if (!params.has("liff") || !params.has("sid")) {
         sys_error("無效參數");
+	continue
       } else if (params.has("liff.state")) {
             const tmp = getAllUrlParams(decodeURIComponent(params.get("liff.state")));
             if (tmp.otp) {
                 params.append("otp", tmp.otp);
             } else {
 		sys_error("無效參數");
+		continue
 	    }
       }
       var liffId = params.get("liff");
