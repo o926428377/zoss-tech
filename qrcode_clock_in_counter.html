@@ -3217,7 +3217,7 @@ function getToken(liffId) {
 	window.onload = async function (e) {
         // load_config();
         getToken(liffId).then(function(params){
-            sendPost(`${url}?role=prize_check`, params).then(function(response){
+            sendPost(`${url}?role=qrcode_clock_in_counter`, params).then(function(response){
                 if (typeof response.msg !== "undefined") {
                     sys_error();
                 } else {
