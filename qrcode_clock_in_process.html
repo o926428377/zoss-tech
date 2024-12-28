@@ -209,8 +209,8 @@
 
     window.onload = async function (e) {
         // load_config();
-	liff.scanCodeV2().then((_otp) => {
-        	getToken(liffId).then(function(params){
+	    getToken(liffId).then(function(params){
+		liff.scanCodeV2().then((_otp) => {
 	            sendPost(`${url}?role=qrcode_clock_in`, {"otp":_otp.value, ...params}).then(function(response){
 			  if (response.result==="NoPermission") {
 			    sys_error("您的帳號未綁定快樂福利社，無法使用QRCODE自助報到，請至服務台人工報到!");
