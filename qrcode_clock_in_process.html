@@ -190,7 +190,7 @@
         sys_error("無效參數");
 	_continue
       } else if (params.has("liff.state")) {
-            const tmp = getAllUrlParams(decodeURIComponent(params.get("liff.state")));
+            var tmp = getAllUrlParams(decodeURIComponent(params.get("liff.state")));
             if (tmp.otp) {
                 var _otp = tmp.otp;
             } else {
