@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>快樂48忘年會 - 來賓QRCODE報到</title>   
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+      .col {
+          height: 37.5vh;
+      }
+    </style>
+  </head>
+  <body class="px-4 pt-4" style="overflow: hidden;height:100vh;">
+  <div id="loading" class="w-100 h-100 position-absolute bg-dark" style="opacity: 0.9;z-index: 999;left: 0px;top: 0px;">
+    <div class="position-absolute top-50 start-50 translate-middle" style="text-align: center;"\>
+    <div class="spinner-border text-primary" id="spinner" role="status" style="width: 5rem;height: 5rem;">
+    <span class="sr-only"></span>
+    </div>
+    <div class="fs-1 text-white">報到資訊查詢中...</div>
+    </div>
+  </div>
+
+
+
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script>
+      function getAllUrlParams(url) {
+      
+      // get query string from url (optional) or window
+      var queryString = url ? url.split('?')[1] : window.location.search.slice(1);
+    
+      // we'll store the parameters here
+      var obj = {};
+    
+      // if query string exists
+      if (queryString) {
+    
+        // stuff after # is not part of query string, so get rid of it
+        queryString = queryString.split('#')[0];
+    
+        // split our query string into its component parts
+        var arr = queryString.split('&');
+    
+        for (var i = 0; i < arr.length; i++) {
+          // separate the keys and the values
+          var a = arr[i].split('=');
+    
+          // set parameter name and value (use 'true' if empty)
+          var paramName = a[0];
+          var paramValue = typeof(a[1]) === 'undefined' ? true : a[1];
+          /** 
+          // (optional) keep case consistent
+          paramName = paramName.toLowerCase();
+          if (typeof paramValue === 'string')
+            paramValue = paramValue.toLowerCase();
+          **/
+          // if the paramName ends with square brackets, e.g. colors[] or colors[2]
+          if (paramName.match(/\[(\d+)?\]$/)) {
+    
+            // create key if it doesn't exist
+            var key = paramName.replace(/\[(\d+)?\]/, '');
+            if (!obj[key])
+              obj[key] = [];
+    
+            // if it's an indexed array e.g. colors[2]
+            if (paramName.match(/\[\d+\]$/)) {
+              // get the index value and add the entry at the appropriate position
+              var index = /\[(\d+)\]/.exec(paramName)[1];
+              obj[key][index] = paramValue;
+            } else {
+              // otherwise add the value to the end of the array
+              obj[key].push(paramValue);
+            }
+          } else {
+            // we're dealing with a string
+            if (!obj[paramName]) {
+              // if it doesn't exist, create property
+              obj[paramName] = paramValue;
+            } else if (obj[paramName] && typeof obj[paramName] === 'string') {
+              // if property does exist and it's a string, convert it to an array
+              obj[paramName] = [obj[paramName]];
+              obj[paramName].push(paramValue);
+            } else {
+              // otherwise add the property
+              obj[paramName].push(paramValue);
+            }
+          }
+        }
+      }
+    
+      return obj;
+    };
+      function getToken(liffId) {
+        return new Promise(function(resolve,reject){
+          liff.init({
+                      liffId: liffId,
+                      withLoginOnExternalBrowser: true
+                  }).then(function (data) {
+              liff.getProfile().then(function (profile) {
+                var params = {};
+                params['userId'] = profile.userId;
+                const accessToken =  liff.getAccessToken();
+                if (!accessToken) {
+                  params['accessToken'] = 'Error';
+                }
+                params['accessToken'] = accessToken;
+                //console.log(params);
+                resolve(params);
+              }).catch(function (error) {
+                window.alert("Error getting profile: " + error);
+                reject(params);
+              });
+            // }
+          });
+        });
+      };
+
+      function sendPost(url, _params) {
+        
+        var form = document.createElement("form");
+        // 設定表單的一些屬性，包含網頁接收伺服器回應的頁面或框架
+        form.setAttribute("method", "post");
+        form.setAttribute("action", url);
+        //form.setAttribute("target", "Iframe1");
+      
+        // 建立隱藏的表單控制項
+        for (var key in _params) {
+          var hiddenField = document.createElement("input");
+          hiddenField.setAttribute("type", "hidden");
+          hiddenField.setAttribute("name", key);
+          hiddenField.setAttribute("value", _params[key]);
+          form.appendChild(hiddenField);
+          //console.log(key);
+        }
+      
+        // 隱藏的submit按鈕，預防瀏覽器不支援模糊的表單設計。（可不用）
+        var hiddenSubmit = document.createElement("input");
+        hiddenSubmit.setAttribute("type", "submit");
+        hiddenSubmit.setAttribute("style", "display:none;");
+        form.appendChild(hiddenSubmit);
+      
+        // 將表單加入網頁中
+        document.body.appendChild(form);
+      
+        // 送出請求
+        //form.submit();
+        return new Promise(function(resolve,reject){
+          fetch(`${url}`, {
+            method: "POST",
+            redirect: "follow", 
+            // mode: "no-cors", 
+            // cache: "no-cache",
+            headers: {
+              "Content-Type": "text/plain",
+            },
+            // credentials: "include",
+            body: JSON.stringify(
+              _params
+              // {"to_add": result.map(x=> [x, prize_target])}
+            )
+          })
+          .then(response => response.text())
+          .then(context => {
+            var data = JSON.parse(context);
+            resolve(data);
+          });
+      
+        })
+      };
+
+    function sys_error(msg) {
+        Swal.fire({
+                title: '系統錯誤',
+                text: msg,
+                icon: "error",
+                timer: 5000
+        }).then(function(){
+            liff.closeWindow();
+        });
+    }
+
+      var params = new URL(document.location.toString()).searchParams;
+      if (params.has("liffRedirectUri")) {
+        params = new URL(decodeURIComponent(params.get("liffRedirectUri"))).searchParams;
+      }
+      if (!params.has("liff") || !params.has("sid")) {
+        sys_error("無效參數");
+	      _continue
+      } else if (params.has("sn")) {
+	      var sn = params.get("sn");
+      } else if (params.has("liff.state")) {
+            var tmp = getAllUrlParams(decodeURIComponent(params.get("liff.state")));
+            if (tmp.sn) {
+                var sn = tmp.sn;
+            } else {
+          		sys_error("無效參數");
+          		_continue
+	          }
+      }
+      var liffId = params.get("liff");
+      var url = `https://script.google.com/macros/s/${params.get("sid")}/exec`;
+
+      
+
+    window.onload = async function (e) {
+        // load_config();
+	    getToken(liffId).then(function(params){
+		    liff.scanCodeV2().then((_otp) => {
+	           sendPost(`${url}?role=qrcode_guest_clock_in`, {"sn":sn, "otp":_otp.value, ...params}).then(function(response){
+          			  if (response.result==="Expired") {
+          			    sys_error("QRCODE已失效，請重新掃描!");
+                  } else if (response.result==="Existed") {
+          			    sys_error("您已報到成功，無須再次報到，出示通行證即可入場!");
+          			  } else if (response.result==="OK") {
+          				liff.sendMessages([
+          					response.msg
+          				])
+          				.then(() => {
+          					liff.closeWindow();
+          				})
+          				.catch((err) => {
+          					Swal.fire({
+          						  title: '系統錯誤',
+          						text: JSON.stringify(response.msg),
+          						  // text: "請重新操作",
+          						  icon: "error"
+          						  // timer: 5000
+          				  }).then(function(){
+          					  liff.closeWindow();
+          				  })
+          				});
+          			  }
+	            });
+		})
+        }).catch(function (error) {
+          Swal.fire({
+                  title: '系統錯誤',
+                  text: "請重新操作",
+                  icon: "error",
+                  timer: 5000
+          }).then(function(){
+              liff.closeWindow();
+          })
+			});
+      };
+
+
+
+</script>
+  </body>
+</html>
