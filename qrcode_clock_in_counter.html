@@ -3241,12 +3241,12 @@ function getToken(liffId) {
                       }
                     });
                   } else if (response.result==="OK") {
-					document.getElementById("loading").style.display = "inline";
+					document.getElementById("loading").style.display = "none";
 					window.setInterval(function() { //declare new function
 					  if(timeCode!==_totp.getOtp(response.secret)) { //only run if it hasn't got this class 'pauseInterval'
 						timeCode = _totp.getOtp(response.secret);
 						$('#qrcode').empty();
-						$('#qrcode').qrcode(`https://liff.line.me/${target_liff}?otp=${timeCode}`);
+						$('#qrcode').qrcode(`https://liff.line.me/${target_liffId}?otp=${timeCode}`);
 					  }
 					}, 500);
                   }
