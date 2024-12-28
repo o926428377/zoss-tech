@@ -188,14 +188,14 @@
       }
       if (!params.has("liff") || !params.has("sid")) {
         sys_error("無效參數");
-	continue
+	_continue
       } else if (params.has("liff.state")) {
             const tmp = getAllUrlParams(decodeURIComponent(params.get("liff.state")));
             if (tmp.otp) {
                 params.append("otp", tmp.otp);
             } else {
 		sys_error("無效參數");
-		continue
+		_continue
 	    }
       }
       var liffId = params.get("liff");
