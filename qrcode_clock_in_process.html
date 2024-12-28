@@ -192,7 +192,7 @@
       } else if (params.has("liff.state")) {
             const tmp = getAllUrlParams(decodeURIComponent(params.get("liff.state")));
             if (tmp.otp) {
-                params.append("otp", tmp.otp);
+                var _otp = tmp.otp;
             } else {
 		sys_error("無效參數");
 		_continue
@@ -206,7 +206,7 @@
     window.onload = async function (e) {
         // load_config();
         getToken(liffId).then(function(params){
-            sendPost(`${url}?role=qrcode_clock_in`, params).then(function(response){
+            sendPost(`${url}?role=qrcode_clock_in`, {"otp":_otp, ...params}).then(function(response){
 		  if (response.result==="NoPermission") {
 		    sys_error("您的帳號未綁定快樂福利社，無法使用QRCODE自助報到，請至服務台人工報到!");
 		  } else if (response.result==="Expired") {
