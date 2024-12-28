@@ -3180,25 +3180,8 @@ function getToken(liffId) {
         
         })
     };
-
-    var params = new URL(document.location.toString()).searchParams;
-    if (params.has("liffRedirectUri")) {
-		params = new URL(decodeURIComponent(params.get("liffRedirectUri"))).searchParams;
-    }
-    if (!params.has("liff") || !params.has("sid") || !params.has("target_liff")) {
-    Swal.fire({
-            title: '系統錯誤',
-            text: "無效參數",
-            icon: "error"
-    });
-    pause
-    }
-
-    var liffId = params.get("liff");
-	var target_liffId = params.get("target_liff");
-    var url = `https://script.google.com/macros/s/${params.get("sid")}/exec`;
-
-    function sys_error() {
+	
+	function sys_error() {
         Swal.fire({
                 title: '系統錯誤',
                 text: "請重新整理",
@@ -3208,6 +3191,25 @@ function getToken(liffId) {
             liff.closeWindow();
         });
     }
+
+    var params = new URL(document.location.toString()).searchParams;
+    if (params.has("liffRedirectUri")) {
+		params = new URL(decodeURIComponent(params.get("liffRedirectUri"))).searchParams;
+    }
+    if (!params.has("liff") || !params.has("sid") || !params.has("target_liff")) {
+		Swal.fire({
+				title: '系統錯誤',
+				text: "無效參數",
+				icon: "error"
+		});
+		pause
+    }
+
+    var liffId = params.get("liff");
+	var target_liffId = params.get("target_liff");
+    var url = `https://script.google.com/macros/s/${params.get("sid")}/exec`;
+
+
 	
 	var _totp = new Totp(30, 6);
 	var timeCode;
@@ -3219,26 +3221,34 @@ function getToken(liffId) {
                 if (typeof response.msg !== "undefined") {
                     sys_error();
                 } else {
-                  if (response.result==="NoPrize") {
+                  if (response.result==="NoPermission") {
                     Swal.fire({
-                        title: "系統錯誤",
-                        text: "查無您的中獎紀錄，請使用中獎者本人手機查詢(需完成福利社LINE@綁定)。",
-                        icon: "error",
-                        showDenyButton: false,
-                        showCancelButton: false,
-                        confirmButtonText: "關閉"
-                    }).then(function() {
-                        liff.closeWindow();
+                      title: "權限錯誤",
+                      text: "您無存取權限，請聯繫管理員開通或登入其他帳號",
+					  icon: "error",
+                      showDenyButton: true,
+                      showCancelButton: true,
+                      cancelButtonText: "關閉",
+                      confirmButtonText: "重新整理",
+                      denyButtonText: `登入其他帳號`
+                    }).then((result) => {
+                      /* Read more about isConfirmed, isDenied below */
+                      if (result.isConfirmed) {
+                        window.location = `https://liff.line.me/${liffId}`;
+                      } else if (result.isDenied) {
+                        liff.logout();
+                        window.location = `https://liff.line.me/${liffId}`;
+                      }
                     });
                   } else if (response.result==="OK") {
-						document.getElementById("loading").style.display = "inline";
-						window.setInterval(function() { //declare new function
-						  if(timeCode!==_totp.getOtp(response.secret)) { //only run if it hasn't got this class 'pauseInterval'
-							timeCode = _totp.getOtp(response.secret);
-							$('#qrcode').empty();
-							$('#qrcode').qrcode(`https://127.0.0.1/?otp=${timeCode}`);
-						  }
-						}, 500);
+					document.getElementById("loading").style.display = "inline";
+					window.setInterval(function() { //declare new function
+					  if(timeCode!==_totp.getOtp(response.secret)) { //only run if it hasn't got this class 'pauseInterval'
+						timeCode = _totp.getOtp(response.secret);
+						$('#qrcode').empty();
+						$('#qrcode').qrcode(`https://liff.line.me/${target_liff}?otp=${timeCode}`);
+					  }
+					}, 500);
                   }
                 }
             });
