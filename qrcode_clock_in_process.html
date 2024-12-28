@@ -228,9 +228,10 @@
 				.catch((err) => {
 					Swal.fire({
 						  title: '系統錯誤',
-						  text: "請重新操作",
+						text: JSON.stringify(response.msg),
+						  // text: "請重新操作",
 						  icon: "error",
-						  timer: 5000
+						  // timer: 5000
 				  }).then(function(){
 					  liff.closeWindow();
 				  })
