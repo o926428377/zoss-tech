@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>快樂48忘年會 - 中獎查詢</title>   
+    <title>快樂48忘年會 - QRCODE報到</title>   
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
@@ -14,30 +14,3097 @@
     <div class="spinner-border text-primary" id="spinner" role="status" style="width: 5rem;height: 5rem;">
     <span class="sr-only"></span>
     </div>
-    <div id="mask" class="fs-1 text-white">查詢中...</div>
+    <div id="mask" class="fs-1 text-white">登入中...</div>
     </div>
   </div>
-  <div style="width:100%;height:10.5%;" class="justify-content-center">
-    <img src="https://i.imgur.com/XAfuktm.png" style="width:100%"></img>
-<!--     <div class="fs-1" style="font-weight: bold;color:#dfc175;align-self: center;text-align: center;">中獎查詢</div> -->
+  <div class="d-flex justify-content-center">
+    <div id="qrcode" class="border border-5 border-white"></div>
   </div>
-  <div style="height: 85%;" class="py-3">
-<!--     <div id="prizes" class="position-absolute top-50 start-50 translate-middle card text-dark bg-light mb-3" style="width: 18rem;opacity: 0.85;"> -->
-    <div id="prizes" class="card text-dark bg-light mb-3" style="height: 100%;opacity: 0.85;overflow: auto;">
-        <div class="card-header">
-            <h2 class="card-title text-center">恭喜您中獎</h2>
-            <h6 class="card-subtitle mb-2 text-muted text-center"><span id="group">桶別</span> - <span id="shop">分店</span></h6>
-        </div>
-    </div>
-  </div>
-  <div style="width:100%;" class="justify-content-center">
-    <img src="https://i.imgur.com/YsAKWQX.png" style="width:100%"></img>
-<!--     <div class="fs-1" style="font-weight: bold;color:#dfc175;align-self: center;text-align: center;">中獎查詢</div> -->
-  </div>
-
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script>
-    function getToken(liffId) {
+var Totp;
+
+Totp = class Totp {
+  // pass in the secret, code dom element, ticker dom element
+  constructor(expiry = 30, length = 6) {
+    this.expiry = expiry;
+    this.length = length;
+    // validate input
+    if (this.length > 8 || this.length < 6) {
+      throw "Error: invalid code length";
+    }
+  }
+
+  dec2hex(s) {
+    return (s < 15.5 ? "0" : "") + Math.round(s).toString(16);
+  }
+
+  hex2dec(s) {
+    return parseInt(s, 16);
+  }
+
+  base32tohex(base32) {
+    var base32chars, bits, chunk, hex, i, val;
+    base32chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+    bits = "";
+    hex = "";
+    i = 0;
+    while (i < base32.length) {
+      val = base32chars.indexOf(base32.charAt(i).toUpperCase());
+      bits += this.leftpad(val.toString(2), 5, "0");
+      i++;
+    }
+    i = 0;
+    while (i + 4 <= bits.length) {
+      chunk = bits.substr(i, 4);
+      hex = hex + parseInt(chunk, 2).toString(16);
+      i += 4;
+    }
+    return hex;
+  }
+
+  leftpad(str, len, pad) {
+    if (len + 1 >= str.length) {
+      str = Array(len + 1 - str.length).join(pad) + str;
+    }
+    return str;
+  }
+
+  getOtp(secret, now = new Date().getTime()) {
+    var epoch, hmac, key, offset, otp, shaObj, time;
+    key = this.base32tohex(secret);
+    epoch = Math.round(now / 1000.0);
+    time = this.leftpad(this.dec2hex(Math.floor(epoch / this.expiry)), 16, "0");
+    shaObj = new jsSHA("SHA-1", "HEX");
+    shaObj.setHMACKey(key, "HEX");
+    shaObj.update(time);
+    hmac = shaObj.getHMAC("HEX");
+    // hmacObj = new jsSHA(time, "HEX")  # Dependency on sha.js
+    // hmac = hmacObj.getHMAC(key, "HEX", "SHA-1", "HEX")
+    if (hmac === "KEY MUST BE IN BYTE INCREMENTS") {
+      throw "Error: hex key must be in byte increments";
+    } else {
+      // return null
+      offset = this.hex2dec(hmac.substring(hmac.length - 1));
+    }
+    otp = (this.hex2dec(hmac.substr(offset * 2, 8)) & this.hex2dec("7fffffff")) + "";
+    if (otp.length > this.length) {
+      otp = otp.substr(otp.length - this.length, this.length);
+    } else {
+      otp = this.leftpad(otp, this.length, "0");
+    }
+    return otp;
+  }
+
+
+};
+
+var SUPPORTED_ALGS = 4 | 2 | 1;
+
+(function (global)
+{
+	"use strict";
+	/**
+	 * Int_64 is a object for 2 32-bit numbers emulating a 64-bit number
+	 *
+	 * @private
+	 * @constructor
+	 * @this {Int_64}
+	 * @param {number} msint_32 The most significant 32-bits of a 64-bit number
+	 * @param {number} lsint_32 The least significant 32-bits of a 64-bit number
+	 */
+	function Int_64(msint_32, lsint_32)
+	{
+		this.highOrder = msint_32;
+		this.lowOrder = lsint_32;
+	}
+
+	/**
+	 * Convert a string to an array of big-endian words
+	 *
+	 * There is a known bug with an odd number of existing bytes and using a
+	 * UTF-16 encoding.  However, this function is used such that the existing
+	 * bytes are always a result of a previous UTF-16 str2binb call and
+	 * therefore there should never be an odd number of existing bytes
+	 *
+	 * @private
+	 * @param {string} str String to be converted to binary representation
+	 * @param {string} utfType The Unicode type, UTF8 or UTF16BE, UTF16LE, to
+	 *   use to encode the source string
+	 * @param {Array.<number>} existingBin A packed int array of bytes to
+	 *   append the results to
+	 * @param {number} existingBinLen The number of bits in the existingBin
+	 *   array
+	 * @return {{value : Array.<number>, binLen : number}} Hash list where
+	 *   "value" contains the output number array and "binLen" is the binary
+	 *   length of "value"
+	 */
+	function str2binb(str, utfType, existingBin, existingBinLen)
+	{
+		var bin = [], codePnt, binArr = [], byteCnt = 0, i, j, existingByteLen,
+			intOffset, byteOffset;
+
+		bin = existingBin || [0];
+		existingBinLen = existingBinLen || 0;
+		existingByteLen = existingBinLen >>> 3;
+
+		if ("UTF8" === utfType)
+		{
+			for (i = 0; i < str.length; i += 1)
+			{
+				codePnt = str.charCodeAt(i);
+				binArr = [];
+
+				if (0x80 > codePnt)
+				{
+					binArr.push(codePnt);
+				}
+				else if (0x800 > codePnt)
+				{
+					binArr.push(0xC0 | (codePnt >>> 6));
+					binArr.push(0x80 | (codePnt & 0x3F));
+				}
+				else if ((0xd800 > codePnt) || (0xe000 <= codePnt)) {
+					binArr.push(
+						0xe0 | (codePnt >>> 12),
+						0x80 | ((codePnt >>> 6) & 0x3f),
+						0x80 | (codePnt & 0x3f)
+					);
+				}
+				else
+				{
+					i += 1;
+					codePnt = 0x10000 + (((codePnt & 0x3ff) << 10) | (str.charCodeAt(i) & 0x3ff));
+					binArr.push(
+						0xf0 | (codePnt >>> 18),
+						0x80 | ((codePnt >>> 12) & 0x3f),
+						0x80 | ((codePnt >>> 6) & 0x3f),
+						0x80 | (codePnt & 0x3f)
+					);
+				}
+
+				for (j = 0; j < binArr.length; j += 1)
+				{
+					byteOffset = byteCnt + existingByteLen;
+					intOffset = byteOffset >>> 2;
+					while (bin.length <= intOffset)
+					{
+						bin.push(0);
+					}
+					/* Known bug kicks in here */
+					bin[intOffset] |= binArr[j] << (8 * (3 - (byteOffset % 4)));
+					byteCnt += 1;
+				}
+			}
+		}
+		else if (("UTF16BE" === utfType) || "UTF16LE" === utfType)
+		{
+			for (i = 0; i < str.length; i += 1)
+			{
+				codePnt = str.charCodeAt(i);
+				/* Internally strings are UTF-16BE so only change if UTF-16LE */
+				if ("UTF16LE" === utfType)
+				{
+					j = codePnt & 0xFF;
+					codePnt = (j << 8) | (codePnt >>> 8);
+				}
+
+				byteOffset = byteCnt + existingByteLen;
+				intOffset = byteOffset >>> 2;
+				while (bin.length <= intOffset)
+				{
+					bin.push(0);
+				}
+				bin[intOffset] |= codePnt << (8 * (2 - (byteOffset % 4)));
+				byteCnt += 2;
+			}
+		}
+		return {"value" : bin, "binLen" : byteCnt * 8 + existingBinLen};
+	}
+
+	/**
+	 * Convert a hex string to an array of big-endian words
+	 *
+	 * @private
+	 * @param {string} str String to be converted to binary representation
+	 * @param {Array.<number>} existingBin A packed int array of bytes to
+	 *   append the results to
+	 * @param {number} existingBinLen The number of bits in the existingBin
+	 *   array
+	 * @return {{value : Array.<number>, binLen : number}} Hash list where
+	 *   "value" contains the output number array and "binLen" is the binary
+	 *   length of "value"
+	 */
+	function hex2binb(str, existingBin, existingBinLen)
+	{
+		var bin, length = str.length, i, num, intOffset, byteOffset,
+			existingByteLen;
+
+		bin = existingBin || [0];
+		existingBinLen = existingBinLen || 0;
+		existingByteLen = existingBinLen >>> 3;
+
+		if (0 !== (length % 2))
+		{
+			throw new Error("String of HEX type must be in byte increments");
+		}
+
+		for (i = 0; i < length; i += 2)
+		{
+			num = parseInt(str.substr(i, 2), 16);
+			if (!isNaN(num))
+			{
+				byteOffset = (i >>> 1) + existingByteLen;
+				intOffset = byteOffset >>> 2;
+				while (bin.length <= intOffset)
+				{
+					bin.push(0);
+				}
+				bin[intOffset] |= num << 8 * (3 - (byteOffset % 4));
+			}
+			else
+			{
+				throw new Error("String of HEX type contains invalid characters");
+			}
+		}
+
+		return {"value" : bin, "binLen" : length * 4 + existingBinLen};
+	}
+
+	/**
+	 * Convert a string of raw bytes to an array of big-endian words
+	 *
+	 * @private
+	 * @param {string} str String of raw bytes to be converted to binary representation
+	 * @param {Array.<number>} existingBin A packed int array of bytes to
+	 *   append the results to
+	 * @param {number} existingBinLen The number of bits in the existingBin
+	 *   array
+	 * @return {{value : Array.<number>, binLen : number}} Hash list where
+	 *   "value" contains the output number array and "binLen" is the binary
+	 *   length of "value"
+	 */
+	function bytes2binb(str, existingBin, existingBinLen)
+	{
+		var bin = [], codePnt, i, existingByteLen, intOffset,
+			byteOffset;
+
+		bin = existingBin || [0];
+		existingBinLen = existingBinLen || 0;
+		existingByteLen = existingBinLen >>> 3;
+
+		for (i = 0; i < str.length; i += 1)
+		{
+			codePnt = str.charCodeAt(i);
+
+			byteOffset = i + existingByteLen;
+			intOffset = byteOffset >>> 2;
+			if (bin.length <= intOffset)
+			{
+				bin.push(0);
+			}
+			bin[intOffset] |= codePnt << 8 * (3 - (byteOffset % 4));
+		}
+
+		return {"value" : bin, "binLen" : str.length * 8 + existingBinLen};
+	}
+
+	/**
+	 * Convert a base-64 string to an array of big-endian words
+	 *
+	 * @private
+	 * @param {string} str String to be converted to binary representation
+	 * @param {Array.<number>} existingBin A packed int array of bytes to
+	 *   append the results to
+	 * @param {number} existingBinLen The number of bits in the existingBin
+	 *   array
+	 * @return {{value : Array.<number>, binLen : number}} Hash list where
+	 *   "value" contains the output number array and "binLen" is the binary
+	 *   length of "value"
+	 */
+	function b642binb(str, existingBin, existingBinLen)
+	{
+		var bin = [], byteCnt = 0, index, i, j, tmpInt, strPart, firstEqual,
+			b64Tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
+			existingByteLen, intOffset, byteOffset;
+
+		bin = existingBin || [0];
+		existingBinLen = existingBinLen || 0;
+		existingByteLen = existingBinLen >>> 3;
+
+		if (-1 === str.search(/^[a-zA-Z0-9=+\/]+$/))
+		{
+			throw new Error("Invalid character in base-64 string");
+		}
+		firstEqual = str.indexOf('=');
+		str = str.replace(/\=/g, '');
+		if ((-1 !== firstEqual) && (firstEqual < str.length))
+		{
+			throw new Error("Invalid '=' found in base-64 string");
+		}
+
+		for (i = 0; i < str.length; i += 4)
+		{
+			strPart = str.substr(i, 4);
+			tmpInt = 0;
+
+			for (j = 0; j < strPart.length; j += 1)
+			{
+				index = b64Tab.indexOf(strPart[j]);
+				tmpInt |= index << (18 - (6 * j));
+			}
+
+			for (j = 0; j < strPart.length - 1; j += 1)
+			{
+				byteOffset = byteCnt + existingByteLen;
+				intOffset = byteOffset >>> 2;
+				while (bin.length <= intOffset)
+				{
+					bin.push(0);
+				}
+				bin[intOffset] |= ((tmpInt >>> (16 - (j * 8))) & 0xFF) <<
+					8 * (3 - (byteOffset % 4));
+				byteCnt += 1;
+			}
+		}
+
+		return {"value" : bin, "binLen" : byteCnt * 8 + existingBinLen};
+	}
+
+	/**
+	 * Convert an array of big-endian words to a hex string.
+	 *
+	 * @private
+	 * @param {Array.<number>} binarray Array of integers to be converted to
+	 *   hexidecimal representation
+	 * @param {{outputUpper : boolean, b64Pad : string}} formatOpts Hash list
+	 *   containing validated output formatting options
+	 * @return {string} Hexidecimal representation of the parameter in string
+	 *   form
+	 */
+	function binb2hex(binarray, formatOpts)
+	{
+		var hex_tab = "0123456789abcdef", str = "",
+			length = binarray.length * 4, i, srcByte;
+
+		for (i = 0; i < length; i += 1)
+		{
+			/* The below is more than a byte but it gets taken care of later */
+			srcByte = binarray[i >>> 2] >>> ((3 - (i % 4)) * 8);
+			str += hex_tab.charAt((srcByte >>> 4) & 0xF) +
+				hex_tab.charAt(srcByte & 0xF);
+		}
+
+		return (formatOpts["outputUpper"]) ? str.toUpperCase() : str;
+	}
+
+	/**
+	 * Convert an array of big-endian words to a base-64 string
+	 *
+	 * @private
+	 * @param {Array.<number>} binarray Array of integers to be converted to
+	 *   base-64 representation
+	 * @param {{outputUpper : boolean, b64Pad : string}} formatOpts Hash list
+	 *   containing validated output formatting options
+	 * @return {string} Base-64 encoded representation of the parameter in
+	 *   string form
+	 */
+	function binb2b64(binarray, formatOpts)
+	{
+		var str = "", length = binarray.length * 4, i, j, triplet, offset, int1, int2,
+			b64Tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+		for (i = 0; i < length; i += 3)
+		{
+			offset = (i + 1) >>> 2;
+			int1 = (binarray.length <= offset) ? 0 : binarray[offset];
+			offset = (i + 2) >>> 2;
+			int2 = (binarray.length <= offset) ? 0 : binarray[offset];
+			triplet = (((binarray[i >>> 2] >>> 8 * (3 - i % 4)) & 0xFF) << 16) |
+				(((int1 >>> 8 * (3 - (i + 1) % 4)) & 0xFF) << 8) |
+				((int2 >>> 8 * (3 - (i + 2) % 4)) & 0xFF);
+			for (j = 0; j < 4; j += 1)
+			{
+				if (i * 8 + j * 6 <= binarray.length * 32)
+				{
+					str += b64Tab.charAt((triplet >>> 6 * (3 - j)) & 0x3F);
+				}
+				else
+				{
+					str += formatOpts["b64Pad"];
+				}
+			}
+		}
+		return str;
+	}
+
+	/**
+	 * Convert an array of big-endian words to raw bytes string
+	 *
+	 * @private
+	 * @param {Array.<number>} binarray Array of integers to be converted to
+	 *   a raw bytes string representation
+	 * @return {string} Raw bytes representation of the parameter in string
+	 *   form
+	 */
+	function binb2bytes(binarray)
+	{
+		var str = "", length = binarray.length * 4, i, srcByte;
+
+		for (i = 0; i < length; i += 1)
+		{
+			srcByte = (binarray[i >>> 2] >>> ((3 - (i % 4)) * 8)) & 0xFF;
+			str += String.fromCharCode(srcByte);
+		}
+
+		return str;
+	}
+
+	/**
+	 * Validate hash list containing output formatting options, ensuring
+	 * presence of every option or adding the default value
+	 *
+	 * @private
+	 * @param {{outputUpper : (boolean|undefined), b64Pad : (string|undefined)}=}
+	 *   options Hash list of output formatting options
+	 * @return {{outputUpper : boolean, b64Pad : string}} Validated hash list
+	 *   containing output formatting options
+	 */
+	function getOutputOpts(options)
+	{
+		var retVal = {"outputUpper" : false, "b64Pad" : "="}, outputOptions;
+		outputOptions = options || {};
+
+		retVal["outputUpper"] = outputOptions["outputUpper"] || false;
+		retVal["b64Pad"] = outputOptions["b64Pad"] || "=";
+
+		if ("boolean" !== typeof(retVal["outputUpper"]))
+		{
+			throw new Error("Invalid outputUpper formatting option");
+		}
+
+		if ("string" !== typeof(retVal["b64Pad"]))
+		{
+			throw new Error("Invalid b64Pad formatting option");
+		}
+
+		return retVal;
+	}
+
+	/**
+	 * Function that takes an input format and UTF encoding and returns the
+	 * appropriate function used to convert the input.
+	 *
+	 * @private
+	 * @param {string} format The format of the string to be converted
+	 * @param {string} utfType The string encoding to use (UTF8, UTF16BE,
+	 *	UTF16LE)
+	 * @return {function(string, Array.<number>=, number=): {value :
+	 *   Array.<number>, binLen : number}} Function that will convert an input
+	 *   string to a packed int array
+	 */
+	function getStrConverter(format, utfType)
+	{
+		var retVal;
+
+		/* Validate encoding */
+		switch (utfType)
+		{
+		case "UTF8":
+			/* Fallthrough */
+		case "UTF16BE":
+			/* Fallthrough */
+		case "UTF16LE":
+			/* Fallthrough */
+			break;
+		default:
+			throw new Error("encoding must be UTF8, UTF16BE, or UTF16LE");
+		}
+
+		/* Map inputFormat to the appropriate converter */
+		switch (format)
+		{
+		case "HEX":
+			retVal = hex2binb;
+			break;
+		case "TEXT":
+			retVal = function(str, existingBin, existingBinLen)
+				{
+					return str2binb(str, utfType, existingBin, existingBinLen);
+				};
+			break;
+		case "B64":
+			retVal = b642binb;
+			break;
+		case "BYTES":
+			retVal = bytes2binb;
+			break;
+		default:
+			throw new Error("format must be HEX, TEXT, B64, or BYTES");
+		}
+
+		return retVal;
+	}
+
+	/**
+	 * The 32-bit implementation of circular rotate left
+	 *
+	 * @private
+	 * @param {number} x The 32-bit integer argument
+	 * @param {number} n The number of bits to shift
+	 * @return {number} The x shifted circularly by n bits
+	 */
+	function rotl_32(x, n)
+	{
+		return (x << n) | (x >>> (32 - n));
+	}
+
+	/**
+	 * The 32-bit implementation of circular rotate right
+	 *
+	 * @private
+	 * @param {number} x The 32-bit integer argument
+	 * @param {number} n The number of bits to shift
+	 * @return {number} The x shifted circularly by n bits
+	 */
+	function rotr_32(x, n)
+	{
+		return (x >>> n) | (x << (32 - n));
+	}
+
+	/**
+	 * The 64-bit implementation of circular rotate right
+	 *
+	 * @private
+	 * @param {Int_64} x The 64-bit integer argument
+	 * @param {number} n The number of bits to shift
+	 * @return {Int_64} The x shifted circularly by n bits
+	 */
+	function rotr_64(x, n)
+	{
+		var retVal = null, tmp = new Int_64(x.highOrder, x.lowOrder);
+
+		if (32 >= n)
+		{
+			retVal = new Int_64(
+					(tmp.highOrder >>> n) | ((tmp.lowOrder << (32 - n)) & 0xFFFFFFFF),
+					(tmp.lowOrder >>> n) | ((tmp.highOrder << (32 - n)) & 0xFFFFFFFF)
+				);
+		}
+		else
+		{
+			retVal = new Int_64(
+					(tmp.lowOrder >>> (n - 32)) | ((tmp.highOrder << (64 - n)) & 0xFFFFFFFF),
+					(tmp.highOrder >>> (n - 32)) | ((tmp.lowOrder << (64 - n)) & 0xFFFFFFFF)
+				);
+		}
+
+		return retVal;
+	}
+
+	/**
+	 * The 32-bit implementation of shift right
+	 *
+	 * @private
+	 * @param {number} x The 32-bit integer argument
+	 * @param {number} n The number of bits to shift
+	 * @return {number} The x shifted by n bits
+	 */
+	function shr_32(x, n)
+	{
+		return x >>> n;
+	}
+
+	/**
+	 * The 64-bit implementation of shift right
+	 *
+	 * @private
+	 * @param {Int_64} x The 64-bit integer argument
+	 * @param {number} n The number of bits to shift
+	 * @return {Int_64} The x shifted by n bits
+	 */
+	function shr_64(x, n)
+	{
+		var retVal = null;
+
+		if (32 >= n)
+		{
+			retVal = new Int_64(
+					x.highOrder >>> n,
+					x.lowOrder >>> n | ((x.highOrder << (32 - n)) & 0xFFFFFFFF)
+				);
+		}
+		else
+		{
+			retVal = new Int_64(
+					0,
+					x.highOrder >>> (n - 32)
+				);
+		}
+
+		return retVal;
+	}
+
+	/**
+	 * The 32-bit implementation of the NIST specified Parity function
+	 *
+	 * @private
+	 * @param {number} x The first 32-bit integer argument
+	 * @param {number} y The second 32-bit integer argument
+	 * @param {number} z The third 32-bit integer argument
+	 * @return {number} The NIST specified output of the function
+	 */
+	function parity_32(x, y, z)
+	{
+		return x ^ y ^ z;
+	}
+
+	/**
+	 * The 32-bit implementation of the NIST specified Ch function
+	 *
+	 * @private
+	 * @param {number} x The first 32-bit integer argument
+	 * @param {number} y The second 32-bit integer argument
+	 * @param {number} z The third 32-bit integer argument
+	 * @return {number} The NIST specified output of the function
+	 */
+	function ch_32(x, y, z)
+	{
+		return (x & y) ^ (~x & z);
+	}
+
+	/**
+	 * The 64-bit implementation of the NIST specified Ch function
+	 *
+	 * @private
+	 * @param {Int_64} x The first 64-bit integer argument
+	 * @param {Int_64} y The second 64-bit integer argument
+	 * @param {Int_64} z The third 64-bit integer argument
+	 * @return {Int_64} The NIST specified output of the function
+	 */
+	function ch_64(x, y, z)
+	{
+		return new Int_64(
+				(x.highOrder & y.highOrder) ^ (~x.highOrder & z.highOrder),
+				(x.lowOrder & y.lowOrder) ^ (~x.lowOrder & z.lowOrder)
+			);
+	}
+
+	/**
+	 * The 32-bit implementation of the NIST specified Maj function
+	 *
+	 * @private
+	 * @param {number} x The first 32-bit integer argument
+	 * @param {number} y The second 32-bit integer argument
+	 * @param {number} z The third 32-bit integer argument
+	 * @return {number} The NIST specified output of the function
+	 */
+	function maj_32(x, y, z)
+	{
+		return (x & y) ^ (x & z) ^ (y & z);
+	}
+
+	/**
+	 * The 64-bit implementation of the NIST specified Maj function
+	 *
+	 * @private
+	 * @param {Int_64} x The first 64-bit integer argument
+	 * @param {Int_64} y The second 64-bit integer argument
+	 * @param {Int_64} z The third 64-bit integer argument
+	 * @return {Int_64} The NIST specified output of the function
+	 */
+	function maj_64(x, y, z)
+	{
+		return new Int_64(
+				(x.highOrder & y.highOrder) ^
+				(x.highOrder & z.highOrder) ^
+				(y.highOrder & z.highOrder),
+				(x.lowOrder & y.lowOrder) ^
+				(x.lowOrder & z.lowOrder) ^
+				(y.lowOrder & z.lowOrder)
+			);
+	}
+
+	/**
+	 * The 32-bit implementation of the NIST specified Sigma0 function
+	 *
+	 * @private
+	 * @param {number} x The 32-bit integer argument
+	 * @return {number} The NIST specified output of the function
+	 */
+	function sigma0_32(x)
+	{
+		return rotr_32(x, 2) ^ rotr_32(x, 13) ^ rotr_32(x, 22);
+	}
+
+	/**
+	 * The 64-bit implementation of the NIST specified Sigma0 function
+	 *
+	 * @private
+	 * @param {Int_64} x The 64-bit integer argument
+	 * @return {Int_64} The NIST specified output of the function
+	 */
+	function sigma0_64(x)
+	{
+		var rotr28 = rotr_64(x, 28), rotr34 = rotr_64(x, 34),
+			rotr39 = rotr_64(x, 39);
+
+		return new Int_64(
+				rotr28.highOrder ^ rotr34.highOrder ^ rotr39.highOrder,
+				rotr28.lowOrder ^ rotr34.lowOrder ^ rotr39.lowOrder);
+	}
+
+	/**
+	 * The 32-bit implementation of the NIST specified Sigma1 function
+	 *
+	 * @private
+	 * @param {number} x The 32-bit integer argument
+	 * @return {number} The NIST specified output of the function
+	 */
+	function sigma1_32(x)
+	{
+		return rotr_32(x, 6) ^ rotr_32(x, 11) ^ rotr_32(x, 25);
+	}
+
+	/**
+	 * The 64-bit implementation of the NIST specified Sigma1 function
+	 *
+	 * @private
+	 * @param {Int_64} x The 64-bit integer argument
+	 * @return {Int_64} The NIST specified output of the function
+	 */
+	function sigma1_64(x)
+	{
+		var rotr14 = rotr_64(x, 14), rotr18 = rotr_64(x, 18),
+			rotr41 = rotr_64(x, 41);
+
+		return new Int_64(
+				rotr14.highOrder ^ rotr18.highOrder ^ rotr41.highOrder,
+				rotr14.lowOrder ^ rotr18.lowOrder ^ rotr41.lowOrder);
+	}
+
+	/**
+	 * The 32-bit implementation of the NIST specified Gamma0 function
+	 *
+	 * @private
+	 * @param {number} x The 32-bit integer argument
+	 * @return {number} The NIST specified output of the function
+	 */
+	function gamma0_32(x)
+	{
+		return rotr_32(x, 7) ^ rotr_32(x, 18) ^ shr_32(x, 3);
+	}
+
+	/**
+	 * The 64-bit implementation of the NIST specified Gamma0 function
+	 *
+	 * @private
+	 * @param {Int_64} x The 64-bit integer argument
+	 * @return {Int_64} The NIST specified output of the function
+	 */
+	function gamma0_64(x)
+	{
+		var rotr1 = rotr_64(x, 1), rotr8 = rotr_64(x, 8), shr7 = shr_64(x, 7);
+
+		return new Int_64(
+				rotr1.highOrder ^ rotr8.highOrder ^ shr7.highOrder,
+				rotr1.lowOrder ^ rotr8.lowOrder ^ shr7.lowOrder
+			);
+	}
+
+	/**
+	 * The 32-bit implementation of the NIST specified Gamma1 function
+	 *
+	 * @private
+	 * @param {number} x The 32-bit integer argument
+	 * @return {number} The NIST specified output of the function
+	 */
+	function gamma1_32(x)
+	{
+		return rotr_32(x, 17) ^ rotr_32(x, 19) ^ shr_32(x, 10);
+	}
+
+	/**
+	 * The 64-bit implementation of the NIST specified Gamma1 function
+	 *
+	 * @private
+	 * @param {Int_64} x The 64-bit integer argument
+	 * @return {Int_64} The NIST specified output of the function
+	 */
+	function gamma1_64(x)
+	{
+		var rotr19 = rotr_64(x, 19), rotr61 = rotr_64(x, 61),
+			shr6 = shr_64(x, 6);
+
+		return new Int_64(
+				rotr19.highOrder ^ rotr61.highOrder ^ shr6.highOrder,
+				rotr19.lowOrder ^ rotr61.lowOrder ^ shr6.lowOrder
+			);
+	}
+
+	/**
+	 * Add two 32-bit integers, wrapping at 2^32. This uses 16-bit operations
+	 * internally to work around bugs in some JS interpreters.
+	 *
+	 * @private
+	 * @param {number} a The first 32-bit integer argument to be added
+	 * @param {number} b The second 32-bit integer argument to be added
+	 * @return {number} The sum of a + b
+	 */
+	function safeAdd_32_2(a, b)
+	{
+		var lsw = (a & 0xFFFF) + (b & 0xFFFF),
+			msw = (a >>> 16) + (b >>> 16) + (lsw >>> 16);
+
+		return ((msw & 0xFFFF) << 16) | (lsw & 0xFFFF);
+	}
+
+	/**
+	 * Add four 32-bit integers, wrapping at 2^32. This uses 16-bit operations
+	 * internally to work around bugs in some JS interpreters.
+	 *
+	 * @private
+	 * @param {number} a The first 32-bit integer argument to be added
+	 * @param {number} b The second 32-bit integer argument to be added
+	 * @param {number} c The third 32-bit integer argument to be added
+	 * @param {number} d The fourth 32-bit integer argument to be added
+	 * @return {number} The sum of a + b + c + d
+	 */
+	function safeAdd_32_4(a, b, c, d)
+	{
+		var lsw = (a & 0xFFFF) + (b & 0xFFFF) + (c & 0xFFFF) + (d & 0xFFFF),
+			msw = (a >>> 16) + (b >>> 16) + (c >>> 16) + (d >>> 16) +
+				(lsw >>> 16);
+
+		return ((msw & 0xFFFF) << 16) | (lsw & 0xFFFF);
+	}
+
+	/**
+	 * Add five 32-bit integers, wrapping at 2^32. This uses 16-bit operations
+	 * internally to work around bugs in some JS interpreters.
+	 *
+	 * @private
+	 * @param {number} a The first 32-bit integer argument to be added
+	 * @param {number} b The second 32-bit integer argument to be added
+	 * @param {number} c The third 32-bit integer argument to be added
+	 * @param {number} d The fourth 32-bit integer argument to be added
+	 * @param {number} e The fifth 32-bit integer argument to be added
+	 * @return {number} The sum of a + b + c + d + e
+	 */
+	function safeAdd_32_5(a, b, c, d, e)
+	{
+		var lsw = (a & 0xFFFF) + (b & 0xFFFF) + (c & 0xFFFF) + (d & 0xFFFF) +
+				(e & 0xFFFF),
+			msw = (a >>> 16) + (b >>> 16) + (c >>> 16) + (d >>> 16) +
+				(e >>> 16) + (lsw >>> 16);
+
+		return ((msw & 0xFFFF) << 16) | (lsw & 0xFFFF);
+	}
+
+	/**
+	 * Add two 64-bit integers, wrapping at 2^64. This uses 16-bit operations
+	 * internally to work around bugs in some JS interpreters.
+	 *
+	 * @private
+	 * @param {Int_64} x The first 64-bit integer argument to be added
+	 * @param {Int_64} y The second 64-bit integer argument to be added
+	 * @return {Int_64} The sum of x + y
+	 */
+	function safeAdd_64_2(x, y)
+	{
+		var lsw, msw, lowOrder, highOrder;
+
+		lsw = (x.lowOrder & 0xFFFF) + (y.lowOrder & 0xFFFF);
+		msw = (x.lowOrder >>> 16) + (y.lowOrder >>> 16) + (lsw >>> 16);
+		lowOrder = ((msw & 0xFFFF) << 16) | (lsw & 0xFFFF);
+
+		lsw = (x.highOrder & 0xFFFF) + (y.highOrder & 0xFFFF) + (msw >>> 16);
+		msw = (x.highOrder >>> 16) + (y.highOrder >>> 16) + (lsw >>> 16);
+		highOrder = ((msw & 0xFFFF) << 16) | (lsw & 0xFFFF);
+
+		return new Int_64(highOrder, lowOrder);
+	}
+
+	/**
+	 * Add four 64-bit integers, wrapping at 2^64. This uses 16-bit operations
+	 * internally to work around bugs in some JS interpreters.
+	 *
+	 * @private
+	 * @param {Int_64} a The first 64-bit integer argument to be added
+	 * @param {Int_64} b The second 64-bit integer argument to be added
+	 * @param {Int_64} c The third 64-bit integer argument to be added
+	 * @param {Int_64} d The fouth 64-bit integer argument to be added
+	 * @return {Int_64} The sum of a + b + c + d
+	 */
+	function safeAdd_64_4(a, b, c, d)
+	{
+		var lsw, msw, lowOrder, highOrder;
+
+		lsw = (a.lowOrder & 0xFFFF) + (b.lowOrder & 0xFFFF) +
+			(c.lowOrder & 0xFFFF) + (d.lowOrder & 0xFFFF);
+		msw = (a.lowOrder >>> 16) + (b.lowOrder >>> 16) +
+			(c.lowOrder >>> 16) + (d.lowOrder >>> 16) + (lsw >>> 16);
+		lowOrder = ((msw & 0xFFFF) << 16) | (lsw & 0xFFFF);
+
+		lsw = (a.highOrder & 0xFFFF) + (b.highOrder & 0xFFFF) +
+			(c.highOrder & 0xFFFF) + (d.highOrder & 0xFFFF) + (msw >>> 16);
+		msw = (a.highOrder >>> 16) + (b.highOrder >>> 16) +
+			(c.highOrder >>> 16) + (d.highOrder >>> 16) + (lsw >>> 16);
+		highOrder = ((msw & 0xFFFF) << 16) | (lsw & 0xFFFF);
+
+		return new Int_64(highOrder, lowOrder);
+	}
+
+	/**
+	 * Add five 64-bit integers, wrapping at 2^64. This uses 16-bit operations
+	 * internally to work around bugs in some JS interpreters.
+	 *
+	 * @private
+	 * @param {Int_64} a The first 64-bit integer argument to be added
+	 * @param {Int_64} b The second 64-bit integer argument to be added
+	 * @param {Int_64} c The third 64-bit integer argument to be added
+	 * @param {Int_64} d The fouth 64-bit integer argument to be added
+	 * @param {Int_64} e The fouth 64-bit integer argument to be added
+	 * @return {Int_64} The sum of a + b + c + d + e
+	 */
+	function safeAdd_64_5(a, b, c, d, e)
+	{
+		var lsw, msw, lowOrder, highOrder;
+
+		lsw = (a.lowOrder & 0xFFFF) + (b.lowOrder & 0xFFFF) +
+			(c.lowOrder & 0xFFFF) + (d.lowOrder & 0xFFFF) +
+			(e.lowOrder & 0xFFFF);
+		msw = (a.lowOrder >>> 16) + (b.lowOrder >>> 16) +
+			(c.lowOrder >>> 16) + (d.lowOrder >>> 16) + (e.lowOrder >>> 16) +
+			(lsw >>> 16);
+		lowOrder = ((msw & 0xFFFF) << 16) | (lsw & 0xFFFF);
+
+		lsw = (a.highOrder & 0xFFFF) + (b.highOrder & 0xFFFF) +
+			(c.highOrder & 0xFFFF) + (d.highOrder & 0xFFFF) +
+			(e.highOrder & 0xFFFF) + (msw >>> 16);
+		msw = (a.highOrder >>> 16) + (b.highOrder >>> 16) +
+			(c.highOrder >>> 16) + (d.highOrder >>> 16) +
+			(e.highOrder >>> 16) + (lsw >>> 16);
+		highOrder = ((msw & 0xFFFF) << 16) | (lsw & 0xFFFF);
+
+		return new Int_64(highOrder, lowOrder);
+	}
+
+	/**
+	 * Gets the H values for the specified SHA variant
+	 *
+	 * @param {string} variant The SHA variant
+	 * @return {Array.<number|Int_64>} The initial H values
+	 */
+	function getH(variant)
+	{
+		var retVal, H_trunc, H_full;
+
+		if (("SHA-1" === variant) && (1 & SUPPORTED_ALGS))
+		{
+			retVal = [
+				0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0
+			];
+		}
+		else if (6 & SUPPORTED_ALGS)
+		{
+			H_trunc = [
+				0xc1059ed8, 0x367cd507, 0x3070dd17, 0xf70e5939,
+				0xffc00b31, 0x68581511, 0x64f98fa7, 0xbefa4fa4
+			];
+			H_full = [
+				0x6A09E667, 0xBB67AE85, 0x3C6EF372, 0xA54FF53A,
+				0x510E527F, 0x9B05688C, 0x1F83D9AB, 0x5BE0CD19
+			];
+
+			switch (variant)
+			{
+			case "SHA-224":
+				retVal = H_trunc;
+				break;
+			case "SHA-256":
+				retVal = H_full;
+				break;
+			case "SHA-384":
+				retVal = [
+					new Int_64(0xcbbb9d5d, H_trunc[0]),
+					new Int_64(0x0629a292a, H_trunc[1]),
+					new Int_64(0x9159015a, H_trunc[2]),
+					new Int_64(0x0152fecd8, H_trunc[3]),
+					new Int_64(0x67332667, H_trunc[4]),
+					new Int_64(0x98eb44a87, H_trunc[5]),
+					new Int_64(0xdb0c2e0d, H_trunc[6]),
+					new Int_64(0x047b5481d, H_trunc[7])
+				];
+				break;
+			case "SHA-512":
+				retVal = [
+					new Int_64(H_full[0], 0xf3bcc908),
+					new Int_64(H_full[1], 0x84caa73b),
+					new Int_64(H_full[2], 0xfe94f82b),
+					new Int_64(H_full[3], 0x5f1d36f1),
+					new Int_64(H_full[4], 0xade682d1),
+					new Int_64(H_full[5], 0x2b3e6c1f),
+					new Int_64(H_full[6], 0xfb41bd6b),
+					new Int_64(H_full[7], 0x137e2179)
+				];
+				break;
+			default:
+				throw new Error("Unknown SHA variant");
+			}
+		}
+		else
+		{
+			throw new Error("No SHA variants supported");
+		}
+
+		return retVal;
+	}
+
+	/**
+	 * Performs a round of SHA-1 hashing over a 512-byte block
+	 *
+	 * @private
+	 * @param {Array.<number>} block The binary array representation of the
+	 *   block to hash
+	 * @param {Array.<number>} H The intermediate H values from a previous
+	 *   round
+	 * @return {Array.<number>} The resulting H values
+	 */
+	function roundSHA1(block, H)
+	{
+		var W = [], a, b, c, d, e, T, ch = ch_32, parity = parity_32,
+			maj = maj_32, rotl = rotl_32, safeAdd_2 = safeAdd_32_2, t,
+			safeAdd_5 = safeAdd_32_5;
+
+		a = H[0];
+		b = H[1];
+		c = H[2];
+		d = H[3];
+		e = H[4];
+
+		for (t = 0; t < 80; t += 1)
+		{
+			if (t < 16)
+			{
+				W[t] = block[t];
+			}
+			else
+			{
+				W[t] = rotl(W[t - 3] ^ W[t - 8] ^ W[t - 14] ^ W[t - 16], 1);
+			}
+
+			if (t < 20)
+			{
+				T = safeAdd_5(rotl(a, 5), ch(b, c, d), e, 0x5a827999, W[t]);
+			}
+			else if (t < 40)
+			{
+				T = safeAdd_5(rotl(a, 5), parity(b, c, d), e, 0x6ed9eba1, W[t]);
+			}
+			else if (t < 60)
+			{
+				T = safeAdd_5(rotl(a, 5), maj(b, c, d), e, 0x8f1bbcdc, W[t]);
+			} else {
+				T = safeAdd_5(rotl(a, 5), parity(b, c, d), e, 0xca62c1d6, W[t]);
+			}
+
+			e = d;
+			d = c;
+			c = rotl(b, 30);
+			b = a;
+			a = T;
+		}
+
+		H[0] = safeAdd_2(a, H[0]);
+		H[1] = safeAdd_2(b, H[1]);
+		H[2] = safeAdd_2(c, H[2]);
+		H[3] = safeAdd_2(d, H[3]);
+		H[4] = safeAdd_2(e, H[4]);
+
+		return H;
+	}
+
+	/**
+	 * Finalizes the SHA-1 hash
+	 *
+	 * @private
+	 * @param {Array.<number>} remainder Any leftover unprocessed packed ints
+	 *   that still need to be processed
+	 * @param {number} remainderBinLen The number of bits in remainder
+	 * @param {number} processedBinLen The number of bits already
+	 *   processed
+	 * @param {Array.<number>} H The intermediate H values from a previous
+	 *   round
+	 * @return {Array.<number>} The array of integers representing the SHA-1
+	 *   hash of message
+	 */
+	function finalizeSHA1(remainder, remainderBinLen, processedBinLen, H)
+	{
+		var i, appendedMessageLength, offset;
+
+		/* The 65 addition is a hack but it works.  The correct number is
+		   actually 72 (64 + 8) but the below math fails if
+		   remainderBinLen + 72 % 512 = 0. Since remainderBinLen % 8 = 0,
+		   "shorting" the addition is OK. */
+		offset = (((remainderBinLen + 65) >>> 9) << 4) + 15;
+		while (remainder.length <= offset)
+		{
+			remainder.push(0);
+		}
+		/* Append '1' at the end of the binary string */
+		remainder[remainderBinLen >>> 5] |= 0x80 << (24 - (remainderBinLen % 32));
+		/* Append length of binary string in the position such that the new
+		length is a multiple of 512.  Logic does not work for even multiples
+		of 512 but there can never be even multiples of 512 */
+		remainder[offset] = remainderBinLen + processedBinLen;
+
+		appendedMessageLength = remainder.length;
+
+		/* This will always be at least 1 full chunk */
+		for (i = 0; i < appendedMessageLength; i += 16)
+		{
+			H = roundSHA1(remainder.slice(i, i + 16), H);
+		}
+
+		return H;
+	}
+
+	/* Put this here so the K arrays aren't put on the stack for every block */
+	var K_sha2, K_sha512;
+	if (6 & SUPPORTED_ALGS)
+	{
+		K_sha2 = [
+			0x428A2F98, 0x71374491, 0xB5C0FBCF, 0xE9B5DBA5,
+			0x3956C25B, 0x59F111F1, 0x923F82A4, 0xAB1C5ED5,
+			0xD807AA98, 0x12835B01, 0x243185BE, 0x550C7DC3,
+			0x72BE5D74, 0x80DEB1FE, 0x9BDC06A7, 0xC19BF174,
+			0xE49B69C1, 0xEFBE4786, 0x0FC19DC6, 0x240CA1CC,
+			0x2DE92C6F, 0x4A7484AA, 0x5CB0A9DC, 0x76F988DA,
+			0x983E5152, 0xA831C66D, 0xB00327C8, 0xBF597FC7,
+			0xC6E00BF3, 0xD5A79147, 0x06CA6351, 0x14292967,
+			0x27B70A85, 0x2E1B2138, 0x4D2C6DFC, 0x53380D13,
+			0x650A7354, 0x766A0ABB, 0x81C2C92E, 0x92722C85,
+			0xA2BFE8A1, 0xA81A664B, 0xC24B8B70, 0xC76C51A3,
+			0xD192E819, 0xD6990624, 0xF40E3585, 0x106AA070,
+			0x19A4C116, 0x1E376C08, 0x2748774C, 0x34B0BCB5,
+			0x391C0CB3, 0x4ED8AA4A, 0x5B9CCA4F, 0x682E6FF3,
+			0x748F82EE, 0x78A5636F, 0x84C87814, 0x8CC70208,
+			0x90BEFFFA, 0xA4506CEB, 0xBEF9A3F7, 0xC67178F2
+		];
+
+		if (4 & SUPPORTED_ALGS)
+		{
+			 K_sha512 = [
+				new Int_64(K_sha2[ 0], 0xd728ae22), new Int_64(K_sha2[ 1], 0x23ef65cd),
+				new Int_64(K_sha2[ 2], 0xec4d3b2f), new Int_64(K_sha2[ 3], 0x8189dbbc),
+				new Int_64(K_sha2[ 4], 0xf348b538), new Int_64(K_sha2[ 5], 0xb605d019),
+				new Int_64(K_sha2[ 6], 0xaf194f9b), new Int_64(K_sha2[ 7], 0xda6d8118),
+				new Int_64(K_sha2[ 8], 0xa3030242), new Int_64(K_sha2[ 9], 0x45706fbe),
+				new Int_64(K_sha2[10], 0x4ee4b28c), new Int_64(K_sha2[11], 0xd5ffb4e2),
+				new Int_64(K_sha2[12], 0xf27b896f), new Int_64(K_sha2[13], 0x3b1696b1),
+				new Int_64(K_sha2[14], 0x25c71235), new Int_64(K_sha2[15], 0xcf692694),
+				new Int_64(K_sha2[16], 0x9ef14ad2), new Int_64(K_sha2[17], 0x384f25e3),
+				new Int_64(K_sha2[18], 0x8b8cd5b5), new Int_64(K_sha2[19], 0x77ac9c65),
+				new Int_64(K_sha2[20], 0x592b0275), new Int_64(K_sha2[21], 0x6ea6e483),
+				new Int_64(K_sha2[22], 0xbd41fbd4), new Int_64(K_sha2[23], 0x831153b5),
+				new Int_64(K_sha2[24], 0xee66dfab), new Int_64(K_sha2[25], 0x2db43210),
+				new Int_64(K_sha2[26], 0x98fb213f), new Int_64(K_sha2[27], 0xbeef0ee4),
+				new Int_64(K_sha2[28], 0x3da88fc2), new Int_64(K_sha2[29], 0x930aa725),
+				new Int_64(K_sha2[30], 0xe003826f), new Int_64(K_sha2[31], 0x0a0e6e70),
+				new Int_64(K_sha2[32], 0x46d22ffc), new Int_64(K_sha2[33], 0x5c26c926),
+				new Int_64(K_sha2[34], 0x5ac42aed), new Int_64(K_sha2[35], 0x9d95b3df),
+				new Int_64(K_sha2[36], 0x8baf63de), new Int_64(K_sha2[37], 0x3c77b2a8),
+				new Int_64(K_sha2[38], 0x47edaee6), new Int_64(K_sha2[39], 0x1482353b),
+				new Int_64(K_sha2[40], 0x4cf10364), new Int_64(K_sha2[41], 0xbc423001),
+				new Int_64(K_sha2[42], 0xd0f89791), new Int_64(K_sha2[43], 0x0654be30),
+				new Int_64(K_sha2[44], 0xd6ef5218), new Int_64(K_sha2[45], 0x5565a910),
+				new Int_64(K_sha2[46], 0x5771202a), new Int_64(K_sha2[47], 0x32bbd1b8),
+				new Int_64(K_sha2[48], 0xb8d2d0c8), new Int_64(K_sha2[49], 0x5141ab53),
+				new Int_64(K_sha2[50], 0xdf8eeb99), new Int_64(K_sha2[51], 0xe19b48a8),
+				new Int_64(K_sha2[52], 0xc5c95a63), new Int_64(K_sha2[53], 0xe3418acb),
+				new Int_64(K_sha2[54], 0x7763e373), new Int_64(K_sha2[55], 0xd6b2b8a3),
+				new Int_64(K_sha2[56], 0x5defb2fc), new Int_64(K_sha2[57], 0x43172f60),
+				new Int_64(K_sha2[58], 0xa1f0ab72), new Int_64(K_sha2[59], 0x1a6439ec),
+				new Int_64(K_sha2[60], 0x23631e28), new Int_64(K_sha2[61], 0xde82bde9),
+				new Int_64(K_sha2[62], 0xb2c67915), new Int_64(K_sha2[63], 0xe372532b),
+				new Int_64(0xca273ece, 0xea26619c), new Int_64(0xd186b8c7, 0x21c0c207),
+				new Int_64(0xeada7dd6, 0xcde0eb1e), new Int_64(0xf57d4f7f, 0xee6ed178),
+				new Int_64(0x06f067aa, 0x72176fba), new Int_64(0x0a637dc5, 0xa2c898a6),
+				new Int_64(0x113f9804, 0xbef90dae), new Int_64(0x1b710b35, 0x131c471b),
+				new Int_64(0x28db77f5, 0x23047d84), new Int_64(0x32caab7b, 0x40c72493),
+				new Int_64(0x3c9ebe0a, 0x15c9bebc), new Int_64(0x431d67c4, 0x9c100d4c),
+				new Int_64(0x4cc5d4be, 0xcb3e42b6), new Int_64(0x597f299c, 0xfc657e2a),
+				new Int_64(0x5fcb6fab, 0x3ad6faec), new Int_64(0x6c44198c, 0x4a475817)
+			];
+		}
+	}
+
+	/**
+	 * Performs a round of SHA-2 hashing over a block
+	 *
+	 * @private
+	 * @param {Array.<number>} block The binary array representation of the
+	 *   block to hash
+	 * @param {Array.<number|Int_64>} H The intermediate H values from a previous
+	 *   round
+	 * @param {string} variant The desired SHA-2 variant
+	 * @return {Array.<number|Int_64>} The resulting H values
+	 */
+	function roundSHA2(block, H, variant)
+	{
+		var a, b, c, d, e, f, g, h, T1, T2, numRounds, t, binaryStringMult,
+			safeAdd_2, safeAdd_4, safeAdd_5, gamma0, gamma1, sigma0, sigma1,
+			ch, maj, Int, W = [], int1, int2, offset, K;
+
+		/* Set up the various function handles and variable for the specific
+		 * variant */
+		if ((variant === "SHA-224" || variant === "SHA-256") &&
+			(2 & SUPPORTED_ALGS))
+		{
+			/* 32-bit variant */
+			numRounds = 64;
+			binaryStringMult = 1;
+			Int = Number;
+			safeAdd_2 = safeAdd_32_2;
+			safeAdd_4 = safeAdd_32_4;
+			safeAdd_5 = safeAdd_32_5;
+			gamma0 = gamma0_32;
+			gamma1 = gamma1_32;
+			sigma0 = sigma0_32;
+			sigma1 = sigma1_32;
+			maj = maj_32;
+			ch = ch_32;
+			K = K_sha2;
+		}
+		else if ((variant === "SHA-384" || variant === "SHA-512") &&
+			(4 & SUPPORTED_ALGS))
+		{
+			/* 64-bit variant */
+			numRounds = 80;
+			binaryStringMult = 2;
+			Int = Int_64;
+			safeAdd_2 = safeAdd_64_2;
+			safeAdd_4 = safeAdd_64_4;
+			safeAdd_5 = safeAdd_64_5;
+			gamma0 = gamma0_64;
+			gamma1 = gamma1_64;
+			sigma0 = sigma0_64;
+			sigma1 = sigma1_64;
+			maj = maj_64;
+			ch = ch_64;
+			K = K_sha512;
+		}
+		else
+		{
+			throw new Error("Unexpected error in SHA-2 implementation");
+		}
+
+		a = H[0];
+		b = H[1];
+		c = H[2];
+		d = H[3];
+		e = H[4];
+		f = H[5];
+		g = H[6];
+		h = H[7];
+
+		for (t = 0; t < numRounds; t += 1)
+		{
+			if (t < 16)
+			{
+				offset = t * binaryStringMult;
+				int1 = (block.length <= offset) ? 0 : block[offset];
+				int2 = (block.length <= offset + 1) ? 0 : block[offset + 1];
+				/* Bit of a hack - for 32-bit, the second term is ignored */
+				W[t] = new Int(int1, int2);
+			}
+			else
+			{
+				W[t] = safeAdd_4(
+						gamma1(W[t - 2]), W[t - 7],
+						gamma0(W[t - 15]), W[t - 16]
+					);
+			}
+
+			T1 = safeAdd_5(h, sigma1(e), ch(e, f, g), K[t], W[t]);
+			T2 = safeAdd_2(sigma0(a), maj(a, b, c));
+			h = g;
+			g = f;
+			f = e;
+			e = safeAdd_2(d, T1);
+			d = c;
+			c = b;
+			b = a;
+			a = safeAdd_2(T1, T2);
+		}
+
+		H[0] = safeAdd_2(a, H[0]);
+		H[1] = safeAdd_2(b, H[1]);
+		H[2] = safeAdd_2(c, H[2]);
+		H[3] = safeAdd_2(d, H[3]);
+		H[4] = safeAdd_2(e, H[4]);
+		H[5] = safeAdd_2(f, H[5]);
+		H[6] = safeAdd_2(g, H[6]);
+		H[7] = safeAdd_2(h, H[7]);
+
+		return H;
+	}
+
+	/**
+	 * Finalizes the SHA-2 hash
+	 *
+	 * @private
+	 * @param {Array.<number>} remainder Any leftover unprocessed packed ints
+	 *   that still need to be processed
+	 * @param {number} remainderBinLen The number of bits in remainder
+	 * @param {number} processedBinLen The number of bits already
+	 *   processed
+	 * @param {Array.<number|Int_64>} H The intermediate H values from a previous
+	 *   round
+	 * @param {string} variant The desired SHA-2 variant
+	 * @return {Array.<number>} The array of integers representing the SHA-2
+	 *   hash of message
+	 */
+	function finalizeSHA2(remainder, remainderBinLen, processedBinLen, H, variant)
+	{
+		var i, appendedMessageLength, offset, retVal, binaryStringInc;
+
+		if ((variant === "SHA-224" || variant === "SHA-256") &&
+			(2 & SUPPORTED_ALGS))
+		{
+			/* 32-bit variant */
+			/* The 65 addition is a hack but it works.  The correct number is
+			   actually 72 (64 + 8) but the below math fails if
+			   remainderBinLen + 72 % 512 = 0. Since remainderBinLen % 8 = 0,
+			   "shorting" the addition is OK. */
+			offset = (((remainderBinLen + 65) >>> 9) << 4) + 15;;
+			binaryStringInc = 16;
+		}
+		else if ((variant === "SHA-384" || variant === "SHA-512") &&
+			(4 & SUPPORTED_ALGS))
+		{
+			/* 64-bit variant */
+			/* The 129 addition is a hack but it works.  The correct number is
+			   actually 136 (128 + 8) but the below math fails if
+			   remainderBinLen + 136 % 1024 = 0. Since remainderBinLen % 8 = 0,
+			   "shorting" the addition is OK. */
+			offset = (((remainderBinLen + 129) >>> 10) << 5) + 31;
+			binaryStringInc = 32;
+		}
+		else
+		{
+			throw new Error("Unexpected error in SHA-2 implementation");
+		}
+
+		while (remainder.length <= offset)
+		{
+			remainder.push(0);
+		}
+		/* Append '1' at the end of the binary string */
+		remainder[remainderBinLen >>> 5] |= 0x80 << (24 - remainderBinLen % 32);
+		/* Append length of binary string in the position such that the new
+		 * length is correct */
+		remainder[offset] = remainderBinLen + processedBinLen;
+
+		appendedMessageLength = remainder.length;
+
+		/* This will always be at least 1 full chunk */
+		for (i = 0; i < appendedMessageLength; i += binaryStringInc)
+		{
+			H = roundSHA2(remainder.slice(i, i + binaryStringInc), H, variant);
+		}
+
+		if (("SHA-224" === variant) && (2 & SUPPORTED_ALGS))
+		{
+			retVal = [
+				H[0], H[1], H[2], H[3],
+				H[4], H[5], H[6]
+			];
+		}
+		else if (("SHA-256" === variant) && (2 & SUPPORTED_ALGS))
+		{
+			retVal = H;
+		}
+		else if (("SHA-384" === variant) && (4 & SUPPORTED_ALGS))
+		{
+			retVal = [
+				H[0].highOrder, H[0].lowOrder,
+				H[1].highOrder, H[1].lowOrder,
+				H[2].highOrder, H[2].lowOrder,
+				H[3].highOrder, H[3].lowOrder,
+				H[4].highOrder, H[4].lowOrder,
+				H[5].highOrder, H[5].lowOrder
+			];
+		}
+		else if (("SHA-512" === variant) && (4 & SUPPORTED_ALGS))
+		{
+			retVal = [
+				H[0].highOrder, H[0].lowOrder,
+				H[1].highOrder, H[1].lowOrder,
+				H[2].highOrder, H[2].lowOrder,
+				H[3].highOrder, H[3].lowOrder,
+				H[4].highOrder, H[4].lowOrder,
+				H[5].highOrder, H[5].lowOrder,
+				H[6].highOrder, H[6].lowOrder,
+				H[7].highOrder, H[7].lowOrder
+			];
+		}
+		else /* This should never be reached */
+		{
+			throw new Error("Unexpected error in SHA-2 implementation");
+		}
+
+		return retVal;
+	}
+
+	/**
+	 * jsSHA is the workhorse of the library.  Instantiate it with the string to
+	 * be hashed as the parameter
+	 *
+	 * @constructor
+	 * @this {jsSHA}
+	 * @param {string} variant The desired SHA variant (SHA-1, SHA-224, SHA-256,
+	 *   SHA-384, or SHA-512)
+	 * @param {string} inputFormat The format of srcString: HEX, TEXT, B64, or BYTES
+	 * @param {{encoding: (string|undefined), numRounds: (string|undefined)}=}
+	 *   options Optional values
+	 */
+	var jsSHA = function(variant, inputFormat, options)
+	{
+		var processedLen = 0, remainder = [], remainderLen = 0, utfType,
+			intermediateH, converterFunc, shaVariant = variant, outputBinLen,
+			variantBlockSize, roundFunc, finalizeFunc, finalized = false,
+			hmacKeySet = false, keyWithIPad = [], keyWithOPad = [], numRounds,
+			updatedCalled = false, inputOptions;
+
+		inputOptions = options || {};
+		utfType = inputOptions["encoding"] || "UTF8";
+		numRounds = inputOptions["numRounds"] || 1;
+
+		converterFunc = getStrConverter(inputFormat, utfType);
+
+		if ((numRounds !== parseInt(numRounds, 10)) || (1 > numRounds))
+		{
+			throw new Error("numRounds must a integer >= 1");
+		}
+
+		if (("SHA-1" === shaVariant) && (1 & SUPPORTED_ALGS))
+		{
+			variantBlockSize = 512;
+			roundFunc = roundSHA1;
+			finalizeFunc = finalizeSHA1;
+			outputBinLen = 160;
+		}
+		else
+		{
+			if (6 & SUPPORTED_ALGS)
+			{
+				roundFunc = function (block, H) {
+					return roundSHA2(block, H, shaVariant);
+				};
+				finalizeFunc = function (remainder, remainderBinLen, processedBinLen, H)
+				{
+					return finalizeSHA2(remainder, remainderBinLen, processedBinLen, H, shaVariant);
+				};
+			}
+
+			if (("SHA-224" === shaVariant) && (2 & SUPPORTED_ALGS))
+			{
+				variantBlockSize = 512;
+				outputBinLen = 224;
+			}
+			else if (("SHA-256" === shaVariant) && (2 & SUPPORTED_ALGS))
+			{
+				variantBlockSize = 512;
+				outputBinLen = 256;
+			}
+			else if (("SHA-384" === shaVariant) && (4 & SUPPORTED_ALGS))
+			{
+				variantBlockSize = 1024;
+				outputBinLen = 384;
+			}
+			else if (("SHA-512" === shaVariant) && (4 & SUPPORTED_ALGS))
+			{
+				variantBlockSize = 1024;
+				outputBinLen = 512;
+			}
+			else
+			{
+				throw new Error("Chosen SHA variant is not supported");
+			}
+		}
+
+		intermediateH = getH(shaVariant);
+
+		/**
+		 * Sets the HMAC key for an eventual getHMAC call.  Must be called
+		 * immediately after jsSHA object instantiation
+		 *
+		 * @expose
+		 * @param {string} key The key used to calculate the HMAC
+		 * @param {string} inputFormat The format of key, HEX, TEXT, B64, or BYTES
+		 * @param {{encoding : (string|undefined)}=} options Associative array
+		 *   of input format options
+		 */
+		this.setHMACKey = function(key, inputFormat, options)
+		{
+			var keyConverterFunc, convertRet, keyBinLen, keyToUse, blockByteSize,
+				i, lastArrayIndex, keyOptions;
+
+			if (true === hmacKeySet)
+			{
+				throw new Error("HMAC key already set");
+			}
+
+			if (true === finalized)
+			{
+				throw new Error("Cannot set HMAC key after finalizing hash");
+			}
+
+			if (true === updatedCalled)
+			{
+				throw new Error("Cannot set HMAC key after calling update");
+			}
+
+			keyOptions = options || {};
+			utfType = keyOptions["encoding"] || "UTF8";
+
+			keyConverterFunc = getStrConverter(inputFormat, utfType);
+
+			convertRet = keyConverterFunc(key);
+			keyBinLen = convertRet["binLen"];
+			keyToUse = convertRet["value"];
+
+			blockByteSize = variantBlockSize >>> 3;
+
+			/* These are used multiple times, calculate and store them */
+			lastArrayIndex = (blockByteSize / 4) - 1;
+
+			/* Figure out what to do with the key based on its size relative to
+			 * the hash's block size */
+			if (blockByteSize < (keyBinLen / 8))
+			{
+				keyToUse = finalizeFunc(keyToUse, keyBinLen, 0, getH(shaVariant));
+				/* For all variants, the block size is bigger than the output
+				 * size so there will never be a useful byte at the end of the
+				 * string */
+				while (keyToUse.length <= lastArrayIndex)
+				{
+					keyToUse.push(0);
+				}
+				keyToUse[lastArrayIndex] &= 0xFFFFFF00;
+			}
+			else if (blockByteSize > (keyBinLen / 8))
+			{
+				/* If the blockByteSize is greater than the key length, there
+				 * will always be at LEAST one "useless" byte at the end of the
+				 * string */
+				while (keyToUse.length <= lastArrayIndex)
+				{
+					keyToUse.push(0);
+				}
+				keyToUse[lastArrayIndex] &= 0xFFFFFF00;
+			}
+
+			/* Create ipad and opad */
+			for (i = 0; i <= lastArrayIndex; i += 1)
+			{
+				keyWithIPad[i] = keyToUse[i] ^ 0x36363636;
+				keyWithOPad[i] = keyToUse[i] ^ 0x5C5C5C5C;
+			}
+
+			intermediateH = roundFunc(keyWithIPad, intermediateH);
+			processedLen = variantBlockSize;
+
+			hmacKeySet = true;
+		};
+
+		/**
+		 * Takes strString and hashes as many blocks as possible.  Stores the
+		 * rest for either a future update or getHash call.
+		 *
+		 * @expose
+		 * @param {string} srcString The string to be hashed
+		 */
+		this.update = function(srcString)
+		{
+			var convertRet, chunkBinLen, chunkIntLen, chunk, i, updateProcessedLen = 0,
+				variantBlockIntInc = variantBlockSize >>> 5;
+
+			convertRet = converterFunc(srcString, remainder, remainderLen);
+			chunkBinLen = convertRet["binLen"];
+			chunk = convertRet["value"];
+
+			chunkIntLen = chunkBinLen >>> 5;
+			for (i = 0; i < chunkIntLen; i += variantBlockIntInc)
+			{
+				if (updateProcessedLen + variantBlockSize <= chunkBinLen)
+				{
+					intermediateH = roundFunc(
+						chunk.slice(i, i + variantBlockIntInc),
+						intermediateH
+					);
+					updateProcessedLen += variantBlockSize;
+				}
+			}
+			processedLen += updateProcessedLen;
+			remainder = chunk.slice(updateProcessedLen >>> 5);
+			remainderLen = chunkBinLen % variantBlockSize;
+			updatedCalled = true;
+		};
+
+		/**
+		 * Returns the desired SHA hash of the string specified at instantiation
+		 * using the specified parameters
+		 *
+		 * @expose
+		 * @param {string} format The desired output formatting (B64, HEX, or BYTES)
+		 * @param {{outputUpper : (boolean|undefined), b64Pad : (string|undefined)}=}
+		 *   options Hash list of output formatting options
+		 * @return {string} The string representation of the hash in the format
+		 *   specified
+		 */
+		this.getHash = function(format, options)
+		{
+			var formatFunc, i, outputOptions;
+
+			if (true === hmacKeySet)
+			{
+				throw new Error("Cannot call getHash after setting HMAC key");
+			}
+
+			outputOptions = getOutputOpts(options);
+
+			/* Validate the output format selection */
+			switch (format)
+			{
+			case "HEX":
+				formatFunc = function(binarray) {return binb2hex(binarray, outputOptions);};
+				break;
+			case "B64":
+				formatFunc = function(binarray) {return binb2b64(binarray, outputOptions);};
+				break;
+			case "BYTES":
+				formatFunc = binb2bytes;
+				break;
+			default:
+				throw new Error("format must be HEX, B64, or BYTES");
+			}
+
+			if (false === finalized)
+			{
+				intermediateH = finalizeFunc(remainder, remainderLen, processedLen, intermediateH);
+				for (i = 1; i < numRounds; i += 1)
+				{
+					intermediateH = finalizeFunc(intermediateH, outputBinLen, 0, getH(shaVariant));
+				}
+			}
+
+			finalized = true;
+			return formatFunc(intermediateH);
+		};
+
+		/**
+		 * Returns the the HMAC in the specified format using the key given by
+		 * a previous setHMACKey call.
+		 *
+		 * @expose
+		 * @param {string} format The desired output formatting
+		 *   (B64, HEX, or BYTES)
+		 * @param {{outputUpper : (boolean|undefined), b64Pad : (string|undefined)}=}
+		 *   options associative array of output formatting options
+		 * @return {string} The string representation of the hash in the format
+		 *   specified
+		 */
+		this.getHMAC = function(format, options)
+		{
+			var formatFunc,	firstHash, outputOptions;
+
+			if (false === hmacKeySet)
+			{
+				throw new Error("Cannot call getHMAC without first setting HMAC key");
+			}
+
+			outputOptions = getOutputOpts(options);
+
+			/* Validate the output format selection */
+			switch (format)
+			{
+			case "HEX":
+				formatFunc = function(binarray) {return binb2hex(binarray, outputOptions);};
+				break;
+			case "B64":
+				formatFunc = function(binarray) {return binb2b64(binarray, outputOptions);};
+				break;
+			case "BYTES":
+				formatFunc = binb2bytes;
+				break;
+			default:
+				throw new Error("outputFormat must be HEX, B64, or BYTES");
+			}
+
+			if (false === finalized)
+			{
+				firstHash = finalizeFunc(remainder, remainderLen, processedLen, intermediateH);
+				intermediateH = roundFunc(keyWithOPad, getH(shaVariant));
+				intermediateH = finalizeFunc(firstHash, outputBinLen, variantBlockSize, intermediateH);
+			}
+
+			finalized = true;
+			return formatFunc(intermediateH);
+		};
+	};
+
+	if (("function" === typeof define) && (define["amd"])) /* AMD Support */
+	{
+		define(function()
+		{
+			return jsSHA;
+		});
+	} else if ("undefined" !== typeof exports) /* Node Support */
+	{
+		if (("undefined" !== typeof module) && module["exports"])
+		{
+		  module["exports"] = exports = jsSHA;
+		}
+		else {
+			exports = jsSHA;
+		}
+	} else { /* Browsers and Web Workers*/
+		global["jsSHA"] = jsSHA;
+	}
+}(this));
+
+(function( $ ){
+	$.fn.qrcode = function(options) {
+		// if options is string, 
+		if( typeof options === 'string' ){
+			options	= { text: options };
+		}
+
+		// set default values
+		// typeNumber < 1 for automatic calculation
+		options	= $.extend( {}, {
+			render		: "canvas",
+			width		: 256,
+			height		: 256,
+			typeNumber	: -1,
+			correctLevel	: QRErrorCorrectLevel.H,
+                        background      : "#ffffff",
+                        foreground      : "#000000"
+		}, options);
+
+		var createCanvas	= function(){
+			// create the qrcode itself
+			var qrcode	= new QRCode(options.typeNumber, options.correctLevel);
+			qrcode.addData(options.text);
+			qrcode.make();
+
+			// create canvas element
+			var canvas	= document.createElement('canvas');
+			canvas.width	= options.width;
+			canvas.height	= options.height;
+			var ctx		= canvas.getContext('2d');
+
+			// compute tileW/tileH based on options.width/options.height
+			var tileW	= options.width  / qrcode.getModuleCount();
+			var tileH	= options.height / qrcode.getModuleCount();
+
+			// draw in the canvas
+			for( var row = 0; row < qrcode.getModuleCount(); row++ ){
+				for( var col = 0; col < qrcode.getModuleCount(); col++ ){
+					ctx.fillStyle = qrcode.isDark(row, col) ? options.foreground : options.background;
+					var w = (Math.ceil((col+1)*tileW) - Math.floor(col*tileW));
+					var h = (Math.ceil((row+1)*tileH) - Math.floor(row*tileH));
+					ctx.fillRect(Math.round(col*tileW),Math.round(row*tileH), w, h);  
+				}	
+			}
+			// return just built canvas
+			return canvas;
+		}
+
+		// from Jon-Carlos Rivera (https://github.com/imbcmdth)
+		var createTable	= function(){
+			// create the qrcode itself
+			var qrcode	= new QRCode(options.typeNumber, options.correctLevel);
+			qrcode.addData(options.text);
+			qrcode.make();
+			
+			// create table element
+			var $table	= $('<table></table>')
+				.css("width", options.width+"px")
+				.css("height", options.height+"px")
+				.css("border", "0px")
+				.css("border-collapse", "collapse")
+				.css('background-color', options.background);
+		  
+			// compute tileS percentage
+			var tileW	= options.width / qrcode.getModuleCount();
+			var tileH	= options.height / qrcode.getModuleCount();
+
+			// draw in the table
+			for(var row = 0; row < qrcode.getModuleCount(); row++ ){
+				var $row = $('<tr></tr>').css('height', tileH+"px").appendTo($table);
+				
+				for(var col = 0; col < qrcode.getModuleCount(); col++ ){
+					$('<td></td>')
+						.css('width', tileW+"px")
+						.css('background-color', qrcode.isDark(row, col) ? options.foreground : options.background)
+						.appendTo($row);
+				}	
+			}
+			// return just built canvas
+			return $table;
+		}
+  
+
+		return this.each(function(){
+			var element	= options.render == "canvas" ? createCanvas() : createTable();
+			$(element).appendTo(this);
+		});
+	};
+})( jQuery );
+
+//---------------------------------------------------------------------
+// QRCode for JavaScript
+//
+// Copyright (c) 2009 Kazuhiko Arase
+//
+// URL: http://www.d-project.com/
+//
+// Licensed under the MIT license:
+//   http://www.opensource.org/licenses/mit-license.php
+//
+// The word "QR Code" is registered trademark of 
+// DENSO WAVE INCORPORATED
+//   http://www.denso-wave.com/qrcode/faqpatent-e.html
+//
+//---------------------------------------------------------------------
+
+//---------------------------------------------------------------------
+// QR8bitByte
+//---------------------------------------------------------------------
+
+function QR8bitByte(data) {
+	this.mode = QRMode.MODE_8BIT_BYTE;
+	this.data = data;
+}
+
+QR8bitByte.prototype = {
+
+	getLength : function(buffer) {
+		return this.data.length;
+	},
+	
+	write : function(buffer) {
+		for (var i = 0; i < this.data.length; i++) {
+			// not JIS ...
+			buffer.put(this.data.charCodeAt(i), 8);
+		}
+	}
+};
+
+//---------------------------------------------------------------------
+// QRCode
+//---------------------------------------------------------------------
+
+function QRCode(typeNumber, errorCorrectLevel) {
+	this.typeNumber = typeNumber;
+	this.errorCorrectLevel = errorCorrectLevel;
+	this.modules = null;
+	this.moduleCount = 0;
+	this.dataCache = null;
+	this.dataList = new Array();
+}
+
+QRCode.prototype = {
+	
+	addData : function(data) {
+		var newData = new QR8bitByte(data);
+		this.dataList.push(newData);
+		this.dataCache = null;
+	},
+	
+	isDark : function(row, col) {
+		if (row < 0 || this.moduleCount <= row || col < 0 || this.moduleCount <= col) {
+			throw new Error(row + "," + col);
+		}
+		return this.modules[row][col];
+	},
+
+	getModuleCount : function() {
+		return this.moduleCount;
+	},
+	
+	make : function() {
+		// Calculate automatically typeNumber if provided is < 1
+		if (this.typeNumber < 1 ){
+			var typeNumber = 1;
+			for (typeNumber = 1; typeNumber < 40; typeNumber++) {
+				var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, this.errorCorrectLevel);
+
+				var buffer = new QRBitBuffer();
+				var totalDataCount = 0;
+				for (var i = 0; i < rsBlocks.length; i++) {
+					totalDataCount += rsBlocks[i].dataCount;
+				}
+
+				for (var i = 0; i < this.dataList.length; i++) {
+					var data = this.dataList[i];
+					buffer.put(data.mode, 4);
+					buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+					data.write(buffer);
+				}
+				if (buffer.getLengthInBits() <= totalDataCount * 8)
+					break;
+			}
+			this.typeNumber = typeNumber;
+		}
+		this.makeImpl(false, this.getBestMaskPattern() );
+	},
+	
+	makeImpl : function(test, maskPattern) {
+		
+		this.moduleCount = this.typeNumber * 4 + 17;
+		this.modules = new Array(this.moduleCount);
+		
+		for (var row = 0; row < this.moduleCount; row++) {
+			
+			this.modules[row] = new Array(this.moduleCount);
+			
+			for (var col = 0; col < this.moduleCount; col++) {
+				this.modules[row][col] = null;//(col + row) % 3;
+			}
+		}
+	
+		this.setupPositionProbePattern(0, 0);
+		this.setupPositionProbePattern(this.moduleCount - 7, 0);
+		this.setupPositionProbePattern(0, this.moduleCount - 7);
+		this.setupPositionAdjustPattern();
+		this.setupTimingPattern();
+		this.setupTypeInfo(test, maskPattern);
+		
+		if (this.typeNumber >= 7) {
+			this.setupTypeNumber(test);
+		}
+	
+		if (this.dataCache == null) {
+			this.dataCache = QRCode.createData(this.typeNumber, this.errorCorrectLevel, this.dataList);
+		}
+	
+		this.mapData(this.dataCache, maskPattern);
+	},
+
+	setupPositionProbePattern : function(row, col)  {
+		
+		for (var r = -1; r <= 7; r++) {
+			
+			if (row + r <= -1 || this.moduleCount <= row + r) continue;
+			
+			for (var c = -1; c <= 7; c++) {
+				
+				if (col + c <= -1 || this.moduleCount <= col + c) continue;
+				
+				if ( (0 <= r && r <= 6 && (c == 0 || c == 6) )
+						|| (0 <= c && c <= 6 && (r == 0 || r == 6) )
+						|| (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+					this.modules[row + r][col + c] = true;
+				} else {
+					this.modules[row + r][col + c] = false;
+				}
+			}		
+		}		
+	},
+	
+	getBestMaskPattern : function() {
+	
+		var minLostPoint = 0;
+		var pattern = 0;
+	
+		for (var i = 0; i < 8; i++) {
+			
+			this.makeImpl(true, i);
+	
+			var lostPoint = QRUtil.getLostPoint(this);
+	
+			if (i == 0 || minLostPoint >  lostPoint) {
+				minLostPoint = lostPoint;
+				pattern = i;
+			}
+		}
+	
+		return pattern;
+	},
+	
+	createMovieClip : function(target_mc, instance_name, depth) {
+	
+		var qr_mc = target_mc.createEmptyMovieClip(instance_name, depth);
+		var cs = 1;
+	
+		this.make();
+
+		for (var row = 0; row < this.modules.length; row++) {
+			
+			var y = row * cs;
+			
+			for (var col = 0; col < this.modules[row].length; col++) {
+	
+				var x = col * cs;
+				var dark = this.modules[row][col];
+			
+				if (dark) {
+					qr_mc.beginFill(0, 100);
+					qr_mc.moveTo(x, y);
+					qr_mc.lineTo(x + cs, y);
+					qr_mc.lineTo(x + cs, y + cs);
+					qr_mc.lineTo(x, y + cs);
+					qr_mc.endFill();
+				}
+			}
+		}
+		
+		return qr_mc;
+	},
+
+	setupTimingPattern : function() {
+		
+		for (var r = 8; r < this.moduleCount - 8; r++) {
+			if (this.modules[r][6] != null) {
+				continue;
+			}
+			this.modules[r][6] = (r % 2 == 0);
+		}
+	
+		for (var c = 8; c < this.moduleCount - 8; c++) {
+			if (this.modules[6][c] != null) {
+				continue;
+			}
+			this.modules[6][c] = (c % 2 == 0);
+		}
+	},
+	
+	setupPositionAdjustPattern : function() {
+	
+		var pos = QRUtil.getPatternPosition(this.typeNumber);
+		
+		for (var i = 0; i < pos.length; i++) {
+		
+			for (var j = 0; j < pos.length; j++) {
+			
+				var row = pos[i];
+				var col = pos[j];
+				
+				if (this.modules[row][col] != null) {
+					continue;
+				}
+				
+				for (var r = -2; r <= 2; r++) {
+				
+					for (var c = -2; c <= 2; c++) {
+					
+						if (r == -2 || r == 2 || c == -2 || c == 2 
+								|| (r == 0 && c == 0) ) {
+							this.modules[row + r][col + c] = true;
+						} else {
+							this.modules[row + r][col + c] = false;
+						}
+					}
+				}
+			}
+		}
+	},
+	
+	setupTypeNumber : function(test) {
+	
+		var bits = QRUtil.getBCHTypeNumber(this.typeNumber);
+	
+		for (var i = 0; i < 18; i++) {
+			var mod = (!test && ( (bits >> i) & 1) == 1);
+			this.modules[Math.floor(i / 3)][i % 3 + this.moduleCount - 8 - 3] = mod;
+		}
+	
+		for (var i = 0; i < 18; i++) {
+			var mod = (!test && ( (bits >> i) & 1) == 1);
+			this.modules[i % 3 + this.moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
+		}
+	},
+	
+	setupTypeInfo : function(test, maskPattern) {
+	
+		var data = (this.errorCorrectLevel << 3) | maskPattern;
+		var bits = QRUtil.getBCHTypeInfo(data);
+	
+		// vertical		
+		for (var i = 0; i < 15; i++) {
+	
+			var mod = (!test && ( (bits >> i) & 1) == 1);
+	
+			if (i < 6) {
+				this.modules[i][8] = mod;
+			} else if (i < 8) {
+				this.modules[i + 1][8] = mod;
+			} else {
+				this.modules[this.moduleCount - 15 + i][8] = mod;
+			}
+		}
+	
+		// horizontal
+		for (var i = 0; i < 15; i++) {
+	
+			var mod = (!test && ( (bits >> i) & 1) == 1);
+			
+			if (i < 8) {
+				this.modules[8][this.moduleCount - i - 1] = mod;
+			} else if (i < 9) {
+				this.modules[8][15 - i - 1 + 1] = mod;
+			} else {
+				this.modules[8][15 - i - 1] = mod;
+			}
+		}
+	
+		// fixed module
+		this.modules[this.moduleCount - 8][8] = (!test);
+	
+	},
+	
+	mapData : function(data, maskPattern) {
+		
+		var inc = -1;
+		var row = this.moduleCount - 1;
+		var bitIndex = 7;
+		var byteIndex = 0;
+		
+		for (var col = this.moduleCount - 1; col > 0; col -= 2) {
+	
+			if (col == 6) col--;
+	
+			while (true) {
+	
+				for (var c = 0; c < 2; c++) {
+					
+					if (this.modules[row][col - c] == null) {
+						
+						var dark = false;
+	
+						if (byteIndex < data.length) {
+							dark = ( ( (data[byteIndex] >>> bitIndex) & 1) == 1);
+						}
+	
+						var mask = QRUtil.getMask(maskPattern, row, col - c);
+	
+						if (mask) {
+							dark = !dark;
+						}
+						
+						this.modules[row][col - c] = dark;
+						bitIndex--;
+	
+						if (bitIndex == -1) {
+							byteIndex++;
+							bitIndex = 7;
+						}
+					}
+				}
+								
+				row += inc;
+	
+				if (row < 0 || this.moduleCount <= row) {
+					row -= inc;
+					inc = -inc;
+					break;
+				}
+			}
+		}
+		
+	}
+
+};
+
+QRCode.PAD0 = 0xEC;
+QRCode.PAD1 = 0x11;
+
+QRCode.createData = function(typeNumber, errorCorrectLevel, dataList) {
+	
+	var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectLevel);
+	
+	var buffer = new QRBitBuffer();
+	
+	for (var i = 0; i < dataList.length; i++) {
+		var data = dataList[i];
+		buffer.put(data.mode, 4);
+		buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+		data.write(buffer);
+	}
+
+	// calc num max data.
+	var totalDataCount = 0;
+	for (var i = 0; i < rsBlocks.length; i++) {
+		totalDataCount += rsBlocks[i].dataCount;
+	}
+
+	if (buffer.getLengthInBits() > totalDataCount * 8) {
+		throw new Error("code length overflow. ("
+			+ buffer.getLengthInBits()
+			+ ">"
+			+  totalDataCount * 8
+			+ ")");
+	}
+
+	// end code
+	if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+		buffer.put(0, 4);
+	}
+
+	// padding
+	while (buffer.getLengthInBits() % 8 != 0) {
+		buffer.putBit(false);
+	}
+
+	// padding
+	while (true) {
+		
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode.PAD0, 8);
+		
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode.PAD1, 8);
+	}
+
+	return QRCode.createBytes(buffer, rsBlocks);
+}
+
+QRCode.createBytes = function(buffer, rsBlocks) {
+
+	var offset = 0;
+	
+	var maxDcCount = 0;
+	var maxEcCount = 0;
+	
+	var dcdata = new Array(rsBlocks.length);
+	var ecdata = new Array(rsBlocks.length);
+	
+	for (var r = 0; r < rsBlocks.length; r++) {
+
+		var dcCount = rsBlocks[r].dataCount;
+		var ecCount = rsBlocks[r].totalCount - dcCount;
+
+		maxDcCount = Math.max(maxDcCount, dcCount);
+		maxEcCount = Math.max(maxEcCount, ecCount);
+		
+		dcdata[r] = new Array(dcCount);
+		
+		for (var i = 0; i < dcdata[r].length; i++) {
+			dcdata[r][i] = 0xff & buffer.buffer[i + offset];
+		}
+		offset += dcCount;
+		
+		var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+		var rawPoly = new QRPolynomial(dcdata[r], rsPoly.getLength() - 1);
+
+		var modPoly = rawPoly.mod(rsPoly);
+		ecdata[r] = new Array(rsPoly.getLength() - 1);
+		for (var i = 0; i < ecdata[r].length; i++) {
+            var modIndex = i + modPoly.getLength() - ecdata[r].length;
+			ecdata[r][i] = (modIndex >= 0)? modPoly.get(modIndex) : 0;
+		}
+
+	}
+	
+	var totalCodeCount = 0;
+	for (var i = 0; i < rsBlocks.length; i++) {
+		totalCodeCount += rsBlocks[i].totalCount;
+	}
+
+	var data = new Array(totalCodeCount);
+	var index = 0;
+
+	for (var i = 0; i < maxDcCount; i++) {
+		for (var r = 0; r < rsBlocks.length; r++) {
+			if (i < dcdata[r].length) {
+				data[index++] = dcdata[r][i];
+			}
+		}
+	}
+
+	for (var i = 0; i < maxEcCount; i++) {
+		for (var r = 0; r < rsBlocks.length; r++) {
+			if (i < ecdata[r].length) {
+				data[index++] = ecdata[r][i];
+			}
+		}
+	}
+
+	return data;
+
+}
+
+//---------------------------------------------------------------------
+// QRMode
+//---------------------------------------------------------------------
+
+var QRMode = {
+	MODE_NUMBER :		1 << 0,
+	MODE_ALPHA_NUM : 	1 << 1,
+	MODE_8BIT_BYTE : 	1 << 2,
+	MODE_KANJI :		1 << 3
+};
+
+//---------------------------------------------------------------------
+// QRErrorCorrectLevel
+//---------------------------------------------------------------------
+ 
+var QRErrorCorrectLevel = {
+	L : 1,
+	M : 0,
+	Q : 3,
+	H : 2
+};
+
+//---------------------------------------------------------------------
+// QRMaskPattern
+//---------------------------------------------------------------------
+
+var QRMaskPattern = {
+	PATTERN000 : 0,
+	PATTERN001 : 1,
+	PATTERN010 : 2,
+	PATTERN011 : 3,
+	PATTERN100 : 4,
+	PATTERN101 : 5,
+	PATTERN110 : 6,
+	PATTERN111 : 7
+};
+
+//---------------------------------------------------------------------
+// QRUtil
+//---------------------------------------------------------------------
+ 
+var QRUtil = {
+
+    PATTERN_POSITION_TABLE : [
+	    [],
+	    [6, 18],
+	    [6, 22],
+	    [6, 26],
+	    [6, 30],
+	    [6, 34],
+	    [6, 22, 38],
+	    [6, 24, 42],
+	    [6, 26, 46],
+	    [6, 28, 50],
+	    [6, 30, 54],		
+	    [6, 32, 58],
+	    [6, 34, 62],
+	    [6, 26, 46, 66],
+	    [6, 26, 48, 70],
+	    [6, 26, 50, 74],
+	    [6, 30, 54, 78],
+	    [6, 30, 56, 82],
+	    [6, 30, 58, 86],
+	    [6, 34, 62, 90],
+	    [6, 28, 50, 72, 94],
+	    [6, 26, 50, 74, 98],
+	    [6, 30, 54, 78, 102],
+	    [6, 28, 54, 80, 106],
+	    [6, 32, 58, 84, 110],
+	    [6, 30, 58, 86, 114],
+	    [6, 34, 62, 90, 118],
+	    [6, 26, 50, 74, 98, 122],
+	    [6, 30, 54, 78, 102, 126],
+	    [6, 26, 52, 78, 104, 130],
+	    [6, 30, 56, 82, 108, 134],
+	    [6, 34, 60, 86, 112, 138],
+	    [6, 30, 58, 86, 114, 142],
+	    [6, 34, 62, 90, 118, 146],
+	    [6, 30, 54, 78, 102, 126, 150],
+	    [6, 24, 50, 76, 102, 128, 154],
+	    [6, 28, 54, 80, 106, 132, 158],
+	    [6, 32, 58, 84, 110, 136, 162],
+	    [6, 26, 54, 82, 110, 138, 166],
+	    [6, 30, 58, 86, 114, 142, 170]
+    ],
+
+    G15 : (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0),
+    G18 : (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0),
+    G15_MASK : (1 << 14) | (1 << 12) | (1 << 10)	| (1 << 4) | (1 << 1),
+
+    getBCHTypeInfo : function(data) {
+	    var d = data << 10;
+	    while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) >= 0) {
+		    d ^= (QRUtil.G15 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) ) ); 	
+	    }
+	    return ( (data << 10) | d) ^ QRUtil.G15_MASK;
+    },
+
+    getBCHTypeNumber : function(data) {
+	    var d = data << 12;
+	    while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) >= 0) {
+		    d ^= (QRUtil.G18 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) ) ); 	
+	    }
+	    return (data << 12) | d;
+    },
+
+    getBCHDigit : function(data) {
+
+	    var digit = 0;
+
+	    while (data != 0) {
+		    digit++;
+		    data >>>= 1;
+	    }
+
+	    return digit;
+    },
+
+    getPatternPosition : function(typeNumber) {
+	    return QRUtil.PATTERN_POSITION_TABLE[typeNumber - 1];
+    },
+
+    getMask : function(maskPattern, i, j) {
+	    
+	    switch (maskPattern) {
+		    
+	    case QRMaskPattern.PATTERN000 : return (i + j) % 2 == 0;
+	    case QRMaskPattern.PATTERN001 : return i % 2 == 0;
+	    case QRMaskPattern.PATTERN010 : return j % 3 == 0;
+	    case QRMaskPattern.PATTERN011 : return (i + j) % 3 == 0;
+	    case QRMaskPattern.PATTERN100 : return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 == 0;
+	    case QRMaskPattern.PATTERN101 : return (i * j) % 2 + (i * j) % 3 == 0;
+	    case QRMaskPattern.PATTERN110 : return ( (i * j) % 2 + (i * j) % 3) % 2 == 0;
+	    case QRMaskPattern.PATTERN111 : return ( (i * j) % 3 + (i + j) % 2) % 2 == 0;
+
+	    default :
+		    throw new Error("bad maskPattern:" + maskPattern);
+	    }
+    },
+
+    getErrorCorrectPolynomial : function(errorCorrectLength) {
+
+	    var a = new QRPolynomial([1], 0);
+
+	    for (var i = 0; i < errorCorrectLength; i++) {
+		    a = a.multiply(new QRPolynomial([1, QRMath.gexp(i)], 0) );
+	    }
+
+	    return a;
+    },
+
+    getLengthInBits : function(mode, type) {
+
+	    if (1 <= type && type < 10) {
+
+		    // 1 - 9
+
+		    switch(mode) {
+		    case QRMode.MODE_NUMBER 	: return 10;
+		    case QRMode.MODE_ALPHA_NUM 	: return 9;
+		    case QRMode.MODE_8BIT_BYTE	: return 8;
+		    case QRMode.MODE_KANJI  	: return 8;
+		    default :
+			    throw new Error("mode:" + mode);
+		    }
+
+	    } else if (type < 27) {
+
+		    // 10 - 26
+
+		    switch(mode) {
+		    case QRMode.MODE_NUMBER 	: return 12;
+		    case QRMode.MODE_ALPHA_NUM 	: return 11;
+		    case QRMode.MODE_8BIT_BYTE	: return 16;
+		    case QRMode.MODE_KANJI  	: return 10;
+		    default :
+			    throw new Error("mode:" + mode);
+		    }
+
+	    } else if (type < 41) {
+
+		    // 27 - 40
+
+		    switch(mode) {
+		    case QRMode.MODE_NUMBER 	: return 14;
+		    case QRMode.MODE_ALPHA_NUM	: return 13;
+		    case QRMode.MODE_8BIT_BYTE	: return 16;
+		    case QRMode.MODE_KANJI  	: return 12;
+		    default :
+			    throw new Error("mode:" + mode);
+		    }
+
+	    } else {
+		    throw new Error("type:" + type);
+	    }
+    },
+
+    getLostPoint : function(qrCode) {
+	    
+	    var moduleCount = qrCode.getModuleCount();
+	    
+	    var lostPoint = 0;
+	    
+	    // LEVEL1
+	    
+	    for (var row = 0; row < moduleCount; row++) {
+
+		    for (var col = 0; col < moduleCount; col++) {
+
+			    var sameCount = 0;
+			    var dark = qrCode.isDark(row, col);
+
+				for (var r = -1; r <= 1; r++) {
+
+				    if (row + r < 0 || moduleCount <= row + r) {
+					    continue;
+				    }
+
+				    for (var c = -1; c <= 1; c++) {
+
+					    if (col + c < 0 || moduleCount <= col + c) {
+						    continue;
+					    }
+
+					    if (r == 0 && c == 0) {
+						    continue;
+					    }
+
+					    if (dark == qrCode.isDark(row + r, col + c) ) {
+						    sameCount++;
+					    }
+				    }
+			    }
+
+			    if (sameCount > 5) {
+				    lostPoint += (3 + sameCount - 5);
+			    }
+		    }
+	    }
+
+	    // LEVEL2
+
+	    for (var row = 0; row < moduleCount - 1; row++) {
+		    for (var col = 0; col < moduleCount - 1; col++) {
+			    var count = 0;
+			    if (qrCode.isDark(row,     col    ) ) count++;
+			    if (qrCode.isDark(row + 1, col    ) ) count++;
+			    if (qrCode.isDark(row,     col + 1) ) count++;
+			    if (qrCode.isDark(row + 1, col + 1) ) count++;
+			    if (count == 0 || count == 4) {
+				    lostPoint += 3;
+			    }
+		    }
+	    }
+
+	    // LEVEL3
+
+	    for (var row = 0; row < moduleCount; row++) {
+		    for (var col = 0; col < moduleCount - 6; col++) {
+			    if (qrCode.isDark(row, col)
+					    && !qrCode.isDark(row, col + 1)
+					    &&  qrCode.isDark(row, col + 2)
+					    &&  qrCode.isDark(row, col + 3)
+					    &&  qrCode.isDark(row, col + 4)
+					    && !qrCode.isDark(row, col + 5)
+					    &&  qrCode.isDark(row, col + 6) ) {
+				    lostPoint += 40;
+			    }
+		    }
+	    }
+
+	    for (var col = 0; col < moduleCount; col++) {
+		    for (var row = 0; row < moduleCount - 6; row++) {
+			    if (qrCode.isDark(row, col)
+					    && !qrCode.isDark(row + 1, col)
+					    &&  qrCode.isDark(row + 2, col)
+					    &&  qrCode.isDark(row + 3, col)
+					    &&  qrCode.isDark(row + 4, col)
+					    && !qrCode.isDark(row + 5, col)
+					    &&  qrCode.isDark(row + 6, col) ) {
+				    lostPoint += 40;
+			    }
+		    }
+	    }
+
+	    // LEVEL4
+	    
+	    var darkCount = 0;
+
+	    for (var col = 0; col < moduleCount; col++) {
+		    for (var row = 0; row < moduleCount; row++) {
+			    if (qrCode.isDark(row, col) ) {
+				    darkCount++;
+			    }
+		    }
+	    }
+	    
+	    var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+	    lostPoint += ratio * 10;
+
+	    return lostPoint;		
+    }
+
+};
+
+
+//---------------------------------------------------------------------
+// QRMath
+//---------------------------------------------------------------------
+
+var QRMath = {
+
+	glog : function(n) {
+	
+		if (n < 1) {
+			throw new Error("glog(" + n + ")");
+		}
+		
+		return QRMath.LOG_TABLE[n];
+	},
+	
+	gexp : function(n) {
+	
+		while (n < 0) {
+			n += 255;
+		}
+	
+		while (n >= 256) {
+			n -= 255;
+		}
+	
+		return QRMath.EXP_TABLE[n];
+	},
+	
+	EXP_TABLE : new Array(256),
+	
+	LOG_TABLE : new Array(256)
+
+};
+	
+for (var i = 0; i < 8; i++) {
+	QRMath.EXP_TABLE[i] = 1 << i;
+}
+for (var i = 8; i < 256; i++) {
+	QRMath.EXP_TABLE[i] = QRMath.EXP_TABLE[i - 4]
+		^ QRMath.EXP_TABLE[i - 5]
+		^ QRMath.EXP_TABLE[i - 6]
+		^ QRMath.EXP_TABLE[i - 8];
+}
+for (var i = 0; i < 255; i++) {
+	QRMath.LOG_TABLE[QRMath.EXP_TABLE[i] ] = i;
+}
+
+//---------------------------------------------------------------------
+// QRPolynomial
+//---------------------------------------------------------------------
+
+function QRPolynomial(num, shift) {
+
+	if (num.length == undefined) {
+		throw new Error(num.length + "/" + shift);
+	}
+
+	var offset = 0;
+
+	while (offset < num.length && num[offset] == 0) {
+		offset++;
+	}
+
+	this.num = new Array(num.length - offset + shift);
+	for (var i = 0; i < num.length - offset; i++) {
+		this.num[i] = num[i + offset];
+	}
+}
+
+QRPolynomial.prototype = {
+
+	get : function(index) {
+		return this.num[index];
+	},
+	
+	getLength : function() {
+		return this.num.length;
+	},
+	
+	multiply : function(e) {
+	
+		var num = new Array(this.getLength() + e.getLength() - 1);
+	
+		for (var i = 0; i < this.getLength(); i++) {
+			for (var j = 0; j < e.getLength(); j++) {
+				num[i + j] ^= QRMath.gexp(QRMath.glog(this.get(i) ) + QRMath.glog(e.get(j) ) );
+			}
+		}
+	
+		return new QRPolynomial(num, 0);
+	},
+	
+	mod : function(e) {
+	
+		if (this.getLength() - e.getLength() < 0) {
+			return this;
+		}
+	
+		var ratio = QRMath.glog(this.get(0) ) - QRMath.glog(e.get(0) );
+	
+		var num = new Array(this.getLength() );
+		
+		for (var i = 0; i < this.getLength(); i++) {
+			num[i] = this.get(i);
+		}
+		
+		for (var i = 0; i < e.getLength(); i++) {
+			num[i] ^= QRMath.gexp(QRMath.glog(e.get(i) ) + ratio);
+		}
+	
+		// recursive call
+		return new QRPolynomial(num, 0).mod(e);
+	}
+};
+
+//---------------------------------------------------------------------
+// QRRSBlock
+//---------------------------------------------------------------------
+
+function QRRSBlock(totalCount, dataCount) {
+	this.totalCount = totalCount;
+	this.dataCount  = dataCount;
+}
+
+QRRSBlock.RS_BLOCK_TABLE = [
+
+	// L
+	// M
+	// Q
+	// H
+
+	// 1
+	[1, 26, 19],
+	[1, 26, 16],
+	[1, 26, 13],
+	[1, 26, 9],
+	
+	// 2
+	[1, 44, 34],
+	[1, 44, 28],
+	[1, 44, 22],
+	[1, 44, 16],
+
+	// 3
+	[1, 70, 55],
+	[1, 70, 44],
+	[2, 35, 17],
+	[2, 35, 13],
+
+	// 4		
+	[1, 100, 80],
+	[2, 50, 32],
+	[2, 50, 24],
+	[4, 25, 9],
+	
+	// 5
+	[1, 134, 108],
+	[2, 67, 43],
+	[2, 33, 15, 2, 34, 16],
+	[2, 33, 11, 2, 34, 12],
+	
+	// 6
+	[2, 86, 68],
+	[4, 43, 27],
+	[4, 43, 19],
+	[4, 43, 15],
+	
+	// 7		
+	[2, 98, 78],
+	[4, 49, 31],
+	[2, 32, 14, 4, 33, 15],
+	[4, 39, 13, 1, 40, 14],
+	
+	// 8
+	[2, 121, 97],
+	[2, 60, 38, 2, 61, 39],
+	[4, 40, 18, 2, 41, 19],
+	[4, 40, 14, 2, 41, 15],
+	
+	// 9
+	[2, 146, 116],
+	[3, 58, 36, 2, 59, 37],
+	[4, 36, 16, 4, 37, 17],
+	[4, 36, 12, 4, 37, 13],
+	
+	// 10		
+	[2, 86, 68, 2, 87, 69],
+	[4, 69, 43, 1, 70, 44],
+	[6, 43, 19, 2, 44, 20],
+	[6, 43, 15, 2, 44, 16],
+
+	// 11
+	[4, 101, 81],
+	[1, 80, 50, 4, 81, 51],
+	[4, 50, 22, 4, 51, 23],
+	[3, 36, 12, 8, 37, 13],
+
+	// 12
+	[2, 116, 92, 2, 117, 93],
+	[6, 58, 36, 2, 59, 37],
+	[4, 46, 20, 6, 47, 21],
+	[7, 42, 14, 4, 43, 15],
+
+	// 13
+	[4, 133, 107],
+	[8, 59, 37, 1, 60, 38],
+	[8, 44, 20, 4, 45, 21],
+	[12, 33, 11, 4, 34, 12],
+
+	// 14
+	[3, 145, 115, 1, 146, 116],
+	[4, 64, 40, 5, 65, 41],
+	[11, 36, 16, 5, 37, 17],
+	[11, 36, 12, 5, 37, 13],
+
+	// 15
+	[5, 109, 87, 1, 110, 88],
+	[5, 65, 41, 5, 66, 42],
+	[5, 54, 24, 7, 55, 25],
+	[11, 36, 12],
+
+	// 16
+	[5, 122, 98, 1, 123, 99],
+	[7, 73, 45, 3, 74, 46],
+	[15, 43, 19, 2, 44, 20],
+	[3, 45, 15, 13, 46, 16],
+
+	// 17
+	[1, 135, 107, 5, 136, 108],
+	[10, 74, 46, 1, 75, 47],
+	[1, 50, 22, 15, 51, 23],
+	[2, 42, 14, 17, 43, 15],
+
+	// 18
+	[5, 150, 120, 1, 151, 121],
+	[9, 69, 43, 4, 70, 44],
+	[17, 50, 22, 1, 51, 23],
+	[2, 42, 14, 19, 43, 15],
+
+	// 19
+	[3, 141, 113, 4, 142, 114],
+	[3, 70, 44, 11, 71, 45],
+	[17, 47, 21, 4, 48, 22],
+	[9, 39, 13, 16, 40, 14],
+
+	// 20
+	[3, 135, 107, 5, 136, 108],
+	[3, 67, 41, 13, 68, 42],
+	[15, 54, 24, 5, 55, 25],
+	[15, 43, 15, 10, 44, 16],
+
+	// 21
+	[4, 144, 116, 4, 145, 117],
+	[17, 68, 42],
+	[17, 50, 22, 6, 51, 23],
+	[19, 46, 16, 6, 47, 17],
+
+	// 22
+	[2, 139, 111, 7, 140, 112],
+	[17, 74, 46],
+	[7, 54, 24, 16, 55, 25],
+	[34, 37, 13],
+
+	// 23
+	[4, 151, 121, 5, 152, 122],
+	[4, 75, 47, 14, 76, 48],
+	[11, 54, 24, 14, 55, 25],
+	[16, 45, 15, 14, 46, 16],
+
+	// 24
+	[6, 147, 117, 4, 148, 118],
+	[6, 73, 45, 14, 74, 46],
+	[11, 54, 24, 16, 55, 25],
+	[30, 46, 16, 2, 47, 17],
+
+	// 25
+	[8, 132, 106, 4, 133, 107],
+	[8, 75, 47, 13, 76, 48],
+	[7, 54, 24, 22, 55, 25],
+	[22, 45, 15, 13, 46, 16],
+
+	// 26
+	[10, 142, 114, 2, 143, 115],
+	[19, 74, 46, 4, 75, 47],
+	[28, 50, 22, 6, 51, 23],
+	[33, 46, 16, 4, 47, 17],
+
+	// 27
+	[8, 152, 122, 4, 153, 123],
+	[22, 73, 45, 3, 74, 46],
+	[8, 53, 23, 26, 54, 24],
+	[12, 45, 15, 28, 46, 16],
+
+	// 28
+	[3, 147, 117, 10, 148, 118],
+	[3, 73, 45, 23, 74, 46],
+	[4, 54, 24, 31, 55, 25],
+	[11, 45, 15, 31, 46, 16],
+
+	// 29
+	[7, 146, 116, 7, 147, 117],
+	[21, 73, 45, 7, 74, 46],
+	[1, 53, 23, 37, 54, 24],
+	[19, 45, 15, 26, 46, 16],
+
+	// 30
+	[5, 145, 115, 10, 146, 116],
+	[19, 75, 47, 10, 76, 48],
+	[15, 54, 24, 25, 55, 25],
+	[23, 45, 15, 25, 46, 16],
+
+	// 31
+	[13, 145, 115, 3, 146, 116],
+	[2, 74, 46, 29, 75, 47],
+	[42, 54, 24, 1, 55, 25],
+	[23, 45, 15, 28, 46, 16],
+
+	// 32
+	[17, 145, 115],
+	[10, 74, 46, 23, 75, 47],
+	[10, 54, 24, 35, 55, 25],
+	[19, 45, 15, 35, 46, 16],
+
+	// 33
+	[17, 145, 115, 1, 146, 116],
+	[14, 74, 46, 21, 75, 47],
+	[29, 54, 24, 19, 55, 25],
+	[11, 45, 15, 46, 46, 16],
+
+	// 34
+	[13, 145, 115, 6, 146, 116],
+	[14, 74, 46, 23, 75, 47],
+	[44, 54, 24, 7, 55, 25],
+	[59, 46, 16, 1, 47, 17],
+
+	// 35
+	[12, 151, 121, 7, 152, 122],
+	[12, 75, 47, 26, 76, 48],
+	[39, 54, 24, 14, 55, 25],
+	[22, 45, 15, 41, 46, 16],
+
+	// 36
+	[6, 151, 121, 14, 152, 122],
+	[6, 75, 47, 34, 76, 48],
+	[46, 54, 24, 10, 55, 25],
+	[2, 45, 15, 64, 46, 16],
+
+	// 37
+	[17, 152, 122, 4, 153, 123],
+	[29, 74, 46, 14, 75, 47],
+	[49, 54, 24, 10, 55, 25],
+	[24, 45, 15, 46, 46, 16],
+
+	// 38
+	[4, 152, 122, 18, 153, 123],
+	[13, 74, 46, 32, 75, 47],
+	[48, 54, 24, 14, 55, 25],
+	[42, 45, 15, 32, 46, 16],
+
+	// 39
+	[20, 147, 117, 4, 148, 118],
+	[40, 75, 47, 7, 76, 48],
+	[43, 54, 24, 22, 55, 25],
+	[10, 45, 15, 67, 46, 16],
+
+	// 40
+	[19, 148, 118, 6, 149, 119],
+	[18, 75, 47, 31, 76, 48],
+	[34, 54, 24, 34, 55, 25],
+	[20, 45, 15, 61, 46, 16]
+];
+
+QRRSBlock.getRSBlocks = function(typeNumber, errorCorrectLevel) {
+	
+	var rsBlock = QRRSBlock.getRsBlockTable(typeNumber, errorCorrectLevel);
+	
+	if (rsBlock == undefined) {
+		throw new Error("bad rs block @ typeNumber:" + typeNumber + "/errorCorrectLevel:" + errorCorrectLevel);
+	}
+
+	var length = rsBlock.length / 3;
+	
+	var list = new Array();
+	
+	for (var i = 0; i < length; i++) {
+
+		var count = rsBlock[i * 3 + 0];
+		var totalCount = rsBlock[i * 3 + 1];
+		var dataCount  = rsBlock[i * 3 + 2];
+
+		for (var j = 0; j < count; j++) {
+			list.push(new QRRSBlock(totalCount, dataCount) );	
+		}
+	}
+	
+	return list;
+}
+
+QRRSBlock.getRsBlockTable = function(typeNumber, errorCorrectLevel) {
+
+	switch(errorCorrectLevel) {
+	case QRErrorCorrectLevel.L :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+	case QRErrorCorrectLevel.M :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+	case QRErrorCorrectLevel.Q :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+	case QRErrorCorrectLevel.H :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+	default :
+		return undefined;
+	}
+}
+
+//---------------------------------------------------------------------
+// QRBitBuffer
+//---------------------------------------------------------------------
+
+function QRBitBuffer() {
+	this.buffer = new Array();
+	this.length = 0;
+}
+
+QRBitBuffer.prototype = {
+
+	get : function(index) {
+		var bufIndex = Math.floor(index / 8);
+		return ( (this.buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+	},
+	
+	put : function(num, length) {
+		for (var i = 0; i < length; i++) {
+			this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+		}
+	},
+	
+	getLengthInBits : function() {
+		return this.length;
+	},
+	
+	putBit : function(bit) {
+	
+		var bufIndex = Math.floor(this.length / 8);
+		if (this.buffer.length <= bufIndex) {
+			this.buffer.push(0);
+		}
+	
+		if (bit) {
+			this.buffer[bufIndex] |= (0x80 >>> (this.length % 8) );
+		}
+	
+		this.length++;
+	}
+};
+
+function getToken(liffId) {
         return new Promise(function(resolve,reject){
             liff.init({
                         liffId: liffId,
@@ -116,9 +3183,9 @@
 
     var params = new URL(document.location.toString()).searchParams;
     if (params.has("liffRedirectUri")) {
-    params = new URL(decodeURIComponent(params.get("liffRedirectUri"))).searchParams;
+		params = new URL(decodeURIComponent(params.get("liffRedirectUri"))).searchParams;
     }
-    if (!params.has("liff") || !params.has("sid")) {
+    if (!params.has("liff") || !params.has("sid") || !params.has("target_liff")) {
     Swal.fire({
             title: '系統錯誤',
             text: "無效參數",
@@ -128,6 +3195,7 @@
     }
 
     var liffId = params.get("liff");
+	var target_liffId = params.get("target_liff");
     var url = `https://script.google.com/macros/s/${params.get("sid")}/exec`;
 
     function sys_error() {
@@ -140,109 +3208,11 @@
             liff.closeWindow();
         });
     }
+	
+	var _totp = new Totp(30, 6);
+	var timeCode;
 
-    function redeem_process(_type, prize_no) {
-        getToken(liffId).then(function(params){
-            liff.scanCodeV2().then((sn) => {
-                if (sn.value) {
-                    document.getElementById("mask").textContent = "核銷中...";
-                    document.getElementById("loading").style.display = "inline";
-                    sendPost(`${url}?role=prize_redeem`, {"sn":sn.value.replace(/\n/g, ''), "type":_type, "prize_no":prize_no, ...params}).then(function(response){
-                        if (typeof response.msg !== "undefined") {
-                            sys_error();
-                        } else {
-                            if (response.result==="NoPrize") {
-                                Swal.fire({
-                                    title: "系統錯誤",
-                                    text: "查無您的中獎紀錄，請使用中獎者本人手機查詢(需完成快樂福利社綁定)。",
-                                    icon: "error",
-                                    showDenyButton: false,
-                                    showCancelButton: false,
-                                    confirmButtonText: "關閉"
-                                }).then(function() {
-                                    liff.closeWindow();
-                                });
-                            } else if (response.result==="PrizeNoError") {
-                                Swal.fire({
-                                    title: "獎項錯誤",
-                                    text: "此獎項序號無法與帳號匹配，請洽工作人員處理。",
-                                    icon: "error",
-                                    showDenyButton: false,
-                                    showCancelButton: false,
-                                    confirmButtonText: "關閉"
-                                }).then(function() {
-                                    document.getElementById("loading").style.display = "none";
-                                });
-                            } else if (response.result==="Redeemed") {
-                                Swal.fire({
-                                    title: "重複核銷",
-                                    text: "已有核銷紀錄，請勿重複核銷。",
-                                    icon: "info",
-                                    showDenyButton: false,
-                                    showCancelButton: false,
-                                    confirmButtonText: "關閉"
-                                }).then(function() {
-                                    document.getElementById("loading").style.display = "none";
-                                });
-                            } else if (response.result==="IncorrectType") {
-                                Swal.fire({
-                                    title: "核銷類型不匹配",
-                                    text: "請使用正確的核銷按鈕。",
-                                    icon: "info",
-                                    showDenyButton: false,
-                                    showCancelButton: false,
-                                    confirmButtonText: "關閉"
-                                }).then(function() {
-                                    document.getElementById("loading").style.display = "none";
-                                });
-                            } else if (response.result==="OK") {
-                                Swal.fire({
-                                    title: "核銷完成",
-                                    icon: "success",
-                                    showDenyButton: false,
-                                    showCancelButton: false,
-                                    timer: 5000,
-                                    confirmButtonText: "關閉"
-                                }).then(function() {
-                                    var element = document.getElementById(`${_type}_redeem_${prize_no}`);
-                                    element.textContent = `已核銷`;
-                                    element.classList.remove("btn-primary");
-                                    element.classList.add("btn-secondary");
-                                    element.disabled=true;
-                                    document.getElementById("loading").style.display = "none";
-                                });
-                            }
-                        }
-                    });
-                }
-            })
-            .catch((error) => {
-                console.log("error", error);
-            });
-        }).catch(function (error) {
-            sys_error();
-        });
-    }
-
-    function add_prize(prize, prize_type) {
-        var _name = prize.name.replace(/(\d)(?=(\d{3})+$)/g, '$1,');
-        var _style = "btn-primary";
-        var _btn = "掃碼核銷";
-        var _disabled = "";
-        if ( prize.redeem!=="") {
-            _style = "btn-secondary";
-            _btn = "已核銷";
-            _disabled = "disabled";
-        }
-        document.getElementById("prizes").innerHTML += 
-        `<div class="card-body">
-            <div>獎項：<span class="text-reset" id="prize_name">${_name}</span></div>
-            <div>序號：<span class="text-reset" id="prize_no">${prize.no}</span></div>
-            <button id="${prize_type}_redeem_${prize.no}" type="button" class="mt-3 btn ${_style} w-100 btn-dark" onclick="redeem_process('${prize_type}', '${prize.no}')" ${_disabled}>${_btn}</button>
-        </div>`;
-    }
-
-    window.onload = async function (e) {
+	window.onload = async function (e) {
         // load_config();
         getToken(liffId).then(function(params){
             sendPost(`${url}?role=prize_check`, params).then(function(response){
@@ -261,19 +3231,14 @@
                         liff.closeWindow();
                     });
                   } else if (response.result==="OK") {
-                      document.getElementById("loading").style.display = "none";
-                      document.getElementById("group").textContent = response.group;
-                      document.getElementById("shop").textContent = response.shop;
-
-                      if (response.prize) {
-                        add_prize(response.prize, "prize");
-                      }
-                      if (response.lottery) {
-                        for(i=0;i<response.lottery.length;i++){
-                            add_prize(response.lottery[i], "lottery");
-                        }
-                      }
-                      
+						document.getElementById("loading").style.display = "inline";
+						window.setInterval(function() { //declare new function
+						  if(timeCode!==_totp.getOtp(response.secret)) { //only run if it hasn't got this class 'pauseInterval'
+							timeCode = _totp.getOtp(response.secret);
+							$('#qrcode').empty();
+							$('#qrcode').qrcode(`https://127.0.0.1/?otp=${timeCode}`);
+						  }
+						}, 500);
                   }
                 }
             });
@@ -281,6 +3246,9 @@
             sys_error();
         });
       };
+
+
+
 
 </script>
   </body>
