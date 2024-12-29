@@ -172,7 +172,13 @@
         }
 
         function share(msg, happy_msg) {
-            var liff_url = `https://liff.line.me/${liffId}?cipher=${cipher}`;
+            var liffId = params.get("liff");
+            var secret = params.get("secret");
+            if (happy_cipher) {
+                var liff_url = `https://liff.line.me/${liffId}?happy_cipher=${happy_cipher}&liff=${liffId}&secret=${secret}`;
+            } else {
+                var liff_url = `https://liff.line.me/${liffId}?cipher=${cipher}&liff=${liffId}&secret=${secret}`;
+            }
             var flex_msg = msg.replace(/\$liff_url/g, liff_url);
             $.each(compress_words_2nd, function (index, value) {
                 flex_msg = flex_msg.replace(RegExp("\\"+index, 'g'), value);
@@ -186,17 +192,26 @@
                     happy_msg = happy_msg.replace(RegExp("\\"+index, 'g'), value);
                 }
             });
+            console.log(flex_msg);
+            console.log(happy_msg);
             happy_msg = JSON.parse(happy_msg);
             $.each(happy_msg, function (index, value) {
                 flex_msg = flex_msg.replace(RegExp("\\"+index, 'g'), value);
             });
+            
             flex_msg = JSON.parse(flex_msg);
+            console.log(flex_msg);
             liff.init({
                 liffId: liffId
             }).then(function () {
                 if (!liff.isLoggedIn()) {
                     console.log(window.location.href.split('?')[0]);
-                    liff.login({redirectUri: window.location.href.split('?')[0] + `?target=share_target_picker&cipher=${cipher}`});
+                    if (happy_cipher) {
+                        liff.login({redirectUri: window.location.href.split('?')[0] + `?happy_cipher=${happy_cipher}&liff=${liffId}&secret=${secret}`});
+                    } else {
+                        liff.login({redirectUri: window.location.href.split('?')[0] + `?cipher=${cipher}&liff=${liffId}&secret=${secret}`});
+                    }
+                    
                 } else {
                     if (!liff.isApiAvailable('shareTargetPicker')) throw new Error('不支援 shareTargetPicker，請嘗試更新應用程式版本。');
                     liff.shareTargetPicker(flex_msg)
