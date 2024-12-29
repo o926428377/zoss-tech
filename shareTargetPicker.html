@@ -287,15 +287,14 @@
                 share(decipher);
 
             } else if (happy_cipher) {
-                var decipher = LZString.decompressFromUint8Array(base64ToArrayBuffer(happy_template.replace(/\-/g, '\+')));
-                var happy_decipher = LZString.decompressFromUint8Array(base64ToArrayBuffer(happy_cipher.replace(/\-/g, '\+')));
-                share(decipher, happy_decipher);
+                // var decipher = LZString.decompressFromUint8Array(base64ToArrayBuffer(happy_template.replace(/\-/g, '\+')));
+                // var happy_decipher = LZString.decompressFromUint8Array(base64ToArrayBuffer(happy_cipher.replace(/\-/g, '\+')));
+                share(LZString.decompressFromUint8Array(base64ToArrayBuffer(happy_template.replace(/\-/g, '\+'))), LZString.decompressFromUint8Array(base64ToArrayBuffer(happy_cipher.replace(/\-/g, '\+'))));
             } else {
                 var decipher = LZString.decompressFromUint8Array(base64ToArrayBuffer(cipher.replace(/\-/g, '\+')));
-                share(decipher);
+                share(LZString.decompressFromUint8Array(base64ToArrayBuffer(cipher.replace(/\-/g, '\+'))));
             }
           }
         };
     </script>
   </body>
-</html>
