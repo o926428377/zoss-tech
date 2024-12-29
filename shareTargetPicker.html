@@ -295,11 +295,11 @@
 
         window.onload = async function (e) {
           if (cipher||happy_cipher) {
-            if (cipher.slice(0, 6) === "@zoss@") {
-                var decipher = pako.inflate(base64ToArrayBuffer(cipher.slice(6).replace(/\-/g, '\+')), { to: 'string' });
-            } else if (happy_cipher) {
+            if (happy_cipher) {
                 var decipher = LZString.decompressFromUint8Array(base64ToArrayBuffer(happy_template.replace(/\-/g, '\+')));
                 var happy_decipher = LZString.decompressFromUint8Array(base64ToArrayBuffer(happy_cipher.replace(/\-/g, '\+')));
+            } else if (cipher||happy_cipher.slice(0, 6) === "@zoss@") {
+                var decipher = pako.inflate(base64ToArrayBuffer(cipher.slice(6).replace(/\-/g, '\+')), { to: 'string' });
             } else {
                 var decipher = LZString.decompressFromUint8Array(base64ToArrayBuffer(cipher.replace(/\-/g, '\+')));
             }
