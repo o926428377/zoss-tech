@@ -167,10 +167,7 @@
         document.getElementById("loading").style.display = "inline";
         getToken(liffId).then(function(params){
             sendPost(`${url}?role=guest_reservation`, params).then(function(response){
-                if (typeof response.msg !== "undefined") {
-                    sys_error();
-                } else {
-                  if (response.result==="NoPermission") {
+                if (response.result==="NoPermission") {
                     Swal.fire({
                         title: "權限錯誤",
                         text: "您無存取權限，請聯繫管理員開通或登入其他帳號",
@@ -181,7 +178,7 @@
                     }).then(function() {
                         liff.closeWindow();
                     });
-                  } else if (response.result==="Expired") {
+                } else if (response.result==="Expired") {
                     Swal.fire({
                         title: "登記日已截止",
                         text: "如仍需登記，請聯繫管理員！",
@@ -192,27 +189,26 @@
                     }).then(function() {
                         liff.closeWindow();
                     });
-                  } else if (response.result==="OK") {
-                      document.getElementById("loading").style.display = "none";
-                      liff.sendMessages([
-              					response.msg
-              				])
-              				.then(() => {
-              					liff.closeWindow();
-              				})
-              				.catch((err) => {
-              					Swal.fire({
-              						  title: '系統錯誤',
-              						text: JSON.stringify(response.msg),
-              						  // text: "請重新操作",
-              						  icon: "error"
-              						  // timer: 5000
-              				  }).then(function(){
-              					  liff.closeWindow();
-              				  })
-              				});
-                      
-                  }
+                } else if (response.result==="OK") {
+                    document.getElementById("loading").style.display = "none";
+                    liff.sendMessages([
+                        response.msg
+                    ])
+                    .then(() => {
+                        liff.closeWindow();
+                    })
+                    .catch((err) => {
+                        Swal.fire({
+                            title: '系統錯誤',
+                            text: JSON.stringify(response.msg),
+                            // text: "請重新操作",
+                            icon: "error"
+                            // timer: 5000
+                        }).then(function(){
+                            liff.closeWindow();
+                        })
+                    });
+                    
                 }
             });
         }).catch(function (error) {
