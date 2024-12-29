@@ -302,6 +302,8 @@
             } else if (happy_cipher) {
                 var decipher = LZString.decompressFromUint8Array(base64ToArrayBuffer(happy_template.replace(/\-/g, '\+')));
                 var happy_decipher = LZString.decompressFromUint8Array(base64ToArrayBuffer(happy_cipher.replace(/\-/g, '\+')));
+                console.log(decipher);
+                console.log(happy_decipher);
             } else {
                 var decipher = LZString.decompressFromUint8Array(base64ToArrayBuffer(cipher.replace(/\-/g, '\+')));
             }
