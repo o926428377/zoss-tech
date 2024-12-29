@@ -222,7 +222,7 @@
                 }
             });
             if (happy_msg) {
-                happy_msg = JSON.parse(flex_msg_happy);
+                happy_msg = JSON.parse(happy_msg);
                 // console.log(flex_msg);
                 $.each(happy_msg, function (index, value) {
                     flex_msg = flex_msg.replace(RegExp("\\"+index, 'g'), value);
