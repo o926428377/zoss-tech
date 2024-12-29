@@ -23,7 +23,7 @@
   </div>
   <div class="py-3">
     <div id="prizes" class="text-dark mb-3" style="height: 100%;opacity: 0.85;">
-        <form onsubmit="make_reserve()" class="row g-3 needs-validation">
+        <form onsubmit="return false;" class="row g-3 needs-validation">
             <div class="input-group mb-3">
                 <span class="col-5 input-group-text justify-content-center" id="basic-addon3">姓名(代表人)</span>
                 <input type="text" class="col form-control" id="name" aria-describedby="basic-addon3" required>
@@ -45,7 +45,7 @@
                 <textarea class="col form-control" aria-label="With textarea" id="note"></textarea>
             </div>
             <div class="input-group">
-                <input type="submit" class="w-100 btn btn-primary bg-primary" id="submit" value="送出"></button>
+                <input type="submit" class="w-100 btn btn-primary bg-primary" id="submit" value="送出" onclick="make_reserve()"></button>
             </div>
         </form>
         
