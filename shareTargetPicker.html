@@ -207,32 +207,31 @@
             }
             var flex_msg = msg.replace(/\$liff_url/g, liff_url);
             if (happy_msg) {
-                var flex_msg_happy = happy_msg.replace(/\$liff_url/g, liff_url);
+                happy_msg = happy_msg.replace(/\$liff_url/g, liff_url);
             }
             $.each(compress_words_2nd, function (index, value) {
                 flex_msg = flex_msg.replace(RegExp("\\"+index, 'g'), value);
                 if (happy_msg) {
-                    flex_msg_happy = flex_msg_happy.replace(RegExp("\\"+index, 'g'), value);
+                    happy_msg = happy_msg.replace(RegExp("\\"+index, 'g'), value);
                 }
             });
             $.each(compress_words, function (index, value) {
                 flex_msg = flex_msg.replace(RegExp("\\"+index, 'g'), value);
                 if (happy_msg) {
-                    flex_msg_happy = flex_msg_happy.replace(RegExp("\\"+index, 'g'), value);
+                    happy_msg = happy_msg.replace(RegExp("\\"+index, 'g'), value);
                 }
             });
             if (happy_msg) {
-                flex_msg_happy = JSON.parse(flex_msg_happy);
+                happy_msg = JSON.parse(flex_msg_happy);
                 // console.log(flex_msg);
-                $.each(flex_msg_happy, function (index, value) {
+                $.each(happy_msg, function (index, value) {
                     flex_msg = flex_msg.replace(RegExp("\\"+index, 'g'), value);
                 });
             }
-            var _flex_msg = JSON.parse(flex_msg);
-            console.log(_flex_msg);
+            var flex_msg = JSON.parse(flex_msg);
             getToken(liffId).then(function(params){
                     if (!liff.isApiAvailable('shareTargetPicker')) throw new Error('不支援 shareTargetPicker，請嘗試更新應用程式版本。');
-                    liff.shareTargetPicker(_flex_msg)
+                    liff.shareTargetPicker(flex_msg)
                         .then(function (res) {
                             if (res) {
                                 Swal.fire({
@@ -295,15 +294,12 @@
         var secret = params.get("secret");
 
         window.onload = async function (e) {
-          if (cipher) {
+          if (cipher||happy_cipher) {
             if (cipher.slice(0, 6) === "@zoss@") {
                 var decipher = pako.inflate(base64ToArrayBuffer(cipher.slice(6).replace(/\-/g, '\+')), { to: 'string' });
-
             } else if (happy_cipher) {
                 var decipher = LZString.decompressFromUint8Array(base64ToArrayBuffer(happy_template.replace(/\-/g, '\+')));
                 var happy_decipher = LZString.decompressFromUint8Array(base64ToArrayBuffer(happy_cipher.replace(/\-/g, '\+')));
-                console.log(decipher);
-                console.log(happy_decipher);
             } else {
                 var decipher = LZString.decompressFromUint8Array(base64ToArrayBuffer(cipher.replace(/\-/g, '\+')));
             }
