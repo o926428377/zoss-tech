@@ -30,7 +30,7 @@
             </div>
             <div class="input-group mb-3">
                 <span class="col-5 input-group-text justify-content-center" id="basic-addon3">服務單位</span>
-                <input type="text" class="col form-control" id="campany" aria-describedby="basic-addon3" required>
+                <input type="text" class="col form-control" id="company" aria-describedby="basic-addon3" required>
             </div>
             <div class="input-group mb-3">
                 <span class="col-5 input-group-text justify-content-center" id="basic-addon3">職稱</span>
@@ -165,8 +165,15 @@
     function make_reserve() {
         // load_config();
         document.getElementById("loading").style.display = "inline";
+        var params2 = {
+          "name": document.getElementById("name").value,
+          "company": document.getElementById("company").value,
+          "title": document.getElementById("name").value,
+          "qty": document.getElementById("qty").value,
+          "note": document.getElementById("note").value
+        };
         getToken(liffId).then(function(params){
-            sendPost(`${url}?role=guest_reservation`, params).then(function(response){
+            sendPost(`${url}?role=guest_reservation`, {...params, ...params2}).then(function(response){
                 if (response.result==="NoPermission") {
                     Swal.fire({
                         title: "權限錯誤",
