@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>LIFF Share Target Picker</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/8.11.8/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/pako/1.0.3/pako.min.js"></script>
+</head>
+<body style="margin: 0 auto;max-width: 85%;">
+    <div id="to_share" style="text-align: center;display: none;">
+    </div>
+    <script>
+        const compress_words = {
+            "$1":"\"type\"\:\"uri\"",
+            "$2":"\"url\"\:\"https\:\/\/i.imgur.com\/",
+            "$3":"\"url\"\:\"https\:\/\/obs.line-scdn.net\/r\/myhome\/hex\/",
+            "$4":"\"altUri\"\:\{\"desktop\"\:\"https\:\/\/\"",
+            "$5":"\"altText\":",
+            "$6":"\"layout\":",
+            "$7":"\"paddingAll\":",
+            "$8":"\"url\":",
+            "$9":"\"aspectMode\":",
+            "$0":"\"gravity\":",
+            "$a":"\"desktop\":",
+            "$b":"\"color\":",
+            "$c":"\"label\":",
+            "$d":"\"backgroundColor\":",
+            "$e":"\"aspectRatio\":",
+            "$f":"\"uri\":",
+            "$g":"\"type\":",
+            "$h":"\"previewUrl\":",
+            "$i":"\"size\":",
+            "$j":"\"type\"\:\"uri\"",
+            "$k":"\"label\"\:\"action\"",
+            "$l":"\"https\:\/\/i.imgur.com\/",
+            "$m":"\"https\:\/\/obs.line-scdn.net\/r\/myhome\/hex\/",
+            "$n":"\"https\:\/\/www.zoss.com.tw\/",
+        };
+
+        const compress_words_2nd = {
+            '$o': '","contents":{$g"bubble",$i"giga","body":{$g"box",$6"vertical","contents":[{$g"box",$6"vertical","contents":[{$g"image",$2',
+            '$p': '",$e"1:3",$i"100%","offsetBottom":"30%"}],"position":"relative","height":"600px"},{$g"box",$6"vertical","contents":[{$g"box",$6"vertical","contents":[{$g"image",',
+            '$q': '","animated":true,$i"4xl",$e"3:1"},{$g"image",$2',
+            '$r': '",$i"full",$e"2:1"},{$g"box",$6"vertical","contents":[{$g"text","text":"',
+            '$s': '",$i"md","wrap":true,"style":"normal","weight":"bold","decoration":"none",$b"#645E6A"},{$g"text","text":"\u9700\u52a0\u5165\u6703\u54e1\u5f8c\uff0c\u4ee5\u6b64\u8a0a\u606f\u4e4b\u9023\u7d50\u9810\u7d04\u5f8c(\u6548\u671f\u81f3',
+            '$t': ')\uff0c\u65b9\u80fd\u53c3\u8207\u6b64\u6d3b\u52d5\uff0c\u8a73\u60c5\u8acb\u9ede\u64ca\u4e0b\u65b9\u9023\u7d50\u3002",$i"xs","wrap":true,"style":"normal","decoration":"none",$b"#645E6A"}],$7"15px",$d"#FFFFFF90","cornerRadius":"15px","spacing":"15px","alignItems":"center","justifyContent":"center"}],$7"20px"}],"position":"absolute"},{$g"box",$6"vertical","contents":[{$g"box",$6"horizontal","contents":[{$g"button","action":{$j,$c"\ud83d\udc88\u670d\u52d9\u64da\u9ede",$f$nshop/"},"style":"primary",$b"#26A22CB3"},{$g"button","action":{$j,$c"\ud83d\udcc6\u7acb\u5373\u9810\u7d04",$f"https://liff.line.me/',
+            '$T': ')\uff0c\u65b9\u80fd\u53c3\u8207\u6b64\u6d3b\u52d5\uff0c\u8a73\u60c5\u8acb\u9ede\u64ca\u4e0b\u65b9\u9023\u7d50\u3002",$i"xs","wrap":true,"style":"normal","decoration":"none",$b"#645E6A"}],$7"15px",$d"#FFFFFF90","cornerRadius":"15px","spacing":"15px","alignItems":"center","justifyContent":"center"}],$7"20px","spacing":"25px"}],"position":"absolute"},{$g"box",$6"vertical","contents":[{$g"box",$6"horizontal","contents":[{$g"button","action":{$j,$c"\ud83d\udc88\u670d\u52d9\u64da\u9ede",$f$nshop/"},"style":"primary",$b"#26A22CB3"},{$g"button","action":{$j,$c"\ud83d\udcc6\u7acb\u5373\u9810\u7d04",$f"https://liff.line.me/',
+            '$u': '"}},"style":"primary",$b"#26A22CB3"}],"spacing":"xxl"},{$g"button","action":{$j,$c"\u77ad\u89e3\u6d3b\u52d5\u8a73\u60c5>",$f"https://zoss-hair.appspot.com/',
+            '$v': '"},"style":"link",$b"#c1ff72"}],"spacing":"18px","position":"absolute",$7"12px","offsetBottom":"0px","width":"100%"}],$7"0px"}}}]',
+            '$w': '"https://liff.line.me/',
+            '$x': '"https://zoss-hair.appspot.com/',
+        	  '$y': '",$i"full",$e"1:1",$9"fit"},{$g"box",$6"vertical","contents":[{$g"text","text":"',
+		        '$z': '",$e"1:3",$i"100%","offsetBottom":"30%"}],"position":"relative","height":"840px"},{$g"box",$6"vertical","contents":[{$g"box",$6"vertical","contents":[{$g"image",',
+        };
+
+        var crypt = {
+          secret : secret,
+
+          encrypt : function (clear) {
+            var cipher = CryptoJS.AES.encrypt(clear, crypt.secret);
+            cipher = cipher.toString();
+            return cipher;
+          },
+
+          decrypt : function (cipher) {
+            var decipher = CryptoJS.AES.decrypt(cipher, crypt.secret);
+            decipher = decipher.toString(CryptoJS.enc.Utf8);
+            return decipher;
+          }
+        };
+
+        function arrayBufferToBase64( buffer ) {
+            var binary = '';
+            var bytes = new Uint8Array( buffer );
+            var len = bytes.byteLength;
+            for (var i = 0; i < len; i++) {
+                binary += String.fromCharCode( bytes[ i ] );
+            }
+            return window.btoa( binary );
+        }
+
+        function base64ToArrayBuffer(base64) {
+            var binary_string =  window.atob(base64);
+            var len = binary_string.length;
+            var bytes = new Uint8Array( len );
+            for (var i = 0; i < len; i++)        {
+                bytes[i] = binary_string.charCodeAt(i);
+            }
+            return bytes;
+        }
+
+        function decompress(byteArray, encoding) {
+          const cs = new DecompressionStream(encoding);
+          const writer = cs.writable.getWriter();
+          writer.write(byteArray);
+          writer.close();
+          return new Response(cs.readable).arrayBuffer().then(function (arrayBuffer) {
+            return new TextDecoder().decode(arrayBuffer);
+          });
+        }
+
+        function share(msg) {
+            var liff_url = `https://liff.line.me/${liffId}?cipher=${cipher}`;
+            var flex_msg = msg.replace(/\$liff_url/g, liff_url);
+            $.each(compress_words_2nd, function (index, value) {
+                flex_msg = flex_msg.replace(RegExp("\\"+index, 'g'), value);
+            });
+            $.each(compress_words, function (index, value) {
+                flex_msg = flex_msg.replace(RegExp("\\"+index, 'g'), value);
+            });
+            flex_msg = JSON.parse(flex_msg);
+            liff.init({
+                liffId: liffId
+            }).then(function () {
+                if (!liff.isLoggedIn()) {
+                    console.log(window.location.href.split('?')[0]);
+                    liff.login({redirectUri: window.location.href.split('?')[0] + `?target=share_target_picker&cipher=${cipher}`});
+                } else {
+                    if (!liff.isApiAvailable('shareTargetPicker')) throw new Error('不支援 shareTargetPicker，請嘗試更新應用程式版本。');
+                    liff.shareTargetPicker(flex_msg)
+                        .then(function (res) {
+                            if (res) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: '分享成功',
+                                }).then((result) => {
+                                    liff.closeWindow();
+                                });
+                            }
+                        }).catch(function (res) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '系統忙碌，請重新操作',
+                        }).then((result) => {
+                            liff.closeWindow();
+                        });
+                    });
+                };
+            });
+        }
+
+        function sys_error(msg) {
+            Swal.fire({
+                    title: '系統錯誤',
+                    text: msg,
+                    icon: "error",
+                    timer: 5000
+            }).then(function(){
+                liff.closeWindow();
+            });
+        }
+
+
+        var params = new URL(document.location.toString()).searchParams;
+        if (params.has("liffRedirectUri")) {
+            params = new URL(decodeURIComponent(params.get("liffRedirectUri"))).searchParams;
+        }
+        if (!params.has("liff")||!params.has("secret")) {
+            sys_error("無效參數");
+            _continue
+        } else if (params.has("cipher")) {
+            var cipher = params.get("cipher");
+        } else if (params.has("liff.state")) {
+            var tmp = getAllUrlParams(decodeURIComponent(params.get("liff.state")));
+            if (tmp.cipher) {
+                var cipher = tmp.cipher;
+            } else {
+                sys_error("無效參數");
+                _continue
+            }
+        }
+    
+        var liffId = params.get("liff");
+        var secret = params.get("secret");
+
+        window.onload = async function (e) {
+          if (cipher) {
+            if (cipher.slice(0, 6) === "@zoss@") {
+                var decipher = pako.inflate(base64ToArrayBuffer(cipher.slice(6).replace(/\-/g, '\+')), { to: 'string' });
+            } else {
+                var decipher = LZString.decompressFromUint8Array(base64ToArrayBuffer(cipher.replace(/\-/g, '\+')));
+            }
+            share(decipher);
+          }
+        };
+    </script>
+  </body>
+</html>
