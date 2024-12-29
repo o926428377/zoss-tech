@@ -172,8 +172,7 @@
         }
 
         function share(msg, happy_msg) {
-            var liffId = params.get("liff");
-            var secret = params.get("secret");
+
             if (happy_cipher) {
                 var liff_url = `https://liff.line.me/${liffId}?happy_cipher=${happy_cipher}&liff=${liffId}&secret=${secret}`;
             } else {
@@ -202,8 +201,8 @@
                     flex_msg = flex_msg.replace(RegExp("\\"+index, 'g'), value);
                 });
             }
-            // console.log(flex_msg);
             var _flex_msg = JSON.parse(flex_msg);
+            // console.log(flex_msg);
             liff.init({
                 liffId: liffId
             }).then(function () {
@@ -218,7 +217,7 @@
                     
                 } else {
                     if (!liff.isApiAvailable('shareTargetPicker')) throw new Error('不支援 shareTargetPicker，請嘗試更新應用程式版本。');
-                    liff.shareTargetPicker(flex_msg)
+                    liff.shareTargetPicker(_flex_msg)
                         .then(function (res) {
                             if (res) {
                                 Swal.fire({
