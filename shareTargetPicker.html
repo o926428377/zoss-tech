@@ -180,23 +180,28 @@
                 var liff_url = `https://liff.line.me/${liffId}?cipher=${cipher}&liff=${liffId}&secret=${secret}`;
             }
             var flex_msg = msg.replace(/\$liff_url/g, liff_url);
+            if (happy_msg) {
+                var flex_msg_happy = happy_msg.replace(/\$liff_url/g, liff_url);
+            }
             $.each(compress_words_2nd, function (index, value) {
                 flex_msg = flex_msg.replace(RegExp("\\"+index, 'g'), value);
                 if (happy_msg) {
-                    happy_msg = happy_msg.replace(RegExp("\\"+index, 'g'), value);
+                    flex_msg_happy = flex_msg_happy.replace(RegExp("\\"+index, 'g'), value);
                 }
             });
             $.each(compress_words, function (index, value) {
                 flex_msg = flex_msg.replace(RegExp("\\"+index, 'g'), value);
                 if (happy_msg) {
-                    happy_msg = happy_msg.replace(RegExp("\\"+index, 'g'), value);
+                    flex_msg_happy = flex_msg_happy.replace(RegExp("\\"+index, 'g'), value);
                 }
             });
-            happy_msg = JSON.parse(happy_msg);
-            // console.log(flex_msg);
-            $.each(happy_msg, function (index, value) {
-                flex_msg = flex_msg.replace(RegExp("\\"+index, 'g'), value);
-            });
+            if (happy_msg) {
+                flex_msg_happy = JSON.parse(flex_msg_happy);
+                // console.log(flex_msg);
+                $.each(flex_msg_happy, function (index, value) {
+                    flex_msg = flex_msg.replace(RegExp("\\"+index, 'g'), value);
+                });
+            }
             // console.log(flex_msg);
             var _flex_msg = JSON.parse(flex_msg);
             liff.init({
