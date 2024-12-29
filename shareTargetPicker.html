@@ -192,19 +192,18 @@
                     happy_msg = happy_msg.replace(RegExp("\\"+index, 'g'), value);
                 }
             });
-            console.log(flex_msg);
-            console.log(happy_msg);
             happy_msg = JSON.parse(happy_msg);
+            // console.log(flex_msg);
             $.each(happy_msg, function (index, value) {
                 flex_msg = flex_msg.replace(RegExp("\\"+index, 'g'), value);
             });
-            
-            flex_msg = JSON.parse(flex_msg);
-            console.log(flex_msg);
+            // console.log(flex_msg);
+            var _flex_msg = JSON.parse(flex_msg);
             liff.init({
                 liffId: liffId
             }).then(function () {
                 if (!liff.isLoggedIn()) {
+
                     console.log(window.location.href.split('?')[0]);
                     if (happy_cipher) {
                         liff.login({redirectUri: window.location.href.split('?')[0] + `?happy_cipher=${happy_cipher}&liff=${liffId}&secret=${secret}`});
@@ -281,13 +280,16 @@
           if (cipher) {
             if (cipher.slice(0, 6) === "@zoss@") {
                 var decipher = pako.inflate(base64ToArrayBuffer(cipher.slice(6).replace(/\-/g, '\+')), { to: 'string' });
+                share(decipher);
+
             } else if (happy_cipher) {
                 var decipher = LZString.decompressFromUint8Array(base64ToArrayBuffer(happy_template.replace(/\-/g, '\+')));
                 var happy_decipher = LZString.decompressFromUint8Array(base64ToArrayBuffer(happy_cipher.replace(/\-/g, '\+')));
+                share(decipher, happy_decipher);
             } else {
                 var decipher = LZString.decompressFromUint8Array(base64ToArrayBuffer(cipher.replace(/\-/g, '\+')));
+                share(decipher);
             }
-            share(decipher, happy_decipher);
           }
         };
     </script>
