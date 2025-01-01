@@ -28,7 +28,8 @@
 	  <div class="d-flex justify-content-center">
 	    <div id="qrcode" class="border border-5 border-white"></div>
 	  </div>
-		  </div>
+		  <div class="fs-4 text-secondary"><span id="sec">0</span>秒鐘後更新...</div>
+	  </div>
   </div>
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script>
@@ -3253,7 +3254,10 @@ function getToken(liffId) {
                   } else if (response.result==="OK") {
 					document.getElementById("loading").style.display = "none";
 					window.setInterval(function() { //declare new function
-					  if(timeCode!==_totp.getOtp(response.secret)) { //only run if it hasn't got this class 'pauseInterval'
+					  const d = new Date();
+					  let s = (60 - d.getSeconds())%30;
+					  document.getElementById("sec").textContent = `${s}`;
+					  if(s===0) { //only run if it hasn't got this class 'pauseInterval'
 						timeCode = _totp.getOtp(response.secret);
 						$('#qrcode').empty();
 						$('#qrcode').qrcode(`${timeCode}`);
