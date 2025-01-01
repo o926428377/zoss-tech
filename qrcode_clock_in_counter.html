@@ -28,7 +28,7 @@
 	  <div class="d-flex justify-content-center">
 	    <div id="qrcode" class="border border-5 border-white"></div>
 	  </div>
-		  <div class="fs-4 text-secondary"><span id="sec">0</span>秒鐘後更新...</div>
+		  <div class="fs-4 text-secondary"><span style="display: inline-block;width: 30px;" id="sec">0</span>秒鐘後更新...</div>
 	  </div>
   </div>
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
@@ -3253,6 +3253,8 @@ function getToken(liffId) {
                     });
                   } else if (response.result==="OK") {
 					document.getElementById("loading").style.display = "none";
+			  		timeCode = _totp.getOtp(response.secret);
+			  		$('#qrcode').qrcode(`${timeCode}`);
 					window.setInterval(function() { //declare new function
 					  const d = new Date();
 					  let s = (60 - d.getSeconds())%30;
