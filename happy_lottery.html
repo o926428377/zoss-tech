@@ -1928,7 +1928,7 @@
       function load_config() {
         lines = text.split("\n");
         for(i=0;i<lines.length;i++){
-          if (lines[i].match(/^\[prizes|shop_list|winner_list|name_list|lottery_buyer_list|special_name_list|lottery_winner_list|special_winner_list|group_list\]$/g)) {
+          if (lines[i].match(/^\[prizes|shop_list|winner_list|name_list|lottery_buyer_list|special_name_list|entire_name_list|lottery_winner_list|special_winner_list|entire_winner_list|group_list\]$/g)) {
             target = lines[i];
             headers = null;
           } else if (lines[i] === "") {
@@ -2222,6 +2222,12 @@
           } else if (prize_target[0]==="S") {
 	    const winner = Object.keys(special_winner_list);
             const target_list = Object.keys(special_name_list).filter(x=> !winner.includes(x));
+            document.getElementById("drawing_single").style.display = "inline";
+            choose(toggle, ["桶別","店名","中獎人"]);
+            target_list.random(qty).then(x=> { onSuccess(x); });
+	  } else if (prize_target[0]==="P" && prizes[prize_target]["桶別"]==="全員工") {
+	    const winner = Object.keys(entire_winner_list);
+            const target_list = Object.keys(entire_name_list).filter(x=> !winner.includes(x));
             document.getElementById("drawing_single").style.display = "inline";
             choose(toggle, ["桶別","店名","中獎人"]);
             target_list.random(qty).then(x=> { onSuccess(x); });
