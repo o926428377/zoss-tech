@@ -2089,7 +2089,7 @@
         target_qty.sort(function(a, b) {
           return b - a;
         });
-        target_qty.filter(x=> x<avaible_qty).forEach(qty => {
+        target_qty.filter(x=> x<avaible_qty && x<=10).forEach(qty => {
           temp += `<input type="radio" class="btn-check" name="qty" id="draw_${qty}" autocomplete="off" value="${qty}">` +
           `<label class="btn btn-light btn-outline-dark" for="draw_${qty}">${qty}</label>`;
         });
