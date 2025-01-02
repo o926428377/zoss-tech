@@ -270,6 +270,12 @@
                       if (response.prize) {
                         add_prize(response.prize, "prize");
                       }
+                      if (response.special) {
+                        add_prize(response.special, "special");
+                      }
+                      if (response.entire) {
+                        add_prize(response.entire, "entire");
+                      }
                       if (response.lottery) {
                         for(i=0;i<response.lottery.length;i++){
                             add_prize(response.lottery[i], "lottery");
