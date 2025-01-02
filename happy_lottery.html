@@ -2059,11 +2059,16 @@
           // option.setAttribute("prize_target", box["獎項編號"]);
           // option.setAttribute("draw_all", false);
           // option.setAttribute("draw_limit", box["桶別"]);
+	  if (group_list[box["桶別"]]) {
+	     var _group = `${group_list[box["桶別"]]}，`;
+	  } else {
+	     var _group = "";
+	  }
           
           if (quota > used) {
-            option.innerHTML = `${box["桶別"]} (${group_list[box["桶別"]]}，名額:${quota}，已抽:${used})`;
+            option.innerHTML = `${box["桶別"]} (${_group}名額:${quota}，已抽:${used})`;
           } else {
-            option.innerHTML = `${box["桶別"]} (${group_list[box["桶別"]]}，名額:${quota}，完成抽獎)`;
+            option.innerHTML = `${box["桶別"]} (${_group}名額:${quota}，完成抽獎)`;
             option.disabled = true;
           }
           select.appendChild(option);
