@@ -1789,7 +1789,7 @@
                 <option value="" selected disabled>請選擇獎項</option>
             </select>
             </div>
-            <div class="col-auto w-20">
+            <div class="col-auto w-50">
             <select name="box_no" id="box_no" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onclick="cancel_ready();" onchange="document.getElementById('shoot').disabled = false;document.getElementById('drawn').style.display = 'none';gen_draw_qty_options();">
               <option value="" selected disabled>請選擇箱別</option>
             </select>
@@ -1919,13 +1919,16 @@
       var winner_list = {};
       var name_list = {};
       var lottery_buyer_list = {};
+      var special_name_list = {};
+      var lottery_winner_list = {};
+      var special_winner_list = {};
+      var group_list = {};
       var toggle;
-
-
+    
       function load_config() {
         lines = text.split("\n");
         for(i=0;i<lines.length;i++){
-          if (lines[i].match(/^\[prizes|shop_list|winner_list|name_list|lottery_buyer_list\]$/g)) {
+          if (lines[i].match(/^\[prizes|shop_list|winner_list|name_list|lottery_buyer_list|special_name_list|lottery_winner_list|special_winner_list|group_list\]$/g)) {
             target = lines[i];
             headers = null;
           } else if (lines[i] === "") {
@@ -1956,6 +1959,19 @@
               case '[name_list]':
                 name_list[tmp["身分證號"]]=tmp;
                 break
+	      case '[special_name_list]':
+                special_name_list[tmp["身分證號"]]=tmp;
+                break
+	      case '[lottery_winner_list]':
+                winner_list[tmp["身分證號"]]=tmp;
+                break
+	      case '[special_winner_list]':
+                special_winner_list[tmp["身分證號"]]=tmp;
+                break
+	      case '[group_list]':
+                group_list[tmp["桶別"]]=tmp["區"];
+                break
+
               // case '[last_winner_list]':
               //   last_winner_list[tmp["身分證號"]]=tmp;
               //   break
@@ -2045,9 +2061,9 @@
           // option.setAttribute("draw_limit", box["桶別"]);
           
           if (quota > used) {
-            option.innerHTML = `${box["桶別"]} (名額:${quota}，已抽:${used})`;
+            option.innerHTML = `${box["桶別"]} (${group_list[box["桶別"]]}，名額:${quota}，已抽:${used})`;
           } else {
-            option.innerHTML = `${box["桶別"]} (名額:${quota}，完成抽獎)`;
+            option.innerHTML = `${box["桶別"]} (${group_list[box["桶別"]]}，名額:${quota}，完成抽獎)`;
             option.disabled = true;
           }
           select.appendChild(option);
@@ -2141,7 +2157,7 @@
 				document.getElementById("drawn").style.display = "inline";
 				var span = document.getElementById("prize_name");
                 if (prizes[prize_target]["獎項編號"][0]!=="L") {
-                    span.innerText = span.textContent = `${prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,')}(${prizes[prize_target]["桶別"]})-中獎名單`;
+                    span.innerText = span.textContent = `${prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,')}(${prizes[prize_target]["桶別"]}:${group_list[prizes[prize_target]["桶別"]]})-中獎名單`;
                     var drawn_list = document.getElementById("drawn_list");
                     console.log(result);
                     drawn_list.innerHTML = gen_list(result, false);
