@@ -190,12 +190,15 @@
       if (!params.has("liff") || !params.has("sid")) {
         sys_error("無效參數");
 	      _continue
-      } else if (params.has("type")) {
+      } else if (params.has("type")&&(params.has("prize_no")) {
 	      var _type = params.get("type");
+	      var prize_no = params.get("prize_no");
+	      
       } else if (params.has("liff.state")) {
             var tmp = getAllUrlParams(decodeURIComponent(params.get("liff.state")));
-            if (tmp.type) {
+            if (tmp.type && tmp.prize_no) {
                 var _type = tmp.type;
+                var prize_no = tmp.prize_no;
             } else {
           		sys_error("無效參數");
           		_continue
@@ -210,7 +213,7 @@
         // load_config();
 	    getToken(liffId).then(function(params){
 		    liff.scanCodeV2().then((_otp) => {
-	           sendPost(`${url}?role=qrcode_guest_clock_in`, {"type":_type, "sn":_otp.value, ...params}).then(function(response){
+	           sendPost(`${url}?role=prize_redeem`, {"sn":sn.value.replace(/\n/g, ''), "type":_type, "prize_no":prize_no, ...params}).then(function(response){
           			  if (response.result==="Existed") {
           			    sys_error("您已曾經核銷此獎項!");
           			  } else if (response.result==="OK") {
