@@ -45,7 +45,7 @@
   <div class="col">
     <div class="card h-100">
       <div class="card-body">
-        <h5 class="card-title badge bg-success fs-5">第一桶</h5>
+        <h5 class="card-title badge bg-success fs-5">第一桶(<span id="g1_regions"></span>)</h5>
 		<div id="carouselExampleSlidesOnly-一" class="carousel slide" data-bs-ride="carousel" data-bs-interval="15000" data-bs-keyboard="false" data-bs-pause="false" data-bs-ride="carousel">
 		<div class="carousel-inner">
 		
@@ -60,7 +60,7 @@
   <div class="col">
     <div class="card h-100">
       <div class="card-body">
-        <h5 class="card-title badge bg-success fs-5">第二桶</h5>
+        <h5 class="card-title badge bg-success fs-5">第二桶(<span id="g2_regions"></span>)</h5>
 		<div id="carouselExampleSlidesOnly-二" class="carousel slide" data-bs-ride="carousel" data-bs-interval="15000" data-bs-keyboard="false" data-bs-pause="false" data-bs-ride="carousel">
 		<div class="carousel-inner">
 		
@@ -74,7 +74,7 @@
   <div class="col">
     <div class="card h-100">
       <div class="card-body">
-        <h5 class="card-title badge bg-success fs-5">第三桶</h5>
+        <h5 class="card-title badge bg-success fs-5">第三桶(<span id="g3_regions"></span>)</h5>
 		<div id="carouselExampleSlidesOnly-三" class="carousel slide" data-bs-ride="carousel" data-bs-interval="15000" data-bs-keyboard="false" data-bs-pause="false">
 		<div class="carousel-inner">
 		
@@ -89,7 +89,7 @@
   <div class="col">
     <div class="card h-100">
       <div class="card-body">
-        <h5 class="card-title badge bg-success fs-5">第四桶</h5>
+        <h5 class="card-title badge bg-success fs-5">第四桶(<span id="g4_regions"></span>)</h5>
 		<div id="carouselExampleSlidesOnly-四" class="carousel slide" data-bs-ride="carousel" data-bs-interval="15000" data-bs-keyboard="false" data-bs-pause="false">
 		<div class="carousel-inner">
 		
@@ -103,7 +103,7 @@
   <div class="col">
     <div class="card h-100">
       <div class="card-body">
-        <h5 class="card-title badge bg-success fs-5">第五桶</h5>
+        <h5 class="card-title badge bg-success fs-5">第五桶(<span id="g5_regions"></span>)</h5>
 		<div id="carouselExampleSlidesOnly-五" class="carousel slide" data-bs-ride="carousel" data-bs-interval="15000" data-bs-keyboard="false" data-bs-pause="false">
 		<div class="carousel-inner">
 		
@@ -117,7 +117,7 @@
   <div class="col">
     <div class="card h-100">
       <div class="card-body">
-        <h5 class="card-title badge bg-success fs-5">第六桶</h5>
+        <h5 class="card-title badge bg-success fs-5">第六桶(<span id="g6_regions"></span>)</h5>
 		<div id="carouselExampleSlidesOnly-六" class="carousel slide" data-bs-ride="carousel" data-bs-interval="15000" data-bs-keyboard="false" data-bs-pause="false">
 		<div class="carousel-inner">
 		
@@ -352,6 +352,9 @@
                     });
                   } else if (response.result==="OK") {
                     update_winner_list(response.winner_list);
+		    ["1","2","3","4","5","6"].forEach((i) => {
+		    	document.getElementById(`g${i}_regions`).textContent=response.groups[`g${i}`];
+		    });
                     ["一","二","三","四","五","六"].forEach((i) => {
                       gen_winner_list(i);
                       document.getElementById(`carouselExampleSlidesOnly-${i}`).addEventListener('slide.bs.carousel', function () {
