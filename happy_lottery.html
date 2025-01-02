@@ -1789,7 +1789,7 @@
                 <option value="" selected disabled>請選擇獎項</option>
             </select>
             </div>
-            <div class="col-auto w-50">
+            <div class="col-auto w-40">
             <select name="box_no" id="box_no" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onclick="cancel_ready();" onchange="document.getElementById('shoot').disabled = false;document.getElementById('drawn').style.display = 'none';gen_draw_qty_options();">
               <option value="" selected disabled>請選擇箱別</option>
             </select>
@@ -2167,7 +2167,7 @@
                     console.log(result);
                     drawn_list.innerHTML = gen_list(result, false);
                 } else {
-                    span.innerText = span.textContent = `${prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,')}(威力彩)-中獎名單`;
+                    span.innerText = span.textContent = `${prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,')}-中獎名單`;
                     var drawn_list = document.getElementById("drawn_list");
                     console.log(result);
                     drawn_list.innerHTML = gen_list(result, true);
