@@ -234,7 +234,15 @@
           					  liff.closeWindow();
           				  })
           				});
-          			  } else {
+          			  } else if (response.result==="Redeemed") {
+					  sys_error("此獎項已完成核銷，請勿重複執行!");
+				  } else if (response.result==="NoPrize") {
+					  sys_error("查無您獲得此獎項，請使用中獎者手機核銷!");
+				  } else if (response.result==="PrizeNoError") {
+					  sys_error("請使用正確核銷按鈕進行核銷!");
+				  } else if (response.result==="IncorrectType") {
+					  sys_error("請使用正確核銷按鈕進行核銷!");
+				  } else {
 					  sys_error(response.result);
 				  }
 	            });
