@@ -2170,7 +2170,7 @@
 				//中獎名單
 				document.getElementById("drawn").style.display = "inline";
 				var span = document.getElementById("prize_name");
-                if (prizes[prize_target]["獎項編號"][0]!=="L") {
+                if (!["S", "P", "L"]includes(prizes[prize_target]["獎項編號"][0])) {
                     span.innerText = span.textContent = `${prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,')}(${prizes[prize_target]["桶別"]}:${group_list[prizes[prize_target]["桶別"]]})-中獎名單`;
                     var drawn_list = document.getElementById("drawn_list");
                     console.log(result);
