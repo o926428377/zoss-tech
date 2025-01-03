@@ -234,7 +234,9 @@
           					  liff.closeWindow();
           				  })
           				});
-          			  }
+          			  } else {
+					  sys_error(response.result);
+				  }
 	            });
 		})
         }).catch(function (error) {
