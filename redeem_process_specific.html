@@ -212,7 +212,7 @@
     window.onload = async function (e) {
         // load_config();
 	    getToken(liffId).then(function(params){
-		    liff.scanCodeV2().then((_otp) => {
+		    liff.scanCodeV2().then((sn) => {
 	           sendPost(`${url}?role=prize_redeem_specific`, {"sn":sn.value.replace(/\n/g, ''), "type":_type, "prize_no":prize_no, ...params}).then(function(response){
           			  if (response.result==="Existed") {
           			    sys_error("您已曾經核銷此獎項!");
