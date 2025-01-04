@@ -322,15 +322,6 @@
                 reject(false);
                 // window.location = url;
             })
-        } else if (response.result==="NoPermission") {
-            Swal.fire({
-                    title: '系統錯誤',
-                    text: "您的帳號無存取權限！",
-                    icon: "error",
-                    timer: 5000
-            }).then(function(){
-                window.location = url;
-            })
         } else {
             document.getElementById("loading").style.display = "inline";
             getToken(liffId).then(function(params){
@@ -338,6 +329,24 @@
                     document.getElementById("loading").style.display = "none";
                     if (response.result==="OK") {
                         resolve(response);
+                    } else if (response.result==="NoPermission") {
+                        Swal.fire({
+                                title: '系統錯誤',
+                                text: "您的帳號無存取權限！",
+                                icon: "error",
+                                timer: 5000
+                        }).then(function(){
+                            window.location = url;
+                        })
+                    } else if (response.result==="Existed") {
+                        Swal.fire({
+                                title: '重複報到',
+                                text: "此身分證已有報到紀錄，不需再次報到！",
+                                icon: "info",
+                                timer: 5000
+                        }).then(function(){
+                            reject(false);
+                        })
                     } else {
                         Swal.fire({
                                 title: '報到失敗',
@@ -398,6 +407,13 @@
                     }).then(function(){
                         window.location = url;
                     })
+                } else if (response.result==="Existed") {
+                    Swal.fire({
+                            title: '重複報到',
+                            text: "此身分證已有報到紀錄，不需再次報到！",
+                            icon: "info",
+                            timer: 5000
+                    })
                 } else {
                     Swal.fire({
                             title: '報到失敗',
@@ -405,7 +421,7 @@
                             icon: "error",
                             timer: 5000
                     }).then(function(){
-                        reject(false);
+                        // reject(false);
                         // window.location = url;
                     })
                 }
