@@ -53,10 +53,10 @@
         <div class="fs-1 text-white text-center fs-5">輸入證號報到</div>
     </div>
     <div class="m-3">
-        <form onsubmit="return false;" class="row g-3 needs-validation">
+        <form onsubmit="return false;" class="row g-3">
             <div class="input-group px-0"">
                 <span class="input-group-text" id="basic-addon3">身分證號</span>
-                <input type="text" class="form-control" id="user_id" aria-describedby="basic-addon3" placeholder="請輸入" autocomplete="off" required>
+                <input type="text" class="form-control" id="user_id" aria-describedby="basic-addon3" placeholder="請輸入" autocomplete="off">
                 <button class="btn btn-secondary" type="button" onclick="clean_input();">清除</button>
             </div>
             <button type="submit" class="w-100 btn btn-primary" id="submit" onclick="clock_in();">報到</button>
