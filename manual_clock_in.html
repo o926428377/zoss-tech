@@ -226,6 +226,9 @@
                     scanner.shouldScan = true;
                     scanner.foreverScan(config, onScanSuccess, function (a, b) {});
                 });
+            } else {
+                scanner.shouldScan = true;
+                scanner.foreverScan(config, onScanSuccess, function (a, b) {});
             }
         }
 
