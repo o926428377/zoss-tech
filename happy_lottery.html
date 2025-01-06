@@ -2105,7 +2105,7 @@
         document.getElementById("draw_qty").innerHTML = temp;
       }
 
-      function gen_list(result, is_lottery) {
+      function gen_list(result, _type) {
         var html = '<table class="table panel-body" style="place-self: center;">' +
         '<thead>' +
         '<tr>' +
@@ -2113,19 +2113,51 @@
         '<th scope="col">區別</th>' +
         '<th scope="col">店名</th>' +
         '<th scope="col">中獎姓名</th>' +
-        `<th scope="col">身分證${is_lottery?"(序號)":""}</th>` +
+        `<th scope="col">身分證${_type==="lottery"y?"(序號)":""}</th>` +
         '</tr>' +
         '</thead>' +
         '<tbody>';
+	
         for(i=0;i<result.length;i++){
-          html += '<tr>' +
-          `<th scope="row">${i+1}</th>` +
-          `<td>${name_list[is_lottery?lottery_buyer_list[result[i]]:result[i]]['區']}</td>` +
-          `<td>${name_list[is_lottery?lottery_buyer_list[result[i]]:result[i]]['店名']}</td>` +
-          `<td>${name_list[is_lottery?lottery_buyer_list[result[i]]:result[i]]['姓名']}</td>` +
-          `<td>${name_list[is_lottery?lottery_buyer_list[result[i]]:result[i]]['身分證號'].slice(0,3)}XXX${name_list[is_lottery?lottery_buyer_list[result[i]]:result[i]]['身分證號'].slice(6,10)}${is_lottery?"("+result[i]+")":""}</td>` +
-          '</tr>' +
-          '<tr>';
+	  if (_type==="lottery") {
+	    html += '<tr>' +
+            `<th scope="row">${i+1}</th>` +
+            `<td>${entire_name_list[lottery_buyer_list[result[i]]]['區']}</td>` +
+            `<td>${entire_name_list[lottery_buyer_list[result[i]]]['店名']}</td>` +
+            `<td>${entire_name_list[lottery_buyer_list[result[i]]]['姓名']}</td>` +
+            `<td>${entire_name_list[lottery_buyer_list[result[i]]]['身分證號'].slice(0,3)}XXX${entire_name_list[lottery_buyer_list[result[i]]]['身分證號'].slice(6,10)}${"("+result[i]+")"}</td>` +
+            '</tr>' +
+            '<tr>';
+	  } else if (_type==="special") {
+		  special_name_list
+	    html += '<tr>' +
+            `<th scope="row">${i+1}</th>` +
+            `<td>${special_name_list[result[i]]['區']}</td>` +
+            `<td>${special_name_list[result[i]]['店名']}</td>` +
+            `<td>${special_name_list[result[i]]['姓名']}</td>` +
+            `<td>${special_name_list[result[i]]['身分證號'].slice(0,3)}XXX${special_name_list[result[i]]['身分證號'].slice(6,10)}</td>` +
+            '</tr>' +
+            '<tr>';
+	  } else if (_type==="entire") {
+	    html += '<tr>' +
+            `<th scope="row">${i+1}</th>` +
+            `<td>${entire_name_list[result[i]]['區']}</td>` +
+            `<td>${entire_name_list[result[i]]['店名']}</td>` +
+            `<td>${entire_name_list[result[i]]['姓名']}</td>` +
+            `<td>${entire_name_list[result[i]]['身分證號'].slice(0,3)}XXX${entire_name_list[result[i]]['身分證號'].slice(6,10)}</td>` +
+            '</tr>' +
+            '<tr>';
+	  } else {
+	    html += '<tr>' +
+            `<th scope="row">${i+1}</th>` +
+            `<td>${name_list[result[i]]['區']}</td>` +
+            `<td>${name_list[result[i]]['店名']}</td>` +
+            `<td>${name_list[result[i]]['姓名']}</td>` +
+            `<td>${name_list[result[i]]['身分證號'].slice(0,3)}XXX${name_list[result[i]]['身分證號'].slice(6,10)}</td>` +
+            '</tr>' +
+            '<tr>';
+	  }
+
         }
         html += '</tbody>' +
         '</table>';
@@ -2174,13 +2206,21 @@
                     span.innerText = span.textContent = `${prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,')}(${prizes[prize_target]["桶別"]}:${group_list[prizes[prize_target]["桶別"]]})-中獎名單`;
                     var drawn_list = document.getElementById("drawn_list");
                     console.log(result);
-                    drawn_list.innerHTML = gen_list(result, false);
                 } else {
                     span.innerText = span.textContent = `${prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,')}-中獎名單`;
                     var drawn_list = document.getElementById("drawn_list");
                     console.log(result);
-                    drawn_list.innerHTML = gen_list(result, true);
                 }
+		if (prizes[prize_target]["獎項編號"][0]==="L") {
+			var _type = "lottery";
+		} else if (prizes[prize_target]["獎項編號"][0]==="P") {
+			var _type = "entire";
+		} else if (prizes[prize_target]["獎項編號"][0]==="S") {
+			var _type = "special";
+		} else {
+			var _type = "prize";
+		}
+		drawn_list.innerHTML = gen_list(result, _type);
 
 			  }
 			})
