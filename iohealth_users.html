@@ -130,7 +130,7 @@
     </style>
   </head>
   <body class="p-4">
-  <div id="loading" class="w-100 position-absolute bg-dark" style="z-index: 999;left: 0px;top: 0px;height: 105vh;display:none;">
+  <div id="loading" class="w-100 position-absolute bg-dark" style="z-index: 999;left: 0px;top: 0px;height: 105vh;">
     <div class="position-absolute top-50 start-50 translate-middle" style="text-align: center;"\>
     <div class="spinner-border text-primary" id="spinner" role="status" style="width: 5rem;height: 5rem;">
     <span class="sr-only"></span>
@@ -144,7 +144,7 @@
 
                     <div id="user_list" style="justify-self: center;width: 90%;max-height: 85vh;overflow: auto;">
                     </div>
-        </div>
+        
         <form onsubmit="return false;" class="row g-3 needs-validation">
 <!--             <div class="input-group mb-3">
                 <span class="col-5 input-group-text justify-content-center" id="basic-addon3">姓名(代表人)</span>
@@ -170,6 +170,7 @@
                 <input type="submit" class="w-100 btn btn-primary bg-primary" id="submit" value="新增" onclick="add_user()"></button>
             </div>
         </form>
+	</div>
         
     </div>
   </div>
@@ -439,6 +440,8 @@ window.onload = async function (e) {
                     var drawn_list = document.getElementById("user_list");
                     drawn_list.innerHTML = gen_list(result);
                     document.getElementById("main").style.display = "inline";
+		    document.getElementById("loading").style.display = "none";
+			
                   }
                 }
             });
