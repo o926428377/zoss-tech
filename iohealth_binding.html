@@ -140,6 +140,17 @@
         });
     };
 
+  function sys_error(msg) {
+        Swal.fire({
+                title: '系統錯誤',
+                text: msg,
+                icon: "error",
+                timer: 5000
+        }).then(function(){
+            liff.closeWindow();
+        });
+    }
+
     function sendPost(url, _params) {
         var form = document.createElement("form");
         // 設定表單的一些屬性，包含網頁接收伺服器回應的頁面或框架
@@ -198,24 +209,12 @@
     }
 
     if (!params.has("liff") || !params.has("sid")) {
-        Swal.fire({
-                title: '系統錯誤',
-                text: "無效參數",
-                icon: "error"
-        });
+        sys_error("無效參數");
         pause
     }  else if (params.has("liff.state")) {
-        var tmp = getAllUrlParams(decodeURIComponent(params.get("liff.state")));
-        if (tmp.uuid) {
-          var uuid = tmp.uuid;
-        } else {
-          Swal.fire({
-                title: '系統錯誤',
-                text: "無效參數",
-                icon: "error"
-          });
-          pause
-        }
+        getToken(liffId);
+    } else if (!params.has("uuid")){
+        var uuid = params.get("uuid");
     }
 
     var liffId = params.get("liff");
