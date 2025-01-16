@@ -138,10 +138,21 @@
                 icon: "error"
         });
         pause
+    }  else if (params.has("liff.state")) {
+        var tmp = getAllUrlParams(decodeURIComponent(params.get("liff.state")));
+        if (tmp.uuid) {
+          var uuid = tmp.uuid;
+        } else {
+          Swal.fire({
+                title: '系統錯誤',
+                text: "無效參數",
+                icon: "error"
+          });
+          pause
+        }
     }
 
     var liffId = params.get("liff");
-    var uuid = params.get("uuid");
     var url = `https://script.google.com/macros/s/${params.get("sid")}/exec`;
 
     function sys_error() {
