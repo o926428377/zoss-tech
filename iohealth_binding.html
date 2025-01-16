@@ -214,6 +214,9 @@
     }  else if (params.has("liff.state")) {
         getToken(params.get("liff"));
     } else if (!params.has("uuid")){
+        sys_error("無效參數");
+        pause
+    } else {
         var uuid = params.get("uuid");
     }
 
