@@ -131,7 +131,7 @@
         params = new URL(decodeURIComponent(params.get("liffRedirectUri"))).searchParams;
     }
 
-    if (!params.has("liff") || !params.has("sid") || !params.has("uuid")) {
+    if (!params.has("liff") || !params.has("sid")) {
         Swal.fire({
                 title: '系統錯誤',
                 text: "無效參數",
