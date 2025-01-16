@@ -212,7 +212,7 @@
         sys_error("無效參數");
         pause
     }  else if (params.has("liff.state")) {
-        getToken(liffId);
+        getToken(params.get("liff"));
     } else if (!params.has("uuid")){
         var uuid = params.get("uuid");
     }
