@@ -221,7 +221,7 @@
                   `<td data-content="分店">${result[i]["shop"]}</td>` +
                   `<td data-content="銷售群">${result[i]["group"]}</td>` +
                   `<td data-content="姓名">-</td>` +
-                  `<td data-content="開通狀態"><button class="btn btn-info btn-lg" type="button" onclick="share_binding_msg('${result[i]["uuid"]}');">立即開通</button></td>` +
+                  `<td data-content="開通狀態"><button class="btn btn-info py-0" type="button" onclick="share_binding_msg('${result[i]["uuid"]}');">立即開通</button></td>` +
                   `<td data-content="詳細資料">-</td>` +
                   '</tr>' +
                   '<tr>';
@@ -230,8 +230,8 @@
                   `<td data-content="分店">${result[i]["shop"]}</td>` +
                   `<td data-content="銷售群">${result[i]["group"]}</td>` +
                   `<td data-content="姓名">${result[i]["name"]}</td>` +
-                  `<td data-content="開通狀態"><button class="btn btn-info btn-lg" type="button" disabled>已開通</button></td>` +
-                  `<td data-content="詳細資料"><button class="btn btn-info btn-lg" type="button" onclick="view_details(${i});">查看</button></td>` +
+                  `<td data-content="開通狀態"><button class="btn btn-info py-0" type="button" disabled>已開通</button></td>` +
+                  `<td data-content="詳細資料"><button class="btn btn-info py-0" type="button" onclick="view_details(${i});">查看</button></td>` +
                   '</tr>' +
                   '<tr>';
           }
