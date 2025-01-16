@@ -244,7 +244,7 @@ function share_binding_msg(uuid) {
   var new_flex_msg = JSON.parse(flex_msg.replace("$liff", target_liff).replace("$uuid", uuid));
   getToken(liffId).then(function(params){
           if (!liff.isApiAvailable('shareTargetPicker')) throw new Error('不支援 shareTargetPicker，請嘗試更新應用程式版本。');
-          liff.shareTargetPicker(new_flex_msg)
+          liff.shareTargetPicker([new_flex_msg])
               .then(function (res) {
                   if (res) {
                       Swal.fire({
