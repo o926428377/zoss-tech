@@ -271,7 +271,7 @@
                 } else if (response.result==="OK") {
                     document.getElementById("loading").style.display = "none";
                     liff.sendMessages([
-                        JSON.parse(response.msg)
+                        JSON.parse(response.flex_msg)
                     ])
                     .then(() => {
                         liff.closeWindow();
