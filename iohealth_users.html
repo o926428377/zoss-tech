@@ -167,7 +167,7 @@
                 <textarea class="col form-control" aria-label="With textarea" id="note"></textarea>
             </div> -->
             <div class="input-group">
-                <input type="submit" class="w-100 btn btn-primary bg-primary" id="submit" value="新增" onclick="add_user()"></button>
+                <input type="submit" class="w-100 btn btn-primary bg-primary" id="submit" value="新增銷售群" onclick="add_group()"></button>
             </div>
         </form>
 	</div>
@@ -264,7 +264,42 @@ function share_binding_msg(uuid) {
           });
   });     
 }
-  
+function add_group() {
+	Swal.fire({
+	  title: "請輸入欲新增的銷售群名稱。新增成功後，將開啟傳送開通訊息畫面，選擇好友並發送即可。",
+	  input: "text",
+	  inputAttributes: {
+	    autocapitalize: "off"
+	  },
+	  showCancelButton: true,
+	  confirmButtonText: "新增",
+	  cancelButtonText: "取消",
+	  showLoaderOnConfirm: true,
+	  preConfirm: (group_name) => {
+	    return getToken(liffId).then(function(params){
+            	return sendPost(`${url}?role=add_group`, {"group_name":group_name, ...params})
+		      .then((r) => {
+		          return r;
+		      })
+		      .catch(error => {
+		        Swal.showValidationMessage(
+		          `系統錯誤，請重新操作!`
+		        )
+		      })
+	    }).catch(error => {
+		Swal.showValidationMessage(
+		  `系統錯誤，請重新操作!`
+		)
+	      })
+	  },
+	  allowOutsideClick: () => !Swal.isLoading()
+	}).then((result) => {
+	  if (result.isConfirmed) {
+	  	share_binding_msg(result.value.uuid);
+	  }
+	});
+}
+	
     function sendPost(url, _params) {
         var form = document.createElement("form");
         // 設定表單的一些屬性，包含網頁接收伺服器回應的頁面或框架
