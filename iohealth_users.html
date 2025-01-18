@@ -320,7 +320,7 @@ function add_x(x) {
 	  showLoaderOnConfirm: true,
 	  preConfirm: (_name) => {
 	    return getToken(liffId).then(function(params){
-            	return sendPost(`${url}?role=add_group`, {`${x}_name`:_name, ...params})
+            	return sendPost(`${url}?role=add_group`, {[`${x}_name`]:_name, ...params})
 		      .then((r) => {
 		          return r;
 		      })
