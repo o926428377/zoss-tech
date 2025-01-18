@@ -320,8 +320,13 @@ function add_x(x) {
 	  showLoaderOnConfirm: true,
 	  preConfirm: (_name) => {
 	    return getToken(liffId).then(function(params){
-            	return sendPost(`${url}?role=add_group`, {[`${x}_name`]:_name, ...params})
+            	return sendPost(`${url}?role=add_${x}`, {[`${x}_name`]:_name, ...params})
 		      .then((r) => {
+		          if (r.result!=="OK") {
+			      return Swal.showValidationMessage(
+			          r.result
+			        )
+		          }
 		          return r;
 		      })
 		      .catch(error => {
@@ -424,66 +429,6 @@ function add_x(x) {
         });
     }
 
-    function add_user() {
-        // load_config();
-        document.getElementById("loading").style.display = "inline";
-        var params2 = {
-          "name": document.getElementById("name").value,
-          "company": document.getElementById("company").value,
-          "title": document.getElementById("title").value,
-          "qty": document.getElementById("qty").value,
-          "note": document.getElementById("note").value
-        };
-        getToken(liffId).then(function(params){
-            sendPost(`${url}?role=guest_reservation`, {...params, ...params2}).then(function(response){
-                if (response.result==="NoPermission") {
-                    Swal.fire({
-                        title: "權限錯誤",
-                        text: "您無存取權限，請聯繫管理員開通或登入其他帳號",
-                        icon: "error",
-                        showDenyButton: false,
-                        showCancelButton: false,
-                        confirmButtonText: "關閉"
-                    }).then(function() {
-                        liff.closeWindow();
-                    });
-                } else if (response.result==="Expired") {
-                    Swal.fire({
-                        title: "登記日已截止",
-                        text: "如仍需登記，請聯繫管理員！",
-                        icon: "error",
-                        showDenyButton: false,
-                        showCancelButton: false,
-                        confirmButtonText: "關閉"
-                    }).then(function() {
-                        liff.closeWindow();
-                    });
-                } else if (response.result==="OK") {
-                    document.getElementById("loading").style.display = "none";
-                    liff.sendMessages([
-                        response.msg
-                    ])
-                    .then(() => {
-                        liff.closeWindow();
-                    })
-                    .catch((err) => {
-                        Swal.fire({
-                            title: '系統錯誤',
-                            // text: JSON.stringify(response.msg),
-                            text: "請重新操作",
-                            icon: "error"
-                            // timer: 5000
-                        }).then(function(){
-                            liff.closeWindow();
-                        })
-                    });
-                    
-                }
-            });
-        }).catch(function (error) {
-            sys_error();
-        });
-      }
 var result;
 var flex_msg;
 window.onload = async function (e) {
