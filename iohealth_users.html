@@ -142,7 +142,7 @@
     <div id="prizes" class="text-dark mb-3">
         <div class="align-items-center justify-content-center" id="main" style="display: none;">
 
-                    <div id="user_list" style="justify-self: center;width: 90%;max-height: 85vh;overflow: auto;">
+                    <div id="user_list" style="justify-self: center;width: 100%;max-height: 90vh;overflow: auto;scrollbar-width: none;">
                     </div>
         
         <form onsubmit="return false;" class="row g-3 needs-validation">
@@ -166,10 +166,10 @@
                 <span class="col-5 input-group-text justify-content-center">備註</span>
                 <textarea class="col form-control" aria-label="With textarea" id="note"></textarea>
             </div> -->
-            <div class="input-group">
-                <input type="submit" class="w-100 btn btn-primary bg-primary" id="submit" value="新增分店" onclick="add_x('shop')"></button>
-                <input type="submit" class="w-100 btn btn-primary bg-primary" id="submit" value="新增銷售群" onclick="add_x('group')"></button>
-                <input type="submit" class="w-100 btn btn-primary bg-primary" id="submit" value="新增會員" onclick="add_x('customer')"></button>
+            <div class="row">
+                <input type="submit" class="mx-1 p-1 col w-100 btn btn-primary bg-primary" id="submit" value="新增分店" onclick="add_x('shop')"></button>
+                <input type="submit" class="mx-1 p-1 col w-100 btn btn-primary bg-primary" id="submit" value="新增銷售群" onclick="add_x('group')"></button>
+                <input type="submit" class="mx-1 p-1 col w-100 btn btn-primary bg-primary" id="submit" value="新增會員" onclick="add_x('customer')"></button>
             </div>
         </form>
 	</div>
