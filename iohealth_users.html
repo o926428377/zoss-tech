@@ -142,30 +142,23 @@
     <div id="prizes" class="text-dark mb-3">
         <div class="align-items-center justify-content-center" id="main" style="display: none;">
 
-                    <div id="user_list" style="justify-self: center;width: 100%;max-height: 90vh;overflow: auto;scrollbar-width: none;">
-                    </div>
+	    <div id="user_list" style="justify-self: center;width: 100%;max-height: 90vh;overflow: auto;scrollbar-width: none;">
+	    	<nav>
+		  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+		    <button class="nav-link active" id="nav-shop-tab" data-bs-toggle="tab" data-bs-target="#nav-shoo" type="button" role="tab" aria-controls="nav-shop" aria-selected="true" style="display: none;">分店管理</button>
+		    <button class="nav-link" id="nav-sales-tab" data-bs-toggle="tab" data-bs-target="#nav-sales" type="button" role="tab" aria-controls="nav-sales" aria-selected="false">銷售群管理</button>
+		    <button class="nav-link" id="nav-user-tab" data-bs-toggle="tab" data-bs-target="#nav-user" type="button" role="tab" aria-controls="nav-user" aria-selected="false">會員管理</button>
+		  </div>
+		</nav>
+		<div class="tab-content" id="nav-tabContent">
+		  <div class="tab-pane fade show active" id="nav-shop" role="tabpanel" aria-labelledby="nav-shop-tab" style="display: none;"></div>
+		  <div class="tab-pane fade" id="nav-sales" role="tabpanel" aria-labelledby="nav-sales-tab"></div>
+		  <div class="tab-pane fade" id="nav-user" role="tabpanel" aria-labelledby="nav-user-tab"></div>
+		</div>
+	    </div>
+		
         
         <form onsubmit="return false;" class="needs-validation">
-<!--             <div class="input-group mb-3">
-                <span class="col-5 input-group-text justify-content-center" id="basic-addon3">姓名(代表人)</span>
-                <input type="text" class="col form-control" id="name" aria-describedby="basic-addon3" required>
-            </div>
-            <div class="input-group mb-3">
-                <span class="col-5 input-group-text justify-content-center" id="basic-addon3">服務單位</span>
-                <input type="text" class="col form-control" id="company" aria-describedby="basic-addon3" required>
-            </div>
-            <div class="input-group mb-3">
-                <span class="col-5 input-group-text justify-content-center" id="basic-addon3">職稱</span>
-                <input type="text" class="col form-control" id="title" aria-describedby="basic-addon3" required>
-            </div>
-            <div class="input-group mb-3">
-                <span class="col-5 input-group-text justify-content-center" id="basic-addon3">出席人數</span>
-                <input type="number" class="col form-control" id="qty" aria-describedby="basic-addon3" required>
-            </div>
-            <div class="input-group mb-3">
-                <span class="col-5 input-group-text justify-content-center">備註</span>
-                <textarea class="col form-control" aria-label="With textarea" id="note"></textarea>
-            </div> -->
             <div class="row">
                 <input type="submit" class="mx-1 p-1 col w-100 btn btn-primary bg-primary" id="admin" value="新增分店" onclick="add_x('shop')" style="display: none;"></button>
                 <input type="submit" class="mx-1 p-1 col w-100 btn btn-primary bg-primary" id="manager" value="新增銷售群" onclick="add_x('group')" style="display: none;"></button>
@@ -464,14 +457,21 @@ window.onload = async function (e) {
 			document.getElementById("admin").style.display = "inline";
 			document.getElementById("manager").style.display = "inline";
 			document.getElementById("sales").style.display = "inline";
+			document.getElementById("nav-shop").style.display = "inline";
+			document.getElementById("nav-shop-tab").style.display = "inline";
+		    	document.getElementById("nav-shop").innerHTML = gen_list(result.filter(x=>x.role==="店長"));
+		    	document.getElementById("nav-sales").innerHTML = gen_list(result.filter(x=>x.role==="銷售員"));
+			document.getElementById("nav-user").innerHTML = gen_list(result.filter(x=>x.role==="會員"));
 		    } else if (response.role==="manager") {
 			document.getElementById("manager").style.display = "inline";
 			document.getElementById("sales").style.display = "inline";
+			document.getElementById("nav-sales").innerHTML = gen_list(result.filter(x=>x.role==="銷售員"));
+			document.getElementById("nav-user").innerHTML = gen_list(result.filter(x=>x.role==="會員"));
 		    } else if (response.role==="sales") {
 			document.getElementById("sales").style.display = "inline";
+			var drawn_list = document.getElementById("user_list");
+                    	drawn_list.innerHTML = gen_list(result);
 		    }
-                    var drawn_list = document.getElementById("user_list");
-                    drawn_list.innerHTML = gen_list(result);
                     document.getElementById("main").style.display = "inline";
 		    document.getElementById("loading").style.display = "none";
 			
