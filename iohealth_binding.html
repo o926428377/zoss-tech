@@ -227,10 +227,10 @@
     var liffId = params.get("liff");
     var url = `https://script.google.com/macros/s/${params.get("sid")}/exec`;
 
-    function sys_error() {
+    function sys_error(text) {
         Swal.fire({
                 title: '系統錯誤',
-                text: "請重新整理",
+                text: text,
                 icon: "error",
                 timer: 5000
         }).then(function(){
@@ -300,7 +300,7 @@
                 }
             });
         }).catch(function (error) {
-            sys_error();
+            sys_error("請重新整理");
         });
       }
 
