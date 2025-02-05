@@ -28,8 +28,8 @@
                 <input type="text" class="col form-control" id="name" aria-describedby="basic-addon3" required>
             </div>
             <div class="input-group mb-3">
-                <span class="col-5 input-group-text justify-content-center" id="basic-addon3">電話</span>
-                <input type="text" class="col form-control" id="telephone" aria-describedby="basic-addon3" required>
+                <span class="col-5 input-group-text justify-content-center" id="basic-addon3">手機</span>
+                <input type="tel" pattern="[0-9]{10}" class="col form-control" id="telephone" aria-describedby="basic-addon3" required>
             </div>
             <div class="input-group mb-3">
                 <span class="col-5 input-group-text justify-content-center" id="basic-addon3">地址</span>
@@ -236,7 +236,7 @@
 
     function bind_account() {
         // load_config();
-        document.getElementById("loading").style.display = "inline";
+        
         var params2 = {
           "name": document.getElementById("name").value,
           "telephone": document.getElementById("telephone").value,
@@ -244,6 +244,11 @@
           "note": document.getElementById("note").value,
           "uuid": uuid
         };
+        if (!params2.name || params2.telephone || params2.address) {
+          return
+        }
+      
+        document.getElementById("loading").style.display = "inline";
         getToken(liffId).then(function(params){
             sendPost(`${url}?role=bind_account`, {...params, ...params2}).then(function(response){
                 if (response.result==="NoPermission") {
