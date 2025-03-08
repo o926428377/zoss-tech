@@ -1574,7 +1574,7 @@ function show_qrcode(uuid) {
   	var liff_url = "https://liff.line.me/$liff?uuid=$uuid".replace("$liff", target_liff).replace("$uuid", uuid);
 	Swal.fire({
 		title: "開通連結",
-		html: '<p>請使用LINE【讀取行動條碼】掃描QRCODE(每一連結僅限一人開通)</p><br><div class="d-flex justify-content-center"><div id="qrcode" class="border border-5 border-white"></div></div>',
+		html: '<p>請使用LINE【讀取行動條碼】掃描</p><br><p>(每一連結僅限一人開通)</p><br><div class="d-flex justify-content-center"><div id="qrcode" class="border border-5 border-white"></div></div>',
 		didOpen: () => {
 			$('#qrcode').qrcode(liff_url);
 		},
@@ -1613,6 +1613,7 @@ function add_customer() {
 	  text: "新增成功後，將開啟傳送開通訊息畫面，選擇好友並發送即可。亦可透過掃描QRCODE取得開通連結。",
 	  showCancelButton: true,
           showDenyButton: true,
+	  denyButtonColor: "#008000",
 	  confirmButtonText: "新增(LINE)",
 	  denyButtonText: "新增(QRCODE)",
 	  cancelButtonText: "取消",
@@ -1660,6 +1661,7 @@ function add_x(x) {
 	  },
 	  showCancelButton: true,
 	  showDenyButton: true,
+	  denyButtonColor: "#008000",
 	  confirmButtonText: "新增(LINE)",
 	  denyButtonText: "新增(QRCODE)",
 	  cancelButtonText: "取消",
