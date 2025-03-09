@@ -1571,7 +1571,7 @@ QRBitBuffer.prototype = {
         return html
   }
 function show_qrcode(uuid) {
-  	var liff_url = "https://liff.line.me/$liff?uuid=$uuid".replace("$liff", target_liff).replace("$uuid", uuid);
+  	var liff_url = "https://liff.line.me/$liff?uuid=$uuid&qrcode_mode=true".replace("$liff", target_liff).replace("$uuid", uuid);
 	Swal.fire({
 		title: "開通連結",
 		html: '<p>請使用LINE【讀取行動條碼】掃描</p><br><p>(每一連結僅限一人開通)</p><br><div class="d-flex justify-content-center"><div id="qrcode" class="border border-5 border-white"></div></div>',
