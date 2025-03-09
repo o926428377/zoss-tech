@@ -222,6 +222,7 @@
         pause
     } else {
         var uuid = params.get("uuid");
+        var qrcode_mode = params.get("qrcode_mode") === "true" ? true : false;
     }
 
     var liffId = params.get("liff");
@@ -279,24 +280,39 @@
                     });
                 } else if (response.result==="OK") {
                     document.getElementById("loading").style.display = "none";
-                    liff.sendMessages([
-                        JSON.parse(response.flex_msg)
-                    ])
-                    .then(() => {
-                        liff.closeWindow();
-                    })
-                    .catch((err) => {
-                        Swal.fire({
-                            title: '系統錯誤',
-                            // text: JSON.stringify(response.msg),
-                            text: "請重新操作",
-                            icon: "error"
-                            // timer: 5000
-                        }).then(function(){
-                            liff.closeWindow();
-                        })
-                    });
-                    
+                    if (qrcode_mode) {
+                      Swal.fire({
+                        title: "開通成功",
+                        text: "請點擊下方按鈕，開啟耕養LINE官方帳號！",
+                        icon: "success",
+                        showDenyButton: false,
+                        showCancelButton: false,
+                        confirmButtonText: "耕養LINE@"
+                      }).then(function() {
+                        if (result.isConfirmed) {
+                    	  	window.location = "https://line.me/R/ti/p/%40306ygaex";
+                          liff.closeWindow();
+                    	  }
+                      });
+                    } else {
+                      liff.sendMessages([
+                          JSON.parse(response.flex_msg)
+                      ])
+                      .then(() => {
+                          liff.closeWindow();
+                      })
+                      .catch((err) => {
+                          Swal.fire({
+                              title: '系統錯誤',
+                              // text: JSON.stringify(response.msg),
+                              text: "請重新操作",
+                              icon: "error"
+                              // timer: 5000
+                          }).then(function(){
+                              liff.closeWindow();
+                          })
+                      });
+                    }
                 }
             });
         }).catch(function (error) {
