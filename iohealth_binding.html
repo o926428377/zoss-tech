@@ -255,6 +255,11 @@
       
         document.getElementById("loading").style.display = "inline";
         getToken(liffId).then(function(params){
+            liff.openWindow({
+              url: "https://line.me/R/ti/p/%40306ygaex",
+              external: false,
+            });
+            return
             sendPost(`${url}?role=bind_account`, {...params, ...params2}).then(function(response){
                 if (response.result==="NoPermission") {
                     Swal.fire({
