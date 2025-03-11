@@ -290,7 +290,10 @@
                         confirmButtonText: "耕養LINE@"
                       }).then(function() {
                         if (result.isConfirmed) {
-                    	  	window.location.href = "https://line.me/R/ti/p/%40306ygaex";
+                          liff.openWindow({
+                            url: "https://line.me/R/ti/p/%40306ygaex",
+                            external: false,
+                          });
                     	  }
                         liff.closeWindow();
                       });
