@@ -141,7 +141,7 @@
         getToken(liffId).then(function(params){
             document.getElementById("mask").textContent = "登記中...";
             document.getElementById("loading").style.display = "inline";
-            var qty = 100;
+            var qty = document.getElementById('qty').valueAsNumber;
             sendPost(`${url}?role=lottery_pre_order`, {"qty": qty, ...params}).then(function(response){
                 if (typeof response.msg !== "undefined") {
                     sys_error();
