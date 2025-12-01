@@ -190,6 +190,9 @@
     window.onload = async function (e) {
         // load_config();
         getToken(liffId).then(function(params){
+            document.getElementById("loading").style.display = "none";
+            pre_order();
+            return
             sendPost(`${url}?role=permission_check`, params).then(function(response){
                 if (typeof response.msg !== "undefined") {
                     sys_error();
