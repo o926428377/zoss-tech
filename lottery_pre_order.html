@@ -160,17 +160,30 @@
                     } else if (response.result==="OK") {
                         liff.sendMessages([
                 					response.flex_msg
-                				]);
-                        Swal.fire({
-                            title: "登記完成",
-                            icon: "success",
-                            showDenyButton: false,
-                            showCancelButton: false,
-                            timer: 5000,
-                            confirmButtonText: "關閉"
-                        }).then(function() {
-                            liff.closeWindow();
-                        });
+                				])
+                				.then(() => {
+                          Swal.fire({
+                              title: "登記完成",
+                              icon: "success",
+                              showDenyButton: false,
+                              showCancelButton: false,
+                              timer: 5000,
+                              confirmButtonText: "關閉"
+                          }).then(function() {
+                              liff.closeWindow();
+                          });
+                				})
+                				.catch((err) => {
+                					Swal.fire({
+                						  title: '系統錯誤',
+                						text: JSON.stringify(response.msg),
+                						  // text: "請重新操作",
+                						  icon: "error"
+                						  // timer: 5000
+                				  }).then(function(){
+                					  liff.closeWindow();
+                				  })
+                				});
                     } else {
                         sys_error();
                     }
