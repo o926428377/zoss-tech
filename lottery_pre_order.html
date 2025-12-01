@@ -158,6 +158,9 @@
                             liff.closeWindow();
                         });
                     } else if (response.result==="OK") {
+                        liff.sendMessages([
+                					response.flex_msg
+                				]);
                         Swal.fire({
                             title: "登記完成",
                             icon: "success",
