@@ -24,7 +24,8 @@
         return new Promise(function(resolve,reject){
             liff.init({
                         liffId: liffId,
-                        withLoginOnExternalBrowser: true
+                        withLoginOnExternalBrowser: true,
+                        redirectUri: `${document.location.origin}${document.location.pathname}?liff=${liffId}&msg=${msg}`
                     }).then(function (data) {
                 liff.getProfile().then(function (profile) {
                 var params = {};
