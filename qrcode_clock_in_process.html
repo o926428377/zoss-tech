@@ -203,7 +203,12 @@
 	//     }
  //      }
       var liffId = params.get("liff");
-      var url = `https://script.google.com/macros/s/${params.get("sid")}/exec`;
+      var url;
+	if (params.get("sid")) {
+	  url = `https://script.google.com/macros/s/${params.get("sid")}/exec`;
+	} else if (params.get("app")) {
+	  url = `https://${params.get("app")}.a.run.app`;
+	}
 
       
 
