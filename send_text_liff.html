@@ -49,7 +49,15 @@
     if (params.has("liffRedirectUri")) {
     params = new URL(decodeURIComponent(params.get("liffRedirectUri"))).searchParams;
     }
-    if (!params.has("liff")) {
+    var msg;
+    if (params.has("liff.state")) {
+        var tmp = getAllUrlParams(decodeURIComponent(params.get("liff.state")));
+        if (tmp.msg) {
+            msg = tmp.msg;
+        }
+    }
+    var liffId = params.get("liff");
+    if (liffId || !msg) {
     Swal.fire({
             title: '系統錯誤',
             text: "無效參數",
@@ -57,9 +65,6 @@
     });
     pause
     }
-
-    var liffId = params.get("liff");
-    var msg = params.get("msg");
 
     function sys_error() {
         Swal.fire({
