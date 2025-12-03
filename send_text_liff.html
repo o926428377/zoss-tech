@@ -126,7 +126,7 @@
         }
     }
     var liffId = params.get("liff");
-    if (liffId || !msg) {
+    if (!liffId || !msg) {
     Swal.fire({
             title: '系統錯誤',
             text: "無效參數",
