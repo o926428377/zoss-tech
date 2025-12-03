@@ -20,31 +20,6 @@
 
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script>
-    function getToken(liffId) {
-        return new Promise(function(resolve,reject){
-            liff.init({
-                        liffId: liffId,
-                        withLoginOnExternalBrowser: true,
-                        redirectUri: `${document.location.origin}${document.location.pathname}?liff=${liffId}&msg=${msg}`
-                    }).then(function (data) {
-                liff.getProfile().then(function (profile) {
-                var params = {};
-                params['userId'] = profile.userId;
-                const accessToken =  liff.getAccessToken();
-                if (!accessToken) {
-                    params['accessToken'] = 'Error';
-                }
-                params['accessToken'] = accessToken;
-                //console.log(params);
-                resolve(params);
-                }).catch(function (error) {
-                window.alert("Error getting profile: " + error);
-                reject(params);
-                });
-            // }
-            });
-        });
-    };
   
     function getAllUrlParams(url) {
       
@@ -149,7 +124,10 @@
 
     window.onload = async function (e) {
         // load_config();
-        getToken(liffId).then(function(params){
+            liff.init({
+                liffId: liffId,
+                withLoginOnExternalBrowser: false
+            }).then(function(params){
             document.getElementById("loading").style.display = "none";
             liff.sendMessages([
                 {
