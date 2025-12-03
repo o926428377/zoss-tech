@@ -117,7 +117,9 @@
     params = new URL(decodeURIComponent(params.get("liffRedirectUri"))).searchParams;
     }
     var msg;
-    if (params.has("liff.state")) {
+    if (params.has("msg")) {
+        msg = params.get("msg");
+    } else if (params.has("liff.state")) {
         var tmp = getAllUrlParams(decodeURIComponent(params.get("liff.state")));
         if (tmp.msg) {
             msg = tmp.msg;
