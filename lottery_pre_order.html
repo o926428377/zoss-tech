@@ -231,12 +231,12 @@
     // 修改：生成標題 + 金屬按鈕 + 取消登記按鈕
     function pre_order() {
         // 1. 加入標題
-        var html = '<h5 class="text-center my-3 fw-bold" style="color: #444; text-shadow: 0 1px 0 #fff;">請選擇登記數量</h5>';
+        var html = '<h5 class="text-center my-3 fw-bold" style="color: #444; text-shadow: 0 1px 0 #fff;">請登記「欲購買的威力彩張數」</h5>';
         
         html += '<div class="grid-container">';
         
         // 2. 產生 1 ~ 200 的金屬質感按鈕
-        for (var i = 1; i <= 200; i++) {
+        for (var i = 1; i <= 50; i++) {
             // 使用新定義的 .btn-metal 類別
             html += `<button type="button" class="btn btn-metal" onclick="submit_process(${i})">${i}</button>`;
         }
