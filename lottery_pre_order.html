@@ -2,11 +2,25 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>快樂48忘年會 - 威力彩購買登記</title>   
+    <title>威力彩購買登記</title>   
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        /* 新增樣式讓按鈕在手機上更好看 */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 4px;
+            padding: 5px;
+        }
+        .num-btn {
+            padding: 2px 0;
+            font-size: 12px;
+            width: 100%;
+        }
+    </style>
   </head>
   <body class="p-4" style="height:100vh;background-image: url('https://i.imgur.com/F0nAnwj.png');background-size: 100% auto;background-repeat: repeat-y;">
   <div id="loading" class="w-100 position-absolute bg-dark" style="z-index: 999;left: 0px;top: 0px;height: 105vh;">
@@ -22,7 +36,8 @@
   </div>
   <div style="height: 85%;" class="py-3">
     <div class="h-100 col d-flex align-items-center justify-content-center">
-    <div id="order" class="card text-dark bg-light mb-3" style="max-height: 100%;width: 100%;opacity: 0.85;overflow: auto;">
+    <div id="order" class="card text-dark bg-light mb-3" style="max-height: 100%;width: 100%;opacity: 0.95;overflow: auto;">
+        <!-- 按鈕將會生成在這裡 -->
     </div>
     </div>
   </div>
@@ -60,46 +75,32 @@
 
     function sendPost(url, _params) {
         var form = document.createElement("form");
-        // 設定表單的一些屬性，包含網頁接收伺服器回應的頁面或框架
         form.setAttribute("method", "post");
         form.setAttribute("action", url);
-        //form.setAttribute("target", "Iframe1");
         
-        // 建立隱藏的表單控制項
         for (var key in _params) {
             var hiddenField = document.createElement("input");
             hiddenField.setAttribute("type", "hidden");
             hiddenField.setAttribute("name", key);
             hiddenField.setAttribute("value", _params[key]);
             form.appendChild(hiddenField);
-            //console.log(key);
         }
         
-        // 隱藏的submit按鈕，預防瀏覽器不支援模糊的表單設計。（可不用）
         var hiddenSubmit = document.createElement("input");
         hiddenSubmit.setAttribute("type", "submit");
         hiddenSubmit.setAttribute("style", "display:none;");
         form.appendChild(hiddenSubmit);
         
-        // 將表單加入網頁中
         document.body.appendChild(form);
         
-        // 送出請求
-        //form.submit();
         return new Promise(function(resolve,reject){
             fetch(`${url}`, {
             method: "POST",
             redirect: "follow", 
-            // mode: "no-cors", 
-            // cache: "no-cache",
             headers: {
                 "Content-Type": "text/plain",
             },
-            // credentials: "include",
-            body: JSON.stringify(
-                _params
-                // {"to_add": result.map(x=> [x, prize_target])}
-            )
+            body: JSON.stringify(_params)
             })
             .then(response => response.text())
             .then(context => {
@@ -120,7 +121,7 @@
             text: "無效參數",
             icon: "error"
     });
-    pause
+    // pause // removed undefined variable
     }
 
     var liffId = params.get("liff");
@@ -142,11 +143,18 @@
         });
     }
 
-    function submit_process() {
+    // 修改：接收數值參數 (val)
+    function submit_process(val) {
         getToken(liffId).then(function(params){
-            document.getElementById("mask").textContent = "登記中...";
+            
+            // 顯示確認對話框 (非必要，若要真正"直接送出"可註解掉此段)
+            // 但為了使用者體驗，加上讀取遮罩是必須的
+            document.getElementById("mask").textContent = val === 0 ? "取消中..." : "登記中...";
             document.getElementById("loading").style.display = "inline";
-            var qty = document.getElementById('qty').valueAsNumber;
+            
+            // 使用傳入的 val 作為 qty
+            var qty = val;
+
             sendPost(`${url}?role=lottery_pre_order`, {"qty": qty, ...params}).then(function(response){
                 if (typeof response.msg !== "undefined") {
                     sys_error();
@@ -168,7 +176,7 @@
                 				])
                 				.then(() => {
                           Swal.fire({
-                              title: "登記完成",
+                              title: val === 0 ? "取消成功" : "登記完成", // 根據操作顯示不同文字
                               icon: "success",
                               showDenyButton: false,
                               showCancelButton: false,
@@ -182,9 +190,7 @@
                 					Swal.fire({
                 						  title: '系統錯誤',
                 						text: JSON.stringify(response.msg),
-                						  // text: "請重新操作",
                 						  icon: "error"
-                						  // timer: 5000
                 				  }).then(function(){
                 					  liff.closeWindow();
                 				  })
@@ -199,13 +205,22 @@
         });
     }
 
+    // 修改：生成 1-200 的按鈕網格 + 取消按鈕
     function pre_order() {
-        var _btn = "送出";
-        document.getElementById("order").innerHTML += 
-        `<div class="card-body" style="justify-items: center;">
-            <div>登記數量：<input type="number" id="qty" name="qty" min="0" max="200" value="0"/></div>
-            <button type="button" class="mt-3 btn btn-primary w-100 btn-dark" onclick="submit_process()">送出</button>
+        var gridHtml = '<div class="grid-container">';
+        
+        // 產生 1 ~ 200 的按鈕
+        for (var i = 1; i <= 200; i++) {
+            gridHtml += `<button type="button" class="btn btn-outline-primary num-btn" onclick="submit_process(${i})">${i}</button>`;
+        }
+        gridHtml += '</div>';
+
+        // 第 21 列：取消按鈕 (代入 0)
+        gridHtml += `<div class="p-2 border-top">
+            <button type="button" class="btn btn-danger w-100" onclick="submit_process(0)">取消</button>
         </div>`;
+
+        document.getElementById("order").innerHTML = gridHtml;
     }
 
     window.onload = async function (e) {
@@ -213,7 +228,9 @@
         getToken(liffId).then(function(params){
             document.getElementById("loading").style.display = "none";
             pre_order();
-            return
+            // 原有的權限檢查若需要啟用，請自行取消下方的 return
+            return; 
+
             sendPost(`${url}?role=permission_check`, params).then(function(response){
                 if (typeof response.msg !== "undefined") {
                     sys_error();
