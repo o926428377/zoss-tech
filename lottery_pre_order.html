@@ -186,7 +186,29 @@
                 if (typeof response.msg !== "undefined") {
                     sys_error();
                 } else {
-                    if (response.result==="QtyPrize") {
+                    if (response.result==="NotMember") {
+                        Swal.fire({
+                            title: "系統錯誤",
+                            text: "無法登記，您尚未完成福利社LINE@綁定。",
+                            icon: "error",
+                            showDenyButton: false,
+                            showCancelButton: false,
+                            confirmButtonText: "關閉"
+                        }).then(function() {
+                            liff.closeWindow();
+                        });
+                    } else if (response.result==="Expired") {
+                        Swal.fire({
+                            title: "系統錯誤",
+                            text: "無法登記，以超過登記截止日。",
+                            icon: "error",
+                            showDenyButton: false,
+                            showCancelButton: false,
+                            confirmButtonText: "關閉"
+                        }).then(function() {
+                            liff.closeWindow();
+                        });
+                    } else if (response.result==="QtyPrize") {
                         Swal.fire({
                             title: "系統錯誤",
                             text: "您輸入的數量不正確，請重新操作。",
