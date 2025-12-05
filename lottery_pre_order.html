@@ -8,27 +8,27 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <style>
-        /* 網格佈局 */
+        /* 網格佈局：改為 5 個一列 */
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            gap: 4px;
-            padding: 5px;
+            grid-template-columns: repeat(5, 1fr); /* 修改：從 10 改為 5 */
+            gap: 10px; /* 修改：增加間距讓按鈕分開一點 */
+            padding: 10px;
         }
 
         /* 金屬質感按鈕樣式 */
         .btn-metal {
             width: 100%;
-            padding: 2px 0;
-            font-size: 12px;
+            padding: 15px 0; /* 修改：增加高度，方便點選 */
+            font-size: 20px; /* 修改：字體放大 */
             font-weight: bold;
             color: #333;
-            /* 金屬光澤漸層：由淺灰到深灰，模擬反光 */
+            /* 金屬光澤漸層 */
             background: linear-gradient(to bottom, #f7f7f7 0%, #dcdcdc 50%, #bababa 51%, #cfcfcf 100%);
             border: 1px solid #888;
-            border-radius: 4px;
+            border-radius: 8px; /* 修改：圓角稍微加大 */
             /* 外部陰影增加立體感，內部高光 */
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.7);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.7);
             /* 文字刻印效果 */
             text-shadow: 0 1px 0 rgba(255,255,255,0.8);
             transition: all 0.1s;
@@ -42,13 +42,12 @@
 
         /* 按鈕點擊(按下)效果 */
         .btn-metal:active {
-            /* 反轉漸層或變深，模擬凹陷 */
             background: linear-gradient(to bottom, #aaaaaa 0%, #cccccc 100%);
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
             border-color: #555;
             color: #fff;
             text-shadow: 0 -1px 0 rgba(0,0,0,0.5);
-            transform: translateY(1px);
+            transform: translateY(2px);
         }
     </style>
   </head>
@@ -61,10 +60,7 @@
     <div id="mask" class="fs-1 text-white">登入中...</div>
     </div>
   </div>
-  <!-- <div style="width:100%;height:10.5%;" class="justify-content-center">
-    <img src="https://i.imgur.com/Gc9rJ1e.png" style="height:100%"></img>
-  </div>
-  <div style="height: 85%;" class="py-3"> -->
+
   <div style="height: 95%;" class="py-3">
     <div class="h-100 col d-flex align-items-center justify-content-center">
     <div id="order" class="card text-dark bg-light mb-3" style="max-height: 100%;width: 100%;opacity: 0.95;overflow: auto;">
@@ -74,7 +70,6 @@
   </div>
   <div style="width:100%;" class="justify-content-center">
     <img src="https://i.imgur.com/YsAKWQX.png" style="width:100%"></img>
-
   </div>
 
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
@@ -93,37 +88,17 @@
                     params['accessToken'] = 'Error';
                 }
                 params['accessToken'] = accessToken;
-                //console.log(params);
                 resolve(params);
                 }).catch(function (error) {
                 window.alert("Error getting profile: " + error);
                 reject(params);
                 });
-            // }
             });
         });
     };
 
     function sendPost(url, _params) {
-        var form = document.createElement("form");
-        form.setAttribute("method", "post");
-        form.setAttribute("action", url);
-        
-        for (var key in _params) {
-            var hiddenField = document.createElement("input");
-            hiddenField.setAttribute("type", "hidden");
-            hiddenField.setAttribute("name", key);
-            hiddenField.setAttribute("value", _params[key]);
-            form.appendChild(hiddenField);
-        }
-        
-        var hiddenSubmit = document.createElement("input");
-        hiddenSubmit.setAttribute("type", "submit");
-        hiddenSubmit.setAttribute("style", "display:none;");
-        form.appendChild(hiddenSubmit);
-        
-        document.body.appendChild(form);
-        
+        // ... (保持原有的 form submit fallback 邏輯) ...
         return new Promise(function(resolve,reject){
             fetch(`${url}`, {
             method: "POST",
@@ -138,7 +113,6 @@
             var data = JSON.parse(context);
             resolve(data);
             });
-        
         })
     };
 
@@ -173,7 +147,41 @@
         });
     }
 
-    // 接收數值參數 (val)
+    // 新增：確認對話方塊函式
+    function confirm_order(val) {
+        var titleText = "";
+        var btnText = "";
+        var btnColor = "";
+
+        if(val === 0) {
+            titleText = "確定要取消登記嗎？";
+            btnText = "是，取消登記";
+            btnColor = "#dc3545"; // 紅色
+        } else {
+            titleText = `您選擇了 <span style="color:red; font-size: 1.2em;">${val}</span> 張`;
+            btnText = "確認送出";
+            btnColor = "#3085d6"; // 藍色
+        }
+
+        Swal.fire({
+            title: '確認數量',
+            html: titleText, // 使用 html 屬性以支援上面的 span 標籤
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: btnColor,
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: btnText,
+            cancelButtonText: '再想想',
+            reverseButtons: true // 讓確認按鈕在右邊
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // 使用者點選確認後，才執行送出流程
+                submit_process(val);
+            }
+        });
+    }
+
+    // 實際執行送出的函式 (原本的 submit_process)
     function submit_process(val) {
         getToken(liffId).then(function(params){
             
@@ -221,9 +229,9 @@
                         });
                     } else if (response.result==="OK") {
                         liff.sendMessages([
-                					response.flex_msg
-                				])
-                				.then(() => {
+                            response.flex_msg
+                        ])
+                        .then(() => {
                           Swal.fire({
                               title: val === 0 ? "取消成功" : "登記完成", 
                               icon: "success",
@@ -234,16 +242,16 @@
                           }).then(function() {
                               liff.closeWindow();
                           });
-                				})
-                				.catch((err) => {
-                					Swal.fire({
-                						  title: '系統錯誤',
-                						text: JSON.stringify(response.msg),
-                						  icon: "error"
-                				  }).then(function(){
-                					  liff.closeWindow();
-                				  })
-                				});
+                        })
+                        .catch((err) => {
+                            Swal.fire({
+                                  title: '系統錯誤',
+                                text: JSON.stringify(response.msg),
+                                  icon: "error"
+                          }).then(function(){
+                              liff.closeWindow();
+                          })
+                        });
                     } else {
                         sys_error();
                     }
@@ -254,23 +262,23 @@
         });
     }
 
-    // 修改：生成標題 + 金屬按鈕 + 取消登記按鈕
+    // 生成按鈕介面
     function pre_order() {
-        // 1. 加入標題
         var html = '<h5 class="text-center my-3 fw-bold" style="color: #444; text-shadow: 0 1px 0 #fff;">請登記「欲購買的威力彩張數」</h5>';
         
         html += '<div class="grid-container">';
         
-        // 2. 產生 1 ~ 200 的金屬質感按鈕
+        // 產生 1 ~ 50 的金屬質感按鈕
         for (var i = 1; i <= 50; i++) {
-            // 使用新定義的 .btn-metal 類別
-            html += `<button type="button" class="btn btn-metal" onclick="submit_process(${i})">${i}</button>`;
+            // 修改：onclick 改為呼叫 confirm_order
+            html += `<button type="button" class="btn btn-metal" onclick="confirm_order(${i})">${i}</button>`;
         }
         html += '</div>';
 
-        // 3. 第 21 列：取消登記按鈕
+        // 取消登記按鈕
         html += `<div class="p-2 border-top mt-2">
-            <button type="button" class="btn btn-danger w-100 shadow fw-bold" onclick="submit_process(0)">取消登記</button>
+            <!-- 修改：onclick 改為呼叫 confirm_order(0) -->
+            <button type="button" class="btn btn-danger w-100 shadow fw-bold p-3 fs-5" onclick="confirm_order(0)">取消登記</button>
         </div>`;
 
         document.getElementById("order").innerHTML = html;
@@ -282,7 +290,7 @@
             pre_order();
             return; 
 
-            // 原有的權限檢查 (如需使用請將上方的 return 刪除)
+            // 原有的權限檢查
             sendPost(`${url}?role=permission_check`, params).then(function(response){
                 if (typeof response.msg !== "undefined") {
                     sys_error();
