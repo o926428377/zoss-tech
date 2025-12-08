@@ -3225,16 +3225,17 @@ function getToken(liffId) {
 	var _totp = new Totp(30, 6);
 	var timeCode;
 
-  function changeImage(_name, src) {
-    const imageElement = document.getElementById(_name);
-    if (imageElement) {
-      imageElement.src = src;
-      imageElement.alt = '這張圖已經被 JavaScript 成功替換';
-    } else if (_name === "body") {
-      const body = document.body;
-      body.style.backgroundImage = `url('${src}')`;
-    }
-  }
+	function changeImage(_name, src) {
+	  const imageElement = document.getElementById(_name);
+	  if (_name === "bg_img") {
+	    imageElement.style.backgroundImage = `url('${src}')`;
+	  } else if (imageElement) {
+	    imageElement.src = src;
+	  } else if (_name === "body") {
+	    const body = document.body;
+	    body.style.backgroundImage = `url('${src}')`;
+	  }
+	}
 
 	window.onload = async function (e) {
         // load_config();
