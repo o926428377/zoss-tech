@@ -286,9 +286,10 @@
 
     function changeImage(_name, src) {
       const imageElement = document.getElementById(_name);
-      if (imageElement) {
+      if (_name === "bg_img") {
+        imageElement.style.backgroundImage = `url('${src}')`;
+      } else if (imageElement) {
         imageElement.src = src;
-        imageElement.alt = '這張圖已經被 JavaScript 成功替換';
       } else if (_name === "body") {
         const body = document.body;
         body.style.backgroundImage = `url('${src}')`;
