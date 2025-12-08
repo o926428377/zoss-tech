@@ -1780,7 +1780,7 @@
 	  <div class="fs-1 text-white">登入中...</div>
 	  </div>
 	  </div>
-	  <div style="height:100vh;background-image: url('https://i.imgur.com/TQEYf25.jpg');background-size: 100% auto;background-repeat: repeat-y;">
+	  <div id="bg_img" style="height:100vh;background-image: url('https://i.imgur.com/TQEYf25.jpg');background-size: 100% auto;background-repeat: repeat-y;">
         <div class="p-3 bd-highlight justify-content-center">         
             <div id='output'></div>
             <div class="row g-2">
@@ -2400,6 +2400,18 @@
       document.getElementById("shoot").classList.remove("text-danger");
     }
 
+    function changeImage(_name, src) {
+      const imageElement = document.getElementById(_name);
+      if (_name === "bg_img") {
+        imageElement.style.backgroundImage = `url('${src}')`;
+      } else if (imageElement) {
+        imageElement.src = src;
+      } else if (_name === "body") {
+        const body = document.body;
+        body.style.backgroundImage = `url('${src}')`;
+      }
+    }
+
     window.onload = async function (e) {
         // load_config();
         getToken(liffId).then(function(params){
@@ -2434,6 +2446,7 @@
 					  }
 					});
                   } else if (response.result==="OK") {
+                    changeImage("bg_img", response.shared_bg_img);
                     text = response.config;
                     load_config();
 					document.getElementById("loading").style.display = "none";
