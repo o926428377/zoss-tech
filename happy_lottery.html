@@ -1881,6 +1881,26 @@
           });
         });
       }
+      
+      Array.prototype.random_table = function(qty){
+        const target_id = shuffle(this.map(x=> x["桌號"]))[0];
+        return new Promise((resolve, reject) => {
+          const rr = shuffle(this.filter(x=>x["桌號"]===target_id)).slice(0,qty);
+          sleep(300).then(() => {
+            resolve(rr);
+          });
+        });
+      }
+
+      Array.prototype.random_idnumber = function(qty){
+        const target_id = shuffle(this.map(x=> x["尾號"]))[0];
+        return new Promise((resolve, reject) => {
+          const rr = shuffle(this.filter(x=>x["尾號"]===target_id)).slice(0,qty);
+          sleep(300).then(() => {
+            resolve(rr);
+          });
+        });
+      }
 
       Array.prototype.random_lottery = function(qty){
         return new Promise((resolve, reject) => {
@@ -1921,9 +1941,17 @@
       var name_list = {};
       var lottery_buyer_list = {};
       var special_name_list = {};
+      var gift_name_list = {};
+      var bonus_name_list = {};
+      var table_name_list = {};
+      var idnumber_name_list = {};
       var entire_name_list = {};
       var lottery_winner_list = {};
       var special_winner_list = {};
+      var gift_winner_list = {};
+      var bonus_winner_list = {};
+      var table_winner_list = {};
+      var idnumber_winner_list = {};
       var entire_winner_list = {};
       var group_list = {};
       var toggle;
@@ -1931,7 +1959,7 @@
       function load_config() {
         lines = text.split("\n");
         for(i=0;i<lines.length;i++){
-          if (lines[i].match(/^\[prizes|shop_list|winner_list|name_list|lottery_buyer_list|special_name_list|entire_name_list|lottery_winner_list|special_winner_list|entire_winner_list|group_list\]$/g)) {
+          if (lines[i].match(/^\[prizes|shop_list|winner_list|name_list|lottery_buyer_list|special_name_list|gift_name_list|bonus_name_list|table_name_list|idnumber_name_list|entire_name_list|lottery_winner_list|special_winner_list|entire_winner_list|group_list|lottery_winner_list|gift_winner_list|bonus_winner_list|table_winner_list|idnumber_winner_list\]$/g)) {
             target = lines[i];
             headers = null;
           } else if (lines[i] === "") {
@@ -1959,25 +1987,49 @@
               case '[lottery_buyer_list]':
                 lottery_buyer_list[tmp["抽獎序號"]]=tmp["身分證號"];
                 break
+              case '[special_winner_list]':
+                special_winner_list[tmp["身分證號"]]=tmp;
+                break
+              case '[gift_winner_list]':
+                gift_winner_list[tmp["身分證號"]]=tmp;
+                break
+              case '[bonus_winner_list]':
+                bonus_winner_list[tmp["身分證號"]]=tmp;
+                break
+              case '[table_winner_list]':
+                table_winner_list[tmp["身分證號"]]=tmp;
+                break
+              case '[idnumber_winner_list]':
+                idnumber_winner_list[tmp["身分證號"]]=tmp;
+                break
               case '[name_list]':
                 name_list[tmp["身分證號"]]=tmp;
                 break
-	      case '[special_name_list]':
+              case '[special_name_list]':
                 special_name_list[tmp["身分證號"]]=tmp;
                 break
-	      case '[entire_name_list]':
+              case '[gift_name_list]':
+                gift_name_list[tmp["身分證號"]]=tmp;
+                break
+              case '[bonus_name_list]':
+                bonus_name_list[tmp["身分證號"]]=tmp;
+                break
+              case '[table_name_list]':
+                table_name_list[tmp["身分證號"]]=tmp;
+                break
+              case '[idnumber_name_list]':
+                idnumber_name_list[tmp["身分證號"]]=tmp;
+                break
+              case '[entire_name_list]':
                 entire_name_list[tmp["身分證號"]]=tmp;
                 break
-	      case '[lottery_winner_list]':
+              case '[lottery_winner_list]':
                 lottery_winner_list[tmp["抽獎序號"]]=tmp;
                 break
-	      case '[special_winner_list]':
-                special_winner_list[tmp["身分證號"]]=tmp;
-                break
-	      case '[entire_winner_list]':
+              case '[entire_winner_list]':
                 entire_winner_list[tmp["身分證號"]]=tmp;
                 break
-	      case '[group_list]':
+              case '[group_list]':
                 group_list[tmp["桶別"]]=tmp["區"];
                 break
 
@@ -2165,66 +2217,67 @@
       }
 
       function onSuccess(result) {
+        const draw_type_dict = {
+          'A':'prize',
+          'L':'lottery',
+          'S':'special',
+          'P':'gift',
+          'B':'bonus',
+          'T':'table',
+          'I':'idnumber'
+        };
         const prize_target = document.getElementById("box_no").selectedOptions[0].value;
         getToken(liffId).then(function(params){
-        fetch(url, {
-          method: "POST",
-          redirect: "follow", 
-          // mode: "cors", 
-          //cache: "no-cache",
-          headers: {
-          "Content-Type": "text/plain",
-          },
-          // credentials: "include",
-          body: JSON.stringify(
-          {"to_add": result.map(x=> [x, prize_target]),...params}
-          )
-        })
-			.then(response => response.text())
-			.then(context => {
-			  //抽獎中
-			  console.log(context);
-			  document.getElementById("drawing_single").style.display = "none";
-			  var chk = JSON.parse(context)["to_add"];
-			  if (chk === "Failed") {
-				Swal.fire({
-				  title: "系統錯誤",
-				  text: "請重新操作",
-				  icon: "error",
-				  showConfirmButton: false,
-				  timer: 1500
-				});
-				gen_prizes_options();
-			  } else {
-				text = chk;
-				load_config();
-				gen_prizes_options();
-				//中獎名單
-				document.getElementById("drawn").style.display = "inline";
-				var span = document.getElementById("prize_name");
-                if (!["S", "P", "L"].includes(prizes[prize_target]["獎項編號"][0])) {
-                    span.innerText = span.textContent = `${prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,')}(${prizes[prize_target]["桶別"]}:${group_list[prizes[prize_target]["桶別"]]})-中獎名單`;
-                    var drawn_list = document.getElementById("drawn_list");
-                    console.log(result);
-                } else {
-                    span.innerText = span.textContent = `${prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,')}-中獎名單`;
-                    var drawn_list = document.getElementById("drawn_list");
-                    console.log(result);
-                }
-		if (prizes[prize_target]["獎項編號"][0]==="L") {
-			var _type = "lottery";
-		} else if (prizes[prize_target]["獎項編號"][0]==="P") {
-			var _type = "entire";
-		} else if (prizes[prize_target]["獎項編號"][0]==="S") {
-			var _type = "special";
-		} else {
-			var _type = "prize";
-		}
-		drawn_list.innerHTML = gen_list(result, _type);
+          fetch(url, {
+            method: "POST",
+            redirect: "follow", 
+            // mode: "cors", 
+            //cache: "no-cache",
+            headers: {
+            "Content-Type": "text/plain",
+            },
+            // credentials: "include",
+            body: JSON.stringify(
+            {"to_add": result.map(x=> [x, prize_target]),...params}
+            )
+          })
+          .then(response => response.text())
+          .then(context => {
+            //抽獎中
+            console.log(context);
+            document.getElementById("drawing_single").style.display = "none";
+            var chk = JSON.parse(context)["to_add"];
+            if (chk === "Failed") {
+            Swal.fire({
+              title: "系統錯誤",
+              text: "請重新操作",
+              icon: "error",
+              showConfirmButton: false,
+              timer: 1500
+            });
+            gen_prizes_options();
+            } else {
+              text = chk;
+              load_config();
+              gen_prizes_options();
+              //中獎名單
+              document.getElementById("drawn").style.display = "inline";
+              var span = document.getElementById("prize_name");
+              if (!["S", "P", "L"].includes(prizes[prize_target]["獎項編號"][0])) {
+                  span.innerText = span.textContent = `${prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,')}(${prizes[prize_target]["桶別"]}:${group_list[prizes[prize_target]["桶別"]]})-中獎名單`;
+                  var drawn_list = document.getElementById("drawn_list");
+                  console.log(result);
+              } else {
+                  span.innerText = span.textContent = `${prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,')}-中獎名單`;
+                  var drawn_list = document.getElementById("drawn_list");
+                  console.log(result);
+              }
+              const _type = draw_type_dict[prizes[prize_target]["獎項編號"][0]];
+              drawn_list.innerHTML = gen_list(result, _type);
 
-			  }
-			})
-		})
+            }
+          })
+        })
       }
 
       function lucky_draw() {
@@ -2255,41 +2308,45 @@
           // winner_list
           // 身分證號,獎項編號,領取
           const quota = parseInt(prizes[prize_target]["名額"]);
-          const draw_all = prizes[prize_target]["桶別"]==="全體";
           const draw_limit = parseInt(prizes[prize_target]["已抽獎數"]);
           var _qty = parseInt(document.querySelector('input[name="qty"]:checked').value);
           //抽獎中
           const qty = Math.min(_qty, quota - draw_limit);
+
+          var winner_dict = {
+            'A': Object.keys(winner_list),
+            'L': Object.keys(lottery_winner_list),
+            'S': Object.keys(special_winner_list),
+            'P': Object.keys(gift_winner_list),
+            'B': Object.keys(bonus_winner_list),
+            'T': Object.keys(table_winner_list),
+            'I': Object.keys(idnumber_winner_list)
+          }
+
           if (prize_target[0]==="L") {
             // const lottery_winner = Object.keys(lottery_winner_list).filter(y=> lottery_winner_list[y]["獎項編號"][0]==="L");
-	    const lottery_winner = Object.keys(lottery_winner_list);
+	          const lottery_winner = Object.keys(lottery_winner_list);
             // const target_list = Object.keys(lottery_buyer_list).filter(x=> !lottery_winner.includes(lottery_buyer_list[x]));
             const target_list = Object.keys(lottery_buyer_list).filter(x=> !lottery_winner.includes(x));
             document.getElementById("drawing_single").style.display = "inline";
             choose([target_list, ...toggle.slice(1)], ["序號","店名","中獎人"]);
             target_list.random_lottery(qty).then(x=> { onSuccess(x); });
-          } else if (prize_target[0]==="S") {
-	    const winner = Object.keys(special_winner_list);
-            const target_list = Object.keys(special_name_list).filter(x=> !winner.includes(x));
+
+          } else if (['S', 'P', 'B', 'T', 'I'].includes(prize_target[0])) {
+            const exclude_winner = [prize_target[0] , ...prizes[prize_target]]["排除中獎區"].split("").flatMap(key => winner_dict[key] || []);
+            const target_list = Object.keys(special_name_list).filter(x=> !exclude_winner.includes(x));
             document.getElementById("drawing_single").style.display = "inline";
-            choose(toggle, ["桶別","店名","中獎人"]);
-            target_list.random(qty).then(x=> { onSuccess(x); });
-	  } else if (prize_target[0]==="P" && prizes[prize_target]["桶別"]==="全員工") {
-	    const winner = Object.keys(entire_winner_list);
-            const target_list = Object.keys(entire_name_list).filter(x=> !winner.includes(x));
-            document.getElementById("drawing_single").style.display = "inline";
-            choose(toggle, ["桶別","店名","中獎人"]);
-            target_list.random(qty).then(x=> { onSuccess(x); });
-          } else if (draw_all) {
-            // const winner = Object.keys(winner_list).filter(y=> winner_list[y]["獎項編號"][0]!=="L");
-            const winner = Object.keys(winner_list);
-            const target_list = Object.keys(name_list).filter(x=> !winner.includes(x));
-            document.getElementById("drawing_single").style.display = "inline";
-            choose(toggle, ["桶別","店名","中獎人"]);
-            target_list.random(qty).then(x=> { onSuccess(x); });
-            // target_list.random(qty).then(x=> { onSuccess_formpost(x); });
-            // google.script.run.withSuccessHandler(onSuccess_mix).lucky_draw_mix(shop, prize_target, JSON.parse(<?= JSON.stringify(prizes[0]["prizes"]?prizes[0]["prizes"]:[]) ?>), JSON.parse(<?= JSON.stringify(prizes[0]["quota"]?prizes[0]["quota"]:[]) ?>), shop_idx);
-          } else {
+            if (prize_target[0] === "T") {
+              choose(toggle, ["桌號","桌號","桌號"]);
+              target_list.random_table(qty).then(x=> { onSuccess(x); });
+            } else if (prize_target[0] === "I") {
+              choose(toggle, ["尾號","尾號","尾號"]);
+              target_list.random_idnumber(qty).then(x=> { onSuccess(x); });
+            } else {
+              choose(toggle, ["桶別","店名","中獎人"]);
+              target_list.random(qty).then(x=> { onSuccess(x); });
+            }
+          } else if (prize_target[0]==="A") {
             // const winner = Object.keys(winner_list).filter(y=> winner_list[y]["獎項編號"][0]!=="L");
             const winner = Object.keys(winner_list);
             const target_list = Object.keys(name_list).filter(x=> shop_list[name_list[x]["店名"]]["桶別"]===prizes[prize_target]["桶別"]).filter(x=> !winner.includes(x));
@@ -2298,6 +2355,7 @@
             target_list.random(qty).then(x=> { onSuccess(x); });
             // target_list.random(qty).then(x=> { onSuccess_formpost(x); });
             // google.script.run.withSuccessHandler(onSuccess).lucky_draw(shop, prize_target, prize_sn, quota, shop_idx, draw_limit);
+
           }
         }
       }
