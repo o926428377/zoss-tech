@@ -2287,15 +2287,17 @@
               //中獎名單
               document.getElementById("drawn").style.display = "inline";
               var span = document.getElementById("prize_name");
-              if (!["S", "P", "L"].includes(prizes[prize_target]["獎項編號"][0])) {
-                  span.innerText = span.textContent = `${prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,')}(${prizes[prize_target]["桶別"]}:${group_list[prizes[prize_target]["桶別"]]})-中獎名單`;
-                  var drawn_list = document.getElementById("drawn_list");
-                  console.log(result);
+              if (["S", "P", "L", "B"].includes(prizes[prize_target]["獎項編號"][0])) {
+                span.innerText = span.textContent = `${prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,')}-中獎名單`;
+              } else if (["T"].includes(prizes[prize_target]["獎項編號"][0])) {
+                span.innerText = span.textContent = `${prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,')}(${prizes[prize_target]["桶別"]}:${entire_name_list[result[0]]["桌號"]})-中獎名單`;
+              } else if (["I"].includes(prizes[prize_target]["獎項編號"][0])) {
+                span.innerText = span.textContent = `${prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,')}(${prizes[prize_target]["桶別"]}:${entire_name_list[result[0]]["尾號"]})-中獎名單`;
               } else {
-                  span.innerText = span.textContent = `${prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,')}-中獎名單`;
-                  var drawn_list = document.getElementById("drawn_list");
-                  console.log(result);
+                span.innerText = span.textContent = `${prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,')}(${prizes[prize_target]["桶別"]}:${group_list[prizes[prize_target]["桶別"]]})-中獎名單`;
               }
+              var drawn_list = document.getElementById("drawn_list");
+              console.log(result);
               const _type = draw_type_dict[prizes[prize_target]["獎項編號"][0]];
               drawn_list.innerHTML = gen_list(result, _type);
 
