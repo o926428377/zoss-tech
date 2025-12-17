@@ -2333,7 +2333,7 @@
             target_list.random_lottery(qty).then(x=> { onSuccess(x); });
 
           } else if (['S', 'P', 'B', 'T', 'I'].includes(prize_target[0])) {
-            const exclude_winner = [prize_target[0] , ...prizes[prize_target]]["排除中獎區"].split("").flatMap(key => winner_dict[key] || []);
+            const exclude_winner = [prize_target[0] , ...prizes[prize_target]["排除中獎區"].split("")].flatMap(key => winner_dict[key] || []);
             const target_list = Object.keys(special_name_list).filter(x=> !exclude_winner.includes(x));
             document.getElementById("drawing_single").style.display = "inline";
             if (prize_target[0] === "T") {
