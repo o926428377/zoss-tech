@@ -1790,7 +1790,7 @@
             </select>
             </div>
             <div class="col-auto w-40">
-            <select name="box_no" id="box_no" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onclick="cancel_ready();" onchange="document.getElementById('shoot').disabled = false;document.getElementById('drawn').style.display = 'none';gen_draw_qty_options();">
+            <select name="box_no" id="box_no" style="display:none;" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onclick="cancel_ready();" onchange="document.getElementById('shoot').disabled = false;document.getElementById('drawn').style.display = 'none';gen_draw_qty_options();">
               <option value="" selected disabled>請選擇箱別</option>
             </select>
             </div>
@@ -1876,7 +1876,7 @@
         return new Promise((resolve, reject) => {
           // const rr = this[Math.floor(Math.random()*this.length)];
           const rr = shuffle(this).slice(0,qty);
-          sleep(300).then(() => {
+          sleep(30).then(() => {
             resolve(rr);
           });
         });
@@ -1886,7 +1886,7 @@
         const target_id = shuffle(this.map(x=> x["桌號"]))[0];
         return new Promise((resolve, reject) => {
           const rr = shuffle(this.filter(x=>x["桌號"]===target_id)).slice(0,qty);
-          sleep(300).then(() => {
+          sleep(30).then(() => {
             resolve(rr);
           });
         });
@@ -1896,7 +1896,7 @@
         const target_id = shuffle(this.map(x=> x["尾號"]))[0];
         return new Promise((resolve, reject) => {
           const rr = shuffle(this.filter(x=>x["尾號"]===target_id)).slice(0,qty);
-          sleep(300).then(() => {
+          sleep(30).then(() => {
             resolve(rr);
           });
         });
@@ -1905,7 +1905,7 @@
       Array.prototype.random_lottery = function(qty){
         return new Promise((resolve, reject) => {
           const rr = shuffle(this).slice(0,qty);
-	  sleep(300).then(() => {
+	        sleep(30).then(() => {
             resolve(rr);
           });
           // const rr = shuffle(this);
@@ -2093,6 +2093,7 @@
         _option.selected = true;
         _option.disabled = true;
         select.appendChild(_option);
+        select.style.display = 'none';
       }
 
       function remove_draw_qty_options() {
@@ -2138,11 +2139,11 @@
           // option.setAttribute("prize_target", box["獎項編號"]);
           // option.setAttribute("draw_all", false);
           // option.setAttribute("draw_limit", box["桶別"]);
-	  if (group_list[box["桶別"]]) {
-	     var _group = `${group_list[box["桶別"]]}，`;
-	  } else {
-	     var _group = "";
-	  }
+          if (group_list[box["桶別"]]) {
+            var _group = `${group_list[box["桶別"]]}，`;
+          } else {
+            var _group = "";
+          }
           
           if (quota > used) {
             option.innerHTML = `${box["桶別"]} (${_group}名額:${quota}，已抽:${used})`;
@@ -2153,8 +2154,12 @@
           select.appendChild(option);
           document.getElementById("shoot").disabled=true;
         });
-        
-
+        if (Object.values(prizes_dict[prize]).length===1) {
+          select.value = Object.values(prizes_dict[prize])[0]["獎項編號"];
+          gen_draw_qty_options();
+        } else {
+          select.style.display = 'inline';
+        }
       }
 
       function gen_draw_qty_options() {
