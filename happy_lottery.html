@@ -2003,26 +2003,44 @@
                 idnumber_winner_list[tmp["身分證號"]]=tmp;
                 break
               case '[name_list]':
-                name_list[tmp["身分證號"]]=tmp;
+                if (tmp["抽獎資格"]==="有") {
+                  name_list[tmp["身分證號"]]=tmp;
+                }
+                if (tmp["特別獎"]==="是") {
+                  special_name_list[tmp["身分證號"]]=tmp;
+                }
+                if (tmp["抽獎資格"]==="有"||tmp["抽獎資格"]==="普獎") {
+                  gift_name_list[tmp["身分證號"]]=tmp;
+                }
+                if (tmp["抽獎資格"]==="有") {
+                  bonus_name_list[tmp["身分證號"]]=tmp;
+                }
+                if (tmp["桌號"]!=="") {
+                  table_name_list[tmp["身分證號"]]=tmp;
+                }
+                if (tmp["抽獎資格"]==="有") {
+                  idnumber_name_list[tmp["身分證號"]]=tmp;
+                }
+                
                 break
-              case '[special_name_list]':
-                special_name_list[tmp["身分證號"]]=tmp;
-                break
-              case '[gift_name_list]':
-                gift_name_list[tmp["身分證號"]]=tmp;
-                break
-              case '[bonus_name_list]':
-                bonus_name_list[tmp["身分證號"]]=tmp;
-                break
-              case '[table_name_list]':
-                table_name_list[tmp["身分證號"]]=tmp;
-                break
-              case '[idnumber_name_list]':
-                idnumber_name_list[tmp["身分證號"]]=tmp;
-                break
-              case '[entire_name_list]':
-                entire_name_list[tmp["身分證號"]]=tmp;
-                break
+              // case '[special_name_list]':
+              //   special_name_list[tmp["身分證號"]]=tmp;
+              //   break
+              // case '[gift_name_list]':
+              //   gift_name_list[tmp["身分證號"]]=tmp;
+              //   break
+              // case '[bonus_name_list]':
+              //   bonus_name_list[tmp["身分證號"]]=tmp;
+              //   break
+              // case '[table_name_list]':
+              //   table_name_list[tmp["身分證號"]]=tmp;
+              //   break
+              // case '[idnumber_name_list]':
+              //   idnumber_name_list[tmp["身分證號"]]=tmp;
+              //   break
+              // case '[entire_name_list]':
+              //   entire_name_list[tmp["身分證號"]]=tmp;
+              //   break
               case '[lottery_winner_list]':
                 lottery_winner_list[tmp["抽獎序號"]]=tmp;
                 break
@@ -2181,7 +2199,6 @@
             '</tr>' +
             '<tr>';
 	  } else if (_type==="special") {
-		  special_name_list
 	    html += '<tr>' +
             `<th scope="row">${i+1}</th>` +
             `<td>${special_name_list[result[i]]['區']}</td>` +
@@ -2314,13 +2331,13 @@
           const qty = Math.min(_qty, quota - draw_limit);
 
           var winner_dict = {
-            'A': Object.keys(winner_list),
+            'A': Object.keys(winner_list.filter(x=> x["獎項編號"][0]==="A")),
             'L': Object.keys(lottery_winner_list),
-            'S': Object.keys(special_winner_list),
-            'P': Object.keys(gift_winner_list),
-            'B': Object.keys(bonus_winner_list),
-            'T': Object.keys(table_winner_list),
-            'I': Object.keys(idnumber_winner_list)
+            'S': Object.keys(winner_list.filter(x=> x["獎項編號"][0]==="S")),
+            'P': Object.keys(winner_list.filter(x=> x["獎項編號"][0]==="P")),
+            'B': Object.keys(winner_list.filter(x=> x["獎項編號"][0]==="B")),
+            'T': Object.keys(winner_list.filter(x=> x["獎項編號"][0]==="T")),
+            'I': Object.keys(winner_list.filter(x=> x["獎項編號"][0]==="I"))
           }
 
           if (prize_target[0]==="L") {
