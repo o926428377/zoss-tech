@@ -2156,6 +2156,8 @@
         });
         if (Object.values(prizes_dict[prize]).length===1) {
           select.value = Object.values(prizes_dict[prize])[0]["獎項編號"];
+          document.getElementById('shoot').disabled = false;
+          document.getElementById('drawn').style.display = 'none';
           gen_draw_qty_options();
         } else {
           select.style.display = 'inline';
