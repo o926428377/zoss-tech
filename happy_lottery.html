@@ -2208,10 +2208,10 @@
 	  } else if (_type==="special") {
 	    html += '<tr>' +
             `<th scope="row">${i+1}</th>` +
-            `<td>${special_name_list[result[i]]['區']}</td>` +
-            `<td>${special_name_list[result[i]]['店名']}</td>` +
-            `<td>${special_name_list[result[i]]['姓名']}</td>` +
-            `<td>${special_name_list[result[i]]['身分證號'].slice(0,3)}XXX${special_name_list[result[i]]['身分證號'].slice(6,10)}</td>` +
+            `<td>${entire_name_list[result[i]]['區']}</td>` +
+            `<td>${entire_name_list[result[i]]['店名']}</td>` +
+            `<td>${entire_name_list[result[i]]['姓名']}</td>` +
+            `<td>${entire_name_list[result[i]]['身分證號'].slice(0,3)}XXX${special_name_list[result[i]]['身分證號'].slice(6,10)}</td>` +
             '</tr>' +
             '<tr>';
 	  } else if (_type==="entire") {
@@ -2226,10 +2226,10 @@
 	  } else {
 	    html += '<tr>' +
             `<th scope="row">${i+1}</th>` +
-            `<td>${name_list[result[i]]['區']}</td>` +
-            `<td>${name_list[result[i]]['店名']}</td>` +
-            `<td>${name_list[result[i]]['姓名']}</td>` +
-            `<td>${name_list[result[i]]['身分證號'].slice(0,3)}XXX${name_list[result[i]]['身分證號'].slice(6,10)}</td>` +
+            `<td>${entire_name_list[result[i]]['區']}</td>` +
+            `<td>${entire_name_list[result[i]]['店名']}</td>` +
+            `<td>${entire_name_list[result[i]]['姓名']}</td>` +
+            `<td>${entire_name_list[result[i]]['身分證號'].slice(0,3)}XXX${name_list[result[i]]['身分證號'].slice(6,10)}</td>` +
             '</tr>' +
             '<tr>';
 	  }
@@ -2340,27 +2340,27 @@
           const qty = Math.min(_qty, quota - draw_limit);
               
           var winner_dict = {
-            'A': Object.entries(winner_list).filter(([key, value]) => value["獎項編號"][0]==="A").map(([key, value]) => key),
-            'L': Object.keys(lottery_winner_list),
-            'S': Object.entries(winner_list).filter(([key, value]) => value["獎項編號"][0]==="S").map(([key, value]) => key),
-            'P': Object.entries(winner_list).filter(([key, value]) => value["獎項編號"][0]==="P").map(([key, value]) => key),
-            'B': Object.entries(winner_list).filter(([key, value]) => value["獎項編號"][0]==="B").map(([key, value]) => key),
-            'T': Object.entries(winner_list).filter(([key, value]) => value["獎項編號"][0]==="T").map(([key, value]) => key),
-            'I': Object.entries(winner_list).filter(([key, value]) => value["獎項編號"][0]==="I").map(([key, value]) => key)
+            'A': [name_list, Object.entries(winner_list).filter(([key, value]) => value["獎項編號"][0]==="A").map(([key, value]) => key)],
+            'L': [lottery_buyer_list, Object.keys(lottery_winner_list)],
+            'S': [special_name_list, Object.entries(winner_list).filter(([key, value]) => value["獎項編號"][0]==="S").map(([key, value]) => key)],
+            'P': [gift_name_list, Object.entries(winner_list).filter(([key, value]) => value["獎項編號"][0]==="P").map(([key, value]) => key)],
+            'B': [bonus_name_list, Object.entries(winner_list).filter(([key, value]) => value["獎項編號"][0]==="B").map(([key, value]) => key)],
+            'T': [table_name_list, Object.entries(winner_list).filter(([key, value]) => value["獎項編號"][0]==="T").map(([key, value]) => key)],
+            'I': [idnumber_name_list, Object.entries(winner_list).filter(([key, value]) => value["獎項編號"][0]==="I").map(([key, value]) => key])
           }
 
           if (prize_target[0]==="L") {
             // const lottery_winner = Object.keys(lottery_winner_list).filter(y=> lottery_winner_list[y]["獎項編號"][0]==="L");
-	          const lottery_winner = Object.keys(lottery_winner_list);
+	          const lottery_winner = winner_dict[prize_target[0]][1];
             // const target_list = Object.keys(lottery_buyer_list).filter(x=> !lottery_winner.includes(lottery_buyer_list[x]));
-            const target_list = Object.keys(lottery_buyer_list).filter(x=> !lottery_winner.includes(x));
+            const target_list = Object.keys(winner_dict[prize_target[0]][0]).filter(x=> !lottery_winner.includes(x));
             document.getElementById("drawing_single").style.display = "inline";
             choose([target_list, ...toggle.slice(1)], ["序號","店名","中獎人"]);
             target_list.random_lottery(qty).then(x=> { onSuccess(x); });
 
           } else if (['S', 'P', 'B', 'T', 'I'].includes(prize_target[0])) {
-            const exclude_winner = [prize_target[0] , ...prizes[prize_target]["排除中獎區"]?prizes[prize_target]["排除中獎區"].split(""):[]].flatMap(key => winner_dict[key] || []);
-            const target_list = Object.keys(special_name_list).filter(x=> !exclude_winner.includes(x));
+            const exclude_winner = [prize_target[0] , ...prizes[prize_target]["排除中獎區"]?prizes[prize_target]["排除中獎區"].split(""):[]].flatMap(key => winner_dict[key][1] || []);
+            const target_list = Object.keys(winner_dict[prize_target[0]][0]).filter(x=> !exclude_winner.includes(x));
             document.getElementById("drawing_single").style.display = "inline";
             if (prize_target[0] === "T") {
               const tables = [...new Set(Object.keys(table_name_list).map(x=> x["桌號"]))];
@@ -2376,8 +2376,8 @@
             }
           } else if (prize_target[0]==="A") {
             // const winner = Object.keys(winner_list).filter(y=> winner_list[y]["獎項編號"][0]!=="L");
-            const winner = Object.keys(winner_list);
-            const target_list = Object.keys(name_list).filter(x=> shop_list[name_list[x]["店名"]]["桶別"]===prizes[prize_target]["桶別"]).filter(x=> !winner.includes(x));
+            const winner = winner_dict[prize_target[0]][1];
+            const target_list = Object.keys(winner_dict[prize_target[0]][0]).filter(x=> shop_list[winner_dict[prize_target[0]][0][x]["店名"]]["桶別"]===prizes[prize_target]["桶別"]).filter(x=> !winner.includes(x));
             document.getElementById("drawing_single").style.display = "inline";
             choose(toggle, ["桶別","店名","中獎人"]);
             target_list.random(qty).then(x=> { onSuccess(x); });
