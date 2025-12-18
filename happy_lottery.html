@@ -233,11 +233,12 @@
       /* *** 重要：結果動畫 (Stop State) *** */
       /* 調整為 2.5秒 並使用 cubic-bezier 產生煞車感 */
       @keyframes spin-10 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 10)); } }
-      .god .wrap > .span-10 { 
+      /*.god .wrap > .span-10 { 
           animation-name: spin-10; 
           animation-duration: 2.5s; 
-          animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1); /* 擬真煞車曲線 */
-      }
+          animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+      }*/
+      .god .wrap > .span-10 { animation-name: spin-10; animation-duration: 0.27s; }
 
       /* --- Spin 11 to 20 --- */
       @keyframes spin-11 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 11)); } }
