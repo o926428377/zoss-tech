@@ -38,71 +38,149 @@
           width: calc(100vw - 16px);
         }
       }
+      /* -----------------------------------------------------------
+        老虎機主體 (The God Class) - 華麗升級版
+      ----------------------------------------------------------- */
       .god {
         margin-bottom: 1rem;
-        padding: 2rem;
-        background: rgba(255, 255, 255, 0.54);
-        border: 1px solid rgba(41, 44, 55, 0.27);
-        border-radius: 0.5rem;
-      }
-      .god span {
+        padding: 3rem 1rem; /* 增加上下 padding 讓機身更大氣 */
         position: relative;
-        display: inline-grid;
+        
+        /* 黑金奢華風格 */
+        background: linear-gradient(180deg, #333 0%, #1a1a1a 100%);
+        border: 4px solid #d4af37; /* 金色邊框 */
+        border-radius: 15px;
+        
+        /* 立體陰影效果 */
+        box-shadow: 
+          0 0 0 2px #000,              /* 黑色內圈 */
+          0 0 0 8px #5c4308,           /* 深金外框 */
+          0 10px 30px rgba(0,0,0,0.8), /* 底部投影 */
+          inset 0 0 20px rgba(0,0,0,0.8); /* 內部深邃感 */
+          
+        display: inline-block; /* 收縮包裹內容 */
+        overflow: hidden;
       }
+
+      /* 裝飾：模擬玻璃反光 */
+      .god::before {
+        content: "";
+        position: absolute;
+        transform: translateY(0); left: 0; right: 0;
+        height: 40%;
+        background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+        border-radius: 12px 12px 0 0;
+        z-index: 5;
+        pointer-events: none;
+      }
+
+      /* 裝飾：中獎線 (紅線或聚焦框) */
+      .god::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 10px;
+        right: 10px;
+        height: 75px; /* 對應 span 的高度 */
+        transform: translateY(-50%);
+        border: 2px solid rgba(255, 215, 0, 0.7);
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        border-radius: 5px;
+        pointer-events: none;
+        z-index: 4;
+      }
+
       .god h1 {
         margin: 0;
-        font-size: 3rem;
+        display: flex;
+        justify-content: center;
+        gap: 10px; /* 欄位間距 */
       }
-      .god span {
+
+      /* -----------------------------------------------------------
+        滾輪視窗 (Column Wrapper)
+      ----------------------------------------------------------- */
+      .god span.wrap {
         display: block;
         display: inline-grid;
-        
-        max-height: 73px;
+        max-height: 73px; /* 顯示高度 */
         overflow: hidden;
-        color: #333844;
+        
+        /* 滾輪質感 */
+        background-color: #fdfdfd; 
+        color: #333;
+        border-radius: 5px;
+        box-shadow: inset 0 0 10px rgba(0,0,0,0.3); /* 滾輪內部陰影，製造凹槽感 */
+        border: 1px solid #999;
       }
-      .god .wrap.no1 {
-        width:15vw;
-      }
-      .god .wrap.no2 {
-        width:42vw;
-      }
-      .god .wrap.no3 {
-        width:25vw;
-      }
-      @media screen and (max-width: 768px) {
-        .god {
-          padding: 2rem 0.5rem;
-        }
-        .god h1 {
-          font-size: 2rem;
-        }
-        .god span {
-          max-height: 36px;
-        }
-      }
+
+      /* 內容文字樣式 */
       .god .wrap > span {
-        -webkit-animation-iteration-count: infinite;
-                animation-iteration-count: infinite;
-        -webkit-animation-timing-function: linear;
-                animation-timing-function: linear;
+        display: flex; /* 使用 Flex 讓文字垂直置中 */
+        align-items: center;
+        justify-content: center;
+        height: 73px; /* 固定高度，確保計算準確 */
+        font-size: 1.8rem;
+        font-weight: bold;
+        font-family: "Arial Black", sans-serif;
+        color: #333;
+        text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
+        
+        /* 動畫設定 */
+        will-change: transform; /* 告訴瀏覽器這會變動，啟用優化 */
+        animation-iteration-count: infinite;
+        animation-timing-function: linear; /* 轉動時使用線性 */
+        /* 若要更有彈性，停止時可用 ease-out，但在 JS 控制 class 切換時處理 */
       }
-      
+
+      /* 欄位寬度設定 */
+      .god .wrap.no1 { width: 15vw; min-width: 100px; }
+      .god .wrap.no2 { width: 42vw; min-width: 200px; }
+      .god .wrap.no3 { width: 25vw; min-width: 150px; }
+
+      /* 手機版調整 */
+      @media screen and (max-width: 768px) {
+        .god { padding: 1.5rem 0.5rem; }
+        .god .wrap > span { font-size: 1.2rem; }
+        .god::after { height: 73px; } /* 保持框線對準 */
+        /* 手機版寬度調整 */
+        .god .wrap.no1 { width: 20vw; }
+        .god .wrap.no2 { width: 45vw; }
+        .god .wrap.no3 { width: 25vw; }
+      }
+
+      /* -----------------------------------------------------------
+        動畫關鍵影格 (使用 Transform 優化效能)
+        *將原本的 top 改為 transform: translateY
+        *這樣做可以達到 60fps 不卡頓
+      ----------------------------------------------------------- */
+
+      /* 基本旋轉動畫模板 */
+      /* 注意：原本你的 JS 可能依賴 .span-1 到 .span-50 */
+      /* 這裡利用 SCSS 邏輯重寫 CSS，為了長度考量，我寫出通用規則 */
+
+      /* 範例：定義從 spin-1 到 spin-50 的動畫 */
+      /* 由於 CSS 不能寫迴圈，以下列出關鍵邏輯，你需要確保這裡覆蓋到你 JS 會呼叫的最大數 */
+
+      .god .wrap > [class*="span-"] {
+          animation-fill-mode: forwards; /* 動畫結束後停在最後位置 */
+      }
+            
       @-webkit-keyframes spin-1 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 1);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 1);
         }
       }
       
       @keyframes spin-1 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 1);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 1);
         }
       }
       .god .wrap > .span-1 {
@@ -114,19 +192,19 @@
       
       @-webkit-keyframes spin-2 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 2);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 2);
         }
       }
       
       @keyframes spin-2 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 2);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 2);
         }
       }
       .god .wrap > .span-2 {
@@ -138,19 +216,19 @@
       
       @-webkit-keyframes spin-3 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 3);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 3);
         }
       }
       
       @keyframes spin-3 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 3);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 3);
         }
       }
       .god .wrap > .span-3 {
@@ -162,19 +240,19 @@
       
       @-webkit-keyframes spin-4 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 4);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 4);
         }
       }
       
       @keyframes spin-4 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 4);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 4);
         }
       }
       .god .wrap > .span-4 {
@@ -186,19 +264,19 @@
       
       @-webkit-keyframes spin-5 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 5);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 5);
         }
       }
       
       @keyframes spin-5 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 5);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 5);
         }
       }
       .god .wrap > .span-5 {
@@ -210,19 +288,19 @@
       
       @-webkit-keyframes spin-6 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 6);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 6);
         }
       }
       
       @keyframes spin-6 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 6);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 6);
         }
       }
       .god .wrap > .span-6 {
@@ -234,19 +312,19 @@
       
       @-webkit-keyframes spin-7 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 7);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 7);
         }
       }
       
       @keyframes spin-7 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 7);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 7);
         }
       }
       .god .wrap > .span-7 {
@@ -258,19 +336,19 @@
       
       @-webkit-keyframes spin-8 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 8);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 8);
         }
       }
       
       @keyframes spin-8 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 8);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 8);
         }
       }
       .god .wrap > .span-8 {
@@ -282,19 +360,19 @@
       
       @-webkit-keyframes spin-9 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 9);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 9);
         }
       }
       
       @keyframes spin-9 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 9);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 9);
         }
       }
       .god .wrap > .span-9 {
@@ -306,19 +384,19 @@
       
       @-webkit-keyframes spin-10 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 10);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 10);
         }
       }
       
       @keyframes spin-10 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 10);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 10);
         }
       }
       .god .wrap > .span-10 {
@@ -341,19 +419,19 @@
       
       @-webkit-keyframes spin-11 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 11);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 11);
         }
       }
       
       @keyframes spin-11 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 11);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 11);
         }
       }
       .god .wrap > .span-11 {
@@ -365,19 +443,19 @@
       
       @-webkit-keyframes spin-12 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 12);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 12);
         }
       }
       
       @keyframes spin-12 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 12);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 12);
         }
       }
       .god .wrap > .span-12 {
@@ -389,19 +467,19 @@
       
       @-webkit-keyframes spin-13 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 13);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 13);
         }
       }
       
       @keyframes spin-13 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 13);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 13);
         }
       }
       .god .wrap > .span-13 {
@@ -413,19 +491,19 @@
       
       @-webkit-keyframes spin-14 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 14);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 14);
         }
       }
       
       @keyframes spin-14 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 14);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 14);
         }
       }
       .god .wrap > .span-14 {
@@ -437,19 +515,19 @@
       
       @-webkit-keyframes spin-15 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 15);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 15);
         }
       }
       
       @keyframes spin-15 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 15);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 15);
         }
       }
       .god .wrap > .span-15 {
@@ -461,19 +539,19 @@
       
       @-webkit-keyframes spin-16 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 16);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 16);
         }
       }
       
       @keyframes spin-16 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 16);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 16);
         }
       }
       .god .wrap > .span-16 {
@@ -485,19 +563,19 @@
       
       @-webkit-keyframes spin-17 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 17);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 17);
         }
       }
       
       @keyframes spin-17 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 17);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 17);
         }
       }
       .god .wrap > .span-17 {
@@ -509,19 +587,19 @@
       
       @-webkit-keyframes spin-18 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 18);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 18);
         }
       }
       
       @keyframes spin-18 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 18);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 18);
         }
       }
       .god .wrap > .span-18 {
@@ -533,19 +611,19 @@
       
       @-webkit-keyframes spin-19 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 19);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 19);
         }
       }
       
       @keyframes spin-19 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 19);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 19);
         }
       }
       .god .wrap > .span-19 {
@@ -557,19 +635,19 @@
       
       @-webkit-keyframes spin-20 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 20);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 20);
         }
       }
       
       @keyframes spin-20 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 20);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 20);
         }
       }
       .god .wrap > .span-20 {
@@ -581,19 +659,19 @@
       
       @-webkit-keyframes spin-21 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 21);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 21);
         }
       }
       
       @keyframes spin-21 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 21);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 21);
         }
       }
       .god .wrap > .span-21 {
@@ -605,19 +683,19 @@
       
       @-webkit-keyframes spin-22 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 22);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 22);
         }
       }
       
       @keyframes spin-22 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 22);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 22);
         }
       }
       .god .wrap > .span-22 {
@@ -629,19 +707,19 @@
       
       @-webkit-keyframes spin-23 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 23);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 23);
         }
       }
       
       @keyframes spin-23 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 23);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 23);
         }
       }
       .god .wrap > .span-23 {
@@ -653,19 +731,19 @@
       
       @-webkit-keyframes spin-24 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 24);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 24);
         }
       }
       
       @keyframes spin-24 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 24);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 24);
         }
       }
       .god .wrap > .span-24 {
@@ -677,19 +755,19 @@
       
       @-webkit-keyframes spin-25 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 25);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 25);
         }
       }
       
       @keyframes spin-25 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 25);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 25);
         }
       }
       .god .wrap > .span-25 {
@@ -701,19 +779,19 @@
       
       @-webkit-keyframes spin-26 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 26);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 26);
         }
       }
       
       @keyframes spin-26 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 26);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 26);
         }
       }
       .god .wrap > .span-26 {
@@ -725,19 +803,19 @@
       
       @-webkit-keyframes spin-27 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 27);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 27);
         }
       }
       
       @keyframes spin-27 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 27);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 27);
         }
       }
       .god .wrap > .span-27 {
@@ -749,19 +827,19 @@
       
       @-webkit-keyframes spin-28 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 28);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 28);
         }
       }
       
       @keyframes spin-28 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 28);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 28);
         }
       }
       .god .wrap > .span-28 {
@@ -773,19 +851,19 @@
       
       @-webkit-keyframes spin-29 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 29);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 29);
         }
       }
       
       @keyframes spin-29 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 29);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 29);
         }
       }
       .god .wrap > .span-29 {
@@ -797,19 +875,19 @@
       
       @-webkit-keyframes spin-30 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 30);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 30);
         }
       }
       
       @keyframes spin-30 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 30);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 30);
         }
       }
       .god .wrap > .span-30 {
@@ -821,19 +899,19 @@
       
       @-webkit-keyframes spin-31 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 31);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 31);
         }
       }
       
       @keyframes spin-31 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 31);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 31);
         }
       }
       .god .wrap > .span-31 {
@@ -845,19 +923,19 @@
       
       @-webkit-keyframes spin-32 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 32);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 32);
         }
       }
       
       @keyframes spin-32 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 32);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 32);
         }
       }
       .god .wrap > .span-32 {
@@ -869,19 +947,19 @@
       
       @-webkit-keyframes spin-33 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 33);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 33);
         }
       }
       
       @keyframes spin-33 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 33);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 33);
         }
       }
       .god .wrap > .span-33 {
@@ -893,19 +971,19 @@
       
       @-webkit-keyframes spin-34 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 34);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 34);
         }
       }
       
       @keyframes spin-34 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 34);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 34);
         }
       }
       .god .wrap > .span-34 {
@@ -917,19 +995,19 @@
       
       @-webkit-keyframes spin-35 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 35);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 35);
         }
       }
       
       @keyframes spin-35 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 35);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 35);
         }
       }
       .god .wrap > .span-35 {
@@ -941,19 +1019,19 @@
       
       @-webkit-keyframes spin-36 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 36);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 36);
         }
       }
       
       @keyframes spin-36 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 36);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 36);
         }
       }
       .god .wrap > .span-36 {
@@ -965,19 +1043,19 @@
       
       @-webkit-keyframes spin-37 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 37);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 37);
         }
       }
       
       @keyframes spin-37 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 37);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 37);
         }
       }
       .god .wrap > .span-37 {
@@ -989,19 +1067,19 @@
       
       @-webkit-keyframes spin-38 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 38);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 38);
         }
       }
       
       @keyframes spin-38 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 38);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 38);
         }
       }
       .god .wrap > .span-38 {
@@ -1013,19 +1091,19 @@
       
       @-webkit-keyframes spin-39 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 39);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 39);
         }
       }
       
       @keyframes spin-39 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 39);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 39);
         }
       }
       .god .wrap > .span-39 {
@@ -1037,19 +1115,19 @@
       
       @-webkit-keyframes spin-40 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 40);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 40);
         }
       }
       
       @keyframes spin-40 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 40);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 40);
         }
       }
       .god .wrap > .span-40 {
@@ -1061,19 +1139,19 @@
       
       @-webkit-keyframes spin-41 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 41);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 41);
         }
       }
       
       @keyframes spin-41 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 41);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 41);
         }
       }
       .god .wrap > .span-41 {
@@ -1085,19 +1163,19 @@
       
       @-webkit-keyframes spin-42 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 42);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 42);
         }
       }
       
       @keyframes spin-42 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 42);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 42);
         }
       }
       .god .wrap > .span-42 {
@@ -1109,19 +1187,19 @@
       
       @-webkit-keyframes spin-43 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 43);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 43);
         }
       }
       
       @keyframes spin-43 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 43);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 43);
         }
       }
       .god .wrap > .span-43 {
@@ -1133,19 +1211,19 @@
       
       @-webkit-keyframes spin-44 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 44);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 44);
         }
       }
       
       @keyframes spin-44 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 44);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 44);
         }
       }
       .god .wrap > .span-44 {
@@ -1157,19 +1235,19 @@
       
       @-webkit-keyframes spin-45 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 45);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 45);
         }
       }
       
       @keyframes spin-45 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 45);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 45);
         }
       }
       .god .wrap > .span-45 {
@@ -1181,19 +1259,19 @@
       
       @-webkit-keyframes spin-46 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 46);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 46);
         }
       }
       
       @keyframes spin-46 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 46);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 46);
         }
       }
       .god .wrap > .span-46 {
@@ -1205,19 +1283,19 @@
       
       @-webkit-keyframes spin-47 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 47);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 47);
         }
       }
       
       @keyframes spin-47 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 47);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 47);
         }
       }
       .god .wrap > .span-47 {
@@ -1229,19 +1307,19 @@
       
       @-webkit-keyframes spin-48 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 48);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 48);
         }
       }
       
       @keyframes spin-48 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 48);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 48);
         }
       }
       .god .wrap > .span-48 {
@@ -1253,19 +1331,19 @@
       
       @-webkit-keyframes spin-49 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 49);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 49);
         }
       }
       
       @keyframes spin-49 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 49);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 49);
         }
       }
       .god .wrap > .span-49 {
@@ -1277,19 +1355,19 @@
       
       @-webkit-keyframes spin-50 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 50);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 50);
         }
       }
       
       @keyframes spin-50 {
         from {
-          top: 0;
+          transform: translateY(0);
         }
         to {
-          top: calc(-73px * 50);
+          transfortransform: translateY(calc(-73px *m: translateY(0); 50);
         }
       }
       .god .wrap > .span-50 {
@@ -1373,7 +1451,7 @@
                 transform-origin: left;
       }
       .btn-start .line.right, .btn-start.not-allow .line.right {
-        top: 0;
+        transform: translateY(0);
         right: -2px;
         -webkit-transform-origin: top;
                 transform-origin: top;
@@ -1444,7 +1522,7 @@
       .button {
         position: absolute;
         cursor: pointer;
-        top: 0;
+        transform: translateY(0);
         left: 0;
         right: 0;
         bottom: 0;
