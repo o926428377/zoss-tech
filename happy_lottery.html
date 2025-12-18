@@ -936,68 +936,91 @@
       if (last_winner_list) {
         last_winner_list = JSON.parse(last_winner_list);
       }
+      var sleep_interval = 300;
+      // 只對陣列進行局部洗牌，取前 count 個，效能極高
+      function getRandomElements(arr, count) {
+          if (count > arr.length) count = arr.length;
+          
+          // 複製陣列以避免修改到原始資料 (若不介意修改原始資料，可去掉 .slice())
+          const result = arr.slice(); 
+          
+          for (let i = 0; i < count; i++) {
+              const j = Math.floor(Math.random() * (result.length - i)) + i;
+              [result[i], result[j]] = [result[j], result[i]]; // 交換
+          }
+          
+          return result.slice(0, count);
+      }
 
-      Array.prototype.random = function(qty){
-        return new Promise((resolve, reject) => {
-          // const rr = this[Math.floor(Math.random()*this.length)];
-          const rr = shuffle(this).slice(0,qty);
-          sleep(30).then(() => {
-            resolve(rr);
+      // ---------------------------------------------------
+
+      Array.prototype.random = function(qty) {
+          return new Promise((resolve) => {
+              // 優化：只取需要的數量，不洗牌整個陣列
+              setTimeout(() => {
+                const rr = getRandomElements(this, qty);
+                resolve(rr);
+              }, sleep_interval); 
           });
-        });
+      }
+
+      Array.prototype.random_table = function(qty) {
+          return new Promise((resolve) => {
+              if (this.length === 0) {
+                  resolve([]);
+                  return;
+              }
+
+              // 優化重點 1: 不需要 map 全部的桌號再洗牌
+              // 直接隨機取一個索引，拿該索引的桌號作為目標
+              const randomIndex = Math.floor(Math.random() * this.length);
+              const target_id = this[randomIndex]["桌號"];
+
+              // 優化重點 2: 篩選出該桌的人
+              const candidates = this.filter(x => x["桌號"] === target_id);
+              
+              // 優化重點 3: 從候選人中隨機抽取
+              const rr = getRandomElements(candidates, qty);
+              
+              resolve(rr);
+              setTimeout(() => {
+                const rr = getRandomElements(candidates, qty);
+                resolve(rr);
+              }, sleep_interval); 
+          });
+      }
+
+      Array.prototype.random_idnumber = function(qty) {
+          return new Promise((resolve) => {
+              if (this.length === 0) {
+                  resolve([]);
+                  return;
+              }
+
+              // 優化同上：直接隨機取一個尾號
+              const randomIndex = Math.floor(Math.random() * this.length);
+              const target_id = this[randomIndex]["尾號"];
+
+              const candidates = this.filter(x => x["尾號"] === target_id);
+              setTimeout(() => {
+                const rr = getRandomElements(candidates, qty);
+                resolve(rr);
+              }, sleep_interval); 
+              
+          });
+      }
+
+      Array.prototype.random_lottery = function(qty) {
+          return new Promise((resolve) => {
+              // 與 random 邏輯相同，使用高效抽取
+              
+              setTimeout(() => {
+                const rr = getRandomElements(this, qty);
+                resolve(rr);
+              }, sleep_interval); 
+          });
       }
       
-      Array.prototype.random_table = function(qty){
-        const target_id = shuffle(this.map(x=> x["桌號"]))[0];
-        return new Promise((resolve, reject) => {
-          const rr = shuffle(this.filter(x=>x["桌號"]===target_id)).slice(0,qty);
-          sleep(30).then(() => {
-            resolve(rr);
-          });
-        });
-      }
-
-      Array.prototype.random_idnumber = function(qty){
-        const target_id = shuffle(this.map(x=> x["尾號"]))[0];
-        return new Promise((resolve, reject) => {
-          const rr = shuffle(this.filter(x=>x["尾號"]===target_id)).slice(0,qty);
-          sleep(30).then(() => {
-            resolve(rr);
-          });
-        });
-      }
-
-      Array.prototype.random_lottery = function(qty){
-        return new Promise((resolve, reject) => {
-          const rr = shuffle(this).slice(0,qty);
-	        sleep(30).then(() => {
-            resolve(rr);
-          });
-          // const rr = shuffle(this);
-          // var result = {};
-          // for(i=0;i<rr.length;i++){
-          //   if (!result[lottery_buyer_list[rr[i]]]) {
-          //       result[lottery_buyer_list[rr[i]]] = rr[i];
-          //   }
-          //   if (Object.keys(result).length===qty) {
-          //       break
-          //   }
-          // }
-          // sleep(3000).then(() => {
-          //   resolve(Object.values(result));
-          // });
-        });
-      }
-      
-
-      function sleep (time) {
-        return new Promise((resolve) => setTimeout(resolve, time));
-      }
-
-      function shuffle(o){ //try this shuffle function
-          for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
-          return o;
-      };
       var slave_mode = false;
       var prizes = {};
       var prizes_dict = {};
