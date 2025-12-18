@@ -1459,11 +1459,11 @@
             const target_list = Object.keys(winner_dict[prize_target[0]][0]).filter(x=> !exclude_winner.includes(x));
             document.getElementById("drawing_single").style.display = "inline";
             if (prize_target[0] === "T") {
-              const tables = [...new Set(Object.keys(table_name_list).map(x=> x["桌號"]))];
+              const tables = [...new Set(Object.values(table_name_list).map(x=> x["桌號"]))];
               choose([tables, tables, tables], ["桌號","桌號","桌號"]);
               target_list.random_table(qty).then(x=> { onSuccess(x); });
             } else if (prize_target[0] === "I") {
-              const all_ids = [...new Set(Object.keys(idnumber_name_list).map(x=> x["尾號"]))];
+              const all_ids = [...new Set(Object.values(idnumber_name_list).map(x=> x["尾號"]))];
               choose([all_ids, all_ids, all_ids], ["尾號","尾號","尾號"]);
               target_list.random_idnumber(qty).then(x=> { onSuccess(x); });
             } else {
