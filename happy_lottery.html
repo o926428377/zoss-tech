@@ -42,6 +42,15 @@
       /* =========================================
         老虎機主體 (The Slot Machine) - 華麗核心
         ========================================= */
+      :root {
+        /* [基礎轉速]：數字越大，轉得越慢 */
+        /* 原本約 0.03s，現在改 0.06s 讓它穩重一點 */
+        --spin-unit: 0.06s; 
+
+        /* [煞車時間]：中獎時停下來花的時間 */
+        /* 數字越大，緩衝滑行越久 */
+        --stop-time: 3s; 
+      }
       .god {
         margin: 0 auto 1rem auto;
         padding: 3rem 1.5rem;
@@ -202,168 +211,167 @@
 
       /* 通用動畫邏輯：移動距離 = -73px * N */
 
-      /* --- Spin 1 to 10 --- */
       @keyframes spin-1 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 1)); } }
-      .god .wrap > .span-1 { animation-name: spin-1; animation-duration: 0.03s; }
+      .god .wrap > .span-1 { animation-name: spin-1; animation-duration: calc(var(--spin-unit) * 1); }
 
       @keyframes spin-2 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 2)); } }
-      .god .wrap > .span-2 { animation-name: spin-2; animation-duration: 0.06s; }
+      .god .wrap > .span-2 { animation-name: spin-2; animation-duration: calc(var(--spin-unit) * 2); }
 
       @keyframes spin-3 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 3)); } }
-      .god .wrap > .span-3 { animation-name: spin-3; animation-duration: 0.09s; }
+      .god .wrap > .span-3 { animation-name: spin-3; animation-duration: calc(var(--spin-unit) * 3); }
 
       @keyframes spin-4 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 4)); } }
-      .god .wrap > .span-4 { animation-name: spin-4; animation-duration: 0.12s; }
+      .god .wrap > .span-4 { animation-name: spin-4; animation-duration: calc(var(--spin-unit) * 4); }
 
       @keyframes spin-5 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 5)); } }
-      .god .wrap > .span-5 { animation-name: spin-5; animation-duration: 0.15s; }
+      .god .wrap > .span-5 { animation-name: spin-5; animation-duration: calc(var(--spin-unit) * 5); }
 
       @keyframes spin-6 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 6)); } }
-      .god .wrap > .span-6 { animation-name: spin-6; animation-duration: 0.18s; }
+      .god .wrap > .span-6 { animation-name: spin-6; animation-duration: calc(var(--spin-unit) * 6); }
 
       @keyframes spin-7 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 7)); } }
-      .god .wrap > .span-7 { animation-name: spin-7; animation-duration: 0.21s; }
+      .god .wrap > .span-7 { animation-name: spin-7; animation-duration: calc(var(--spin-unit) * 7); }
 
       @keyframes spin-8 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 8)); } }
-      .god .wrap > .span-8 { animation-name: spin-8; animation-duration: 0.24s; }
+      .god .wrap > .span-8 { animation-name: spin-8; animation-duration: calc(var(--spin-unit) * 8); }
 
       @keyframes spin-9 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 9)); } }
-      .god .wrap > .span-9 { animation-name: spin-9; animation-duration: 0.27s; }
+      .god .wrap > .span-9 { animation-name: spin-9; animation-duration: calc(var(--spin-unit) * 9); }
 
-      /* *** 重要：結果動畫 (Stop State) *** */
-      /* 調整為 2.5秒 並使用 cubic-bezier 產生煞車感 */
+      /* *** 重要：結果停止狀態 (Stop State) *** */
+      /* 這是你的 JS 程式碼用來「停下」的 class (span-10) */
       @keyframes spin-10 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 10)); } }
-      /*.god .wrap > .span-10 { 
+      .god .wrap > .span-10 { animation-name: spin-10; animation-duration: calc(var(--spin-unit) * 10); }
+      /* .god .wrap > .span-10 { 
           animation-name: spin-10; 
-          animation-duration: 2.5s; 
-          animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
-      }*/
-      .god .wrap > .span-10 { animation-name: spin-10; animation-duration: 0.27s; }
+          animation-duration: var(--stop-time); 
+          animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1); 
+      } */
 
       /* --- Spin 11 to 20 --- */
       @keyframes spin-11 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 11)); } }
-      .god .wrap > .span-11 { animation-name: spin-11; animation-duration: 0.33s; }
+      .god .wrap > .span-11 { animation-name: spin-11; animation-duration: calc(var(--spin-unit) * 11); }
 
       @keyframes spin-12 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 12)); } }
-      .god .wrap > .span-12 { animation-name: spin-12; animation-duration: 0.36s; }
+      .god .wrap > .span-12 { animation-name: spin-12; animation-duration: calc(var(--spin-unit) * 12); }
 
       @keyframes spin-13 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 13)); } }
-      .god .wrap > .span-13 { animation-name: spin-13; animation-duration: 0.39s; }
+      .god .wrap > .span-13 { animation-name: spin-13; animation-duration: calc(var(--spin-unit) * 13); }
 
       @keyframes spin-14 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 14)); } }
-      .god .wrap > .span-14 { animation-name: spin-14; animation-duration: 0.42s; }
+      .god .wrap > .span-14 { animation-name: spin-14; animation-duration: calc(var(--spin-unit) * 14); }
 
       @keyframes spin-15 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 15)); } }
-      .god .wrap > .span-15 { animation-name: spin-15; animation-duration: 0.45s; }
+      .god .wrap > .span-15 { animation-name: spin-15; animation-duration: calc(var(--spin-unit) * 15); }
 
       @keyframes spin-16 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 16)); } }
-      .god .wrap > .span-16 { animation-name: spin-16; animation-duration: 0.48s; }
+      .god .wrap > .span-16 { animation-name: spin-16; animation-duration: calc(var(--spin-unit) * 16); }
 
       @keyframes spin-17 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 17)); } }
-      .god .wrap > .span-17 { animation-name: spin-17; animation-duration: 0.51s; }
+      .god .wrap > .span-17 { animation-name: spin-17; animation-duration: calc(var(--spin-unit) * 17); }
 
       @keyframes spin-18 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 18)); } }
-      .god .wrap > .span-18 { animation-name: spin-18; animation-duration: 0.54s; }
+      .god .wrap > .span-18 { animation-name: spin-18; animation-duration: calc(var(--spin-unit) * 18); }
 
       @keyframes spin-19 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 19)); } }
-      .god .wrap > .span-19 { animation-name: spin-19; animation-duration: 0.57s; }
+      .god .wrap > .span-19 { animation-name: spin-19; animation-duration: calc(var(--spin-unit) * 19); }
 
       @keyframes spin-20 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 20)); } }
-      .god .wrap > .span-20 { animation-name: spin-20; animation-duration: 0.6s; }
+      .god .wrap > .span-20 { animation-name: spin-20; animation-duration: calc(var(--spin-unit) * 20); }
 
       /* --- Spin 21 to 30 --- */
       @keyframes spin-21 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 21)); } }
-      .god .wrap > .span-21 { animation-name: spin-21; animation-duration: 0.63s; }
+      .god .wrap > .span-21 { animation-name: spin-21; animation-duration: calc(var(--spin-unit) * 21); }
 
       @keyframes spin-22 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 22)); } }
-      .god .wrap > .span-22 { animation-name: spin-22; animation-duration: 0.66s; }
+      .god .wrap > .span-22 { animation-name: spin-22; animation-duration: calc(var(--spin-unit) * 22); }
 
       @keyframes spin-23 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 23)); } }
-      .god .wrap > .span-23 { animation-name: spin-23; animation-duration: 0.69s; }
+      .god .wrap > .span-23 { animation-name: spin-23; animation-duration: calc(var(--spin-unit) * 23); }
 
       @keyframes spin-24 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 24)); } }
-      .god .wrap > .span-24 { animation-name: spin-24; animation-duration: 0.72s; }
+      .god .wrap > .span-24 { animation-name: spin-24; animation-duration: calc(var(--spin-unit) * 24); }
 
       @keyframes spin-25 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 25)); } }
-      .god .wrap > .span-25 { animation-name: spin-25; animation-duration: 0.75s; }
+      .god .wrap > .span-25 { animation-name: spin-25; animation-duration: calc(var(--spin-unit) * 25); }
 
       @keyframes spin-26 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 26)); } }
-      .god .wrap > .span-26 { animation-name: spin-26; animation-duration: 0.78s; }
+      .god .wrap > .span-26 { animation-name: spin-26; animation-duration: calc(var(--spin-unit) * 26); }
 
       @keyframes spin-27 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 27)); } }
-      .god .wrap > .span-27 { animation-name: spin-27; animation-duration: 0.81s; }
+      .god .wrap > .span-27 { animation-name: spin-27; animation-duration: calc(var(--spin-unit) * 27); }
 
       @keyframes spin-28 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 28)); } }
-      .god .wrap > .span-28 { animation-name: spin-28; animation-duration: 0.84s; }
+      .god .wrap > .span-28 { animation-name: spin-28; animation-duration: calc(var(--spin-unit) * 28); }
 
       @keyframes spin-29 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 29)); } }
-      .god .wrap > .span-29 { animation-name: spin-29; animation-duration: 0.87s; }
+      .god .wrap > .span-29 { animation-name: spin-29; animation-duration: calc(var(--spin-unit) * 29); }
 
       @keyframes spin-30 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 30)); } }
-      .god .wrap > .span-30 { animation-name: spin-30; animation-duration: 0.9s; }
+      .god .wrap > .span-30 { animation-name: spin-30; animation-duration: calc(var(--spin-unit) * 30); }
 
       /* --- Spin 31 to 40 --- */
       @keyframes spin-31 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 31)); } }
-      .god .wrap > .span-31 { animation-name: spin-31; animation-duration: 0.93s; }
+      .god .wrap > .span-31 { animation-name: spin-31; animation-duration: calc(var(--spin-unit) * 31); }
 
       @keyframes spin-32 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 32)); } }
-      .god .wrap > .span-32 { animation-name: spin-32; animation-duration: 0.96s; }
+      .god .wrap > .span-32 { animation-name: spin-32; animation-duration: calc(var(--spin-unit) * 32); }
 
       @keyframes spin-33 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 33)); } }
-      .god .wrap > .span-33 { animation-name: spin-33; animation-duration: 0.99s; }
+      .god .wrap > .span-33 { animation-name: spin-33; animation-duration: calc(var(--spin-unit) * 33); }
 
       @keyframes spin-34 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 34)); } }
-      .god .wrap > .span-34 { animation-name: spin-34; animation-duration: 1.02s; }
+      .god .wrap > .span-34 { animation-name: spin-34; animation-duration: calc(var(--spin-unit) * 34); }
 
       @keyframes spin-35 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 35)); } }
-      .god .wrap > .span-35 { animation-name: spin-35; animation-duration: 1.05s; }
+      .god .wrap > .span-35 { animation-name: spin-35; animation-duration: calc(var(--spin-unit) * 35); }
 
       @keyframes spin-36 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 36)); } }
-      .god .wrap > .span-36 { animation-name: spin-36; animation-duration: 1.08s; }
+      .god .wrap > .span-36 { animation-name: spin-36; animation-duration: calc(var(--spin-unit) * 36); }
 
       @keyframes spin-37 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 37)); } }
-      .god .wrap > .span-37 { animation-name: spin-37; animation-duration: 1.11s; }
+      .god .wrap > .span-37 { animation-name: spin-37; animation-duration: calc(var(--spin-unit) * 37); }
 
       @keyframes spin-38 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 38)); } }
-      .god .wrap > .span-38 { animation-name: spin-38; animation-duration: 1.14s; }
+      .god .wrap > .span-38 { animation-name: spin-38; animation-duration: calc(var(--spin-unit) * 38); }
 
       @keyframes spin-39 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 39)); } }
-      .god .wrap > .span-39 { animation-name: spin-39; animation-duration: 1.17s; }
+      .god .wrap > .span-39 { animation-name: spin-39; animation-duration: calc(var(--spin-unit) * 39); }
 
       @keyframes spin-40 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 40)); } }
-      .god .wrap > .span-40 { animation-name: spin-40; animation-duration: 1.2s; }
+      .god .wrap > .span-40 { animation-name: spin-40; animation-duration: calc(var(--spin-unit) * 40); }
 
       /* --- Spin 41 to 50 --- */
       @keyframes spin-41 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 41)); } }
-      .god .wrap > .span-41 { animation-name: spin-41; animation-duration: 1.23s; }
+      .god .wrap > .span-41 { animation-name: spin-41; animation-duration: calc(var(--spin-unit) * 41); }
 
       @keyframes spin-42 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 42)); } }
-      .god .wrap > .span-42 { animation-name: spin-42; animation-duration: 1.26s; }
+      .god .wrap > .span-42 { animation-name: spin-42; animation-duration: calc(var(--spin-unit) * 42); }
 
       @keyframes spin-43 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 43)); } }
-      .god .wrap > .span-43 { animation-name: spin-43; animation-duration: 1.29s; }
+      .god .wrap > .span-43 { animation-name: spin-43; animation-duration: calc(var(--spin-unit) * 43); }
 
       @keyframes spin-44 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 44)); } }
-      .god .wrap > .span-44 { animation-name: spin-44; animation-duration: 1.32s; }
+      .god .wrap > .span-44 { animation-name: spin-44; animation-duration: calc(var(--spin-unit) * 44); }
 
       @keyframes spin-45 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 45)); } }
-      .god .wrap > .span-45 { animation-name: spin-45; animation-duration: 1.35s; }
+      .god .wrap > .span-45 { animation-name: spin-45; animation-duration: calc(var(--spin-unit) * 45); }
 
       @keyframes spin-46 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 46)); } }
-      .god .wrap > .span-46 { animation-name: spin-46; animation-duration: 1.38s; }
+      .god .wrap > .span-46 { animation-name: spin-46; animation-duration: calc(var(--spin-unit) * 46); }
 
       @keyframes spin-47 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 47)); } }
-      .god .wrap > .span-47 { animation-name: spin-47; animation-duration: 1.41s; }
+      .god .wrap > .span-47 { animation-name: spin-47; animation-duration: calc(var(--spin-unit) * 47); }
 
       @keyframes spin-48 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 48)); } }
-      .god .wrap > .span-48 { animation-name: spin-48; animation-duration: 1.44s; }
+      .god .wrap > .span-48 { animation-name: spin-48; animation-duration: calc(var(--spin-unit) * 48); }
 
       @keyframes spin-49 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 49)); } }
-      .god .wrap > .span-49 { animation-name: spin-49; animation-duration: 1.47s; }
+      .god .wrap > .span-49 { animation-name: spin-49; animation-duration: calc(var(--spin-unit) * 49); }
 
       @keyframes spin-50 { from { transform: translateY(0); } to { transform: translateY(calc(-73px * 50)); } }
-      .god .wrap > .span-50 { animation-name: spin-50; animation-duration: 1.5s; }
-      
+      .god .wrap > .span-50 { animation-name: spin-50; animation-duration: calc(var(--spin-unit) * 50); }
+
       .btns {
         display: flex;
         margin-bottom: 3rem;
