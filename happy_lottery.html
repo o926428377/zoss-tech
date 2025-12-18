@@ -85,17 +85,15 @@
         z-index: 10;
       }
 
-      /* 裝飾：中獎線 (Focus Line) - 視覺焦點 */
+      /* 裝飾：中獎線 (Focus Line) - 視覺焦點
       .god::after {
         content: "";
         position: absolute;
         top: 50%;
         left: -5%;
         right: -5%;
-        height: 75px; /* 對應單個文字高度 */
+        height: 75px; 
         transform: translateY(-50%);
-        
-        /* 黃金雷射邊框 */
         border-top: 2px solid rgba(255, 215, 0, 0.8);
         border-bottom: 2px solid rgba(255, 215, 0, 0.8);
         background: linear-gradient(90deg, 
@@ -107,6 +105,7 @@
         pointer-events: none;
         z-index: 20;
       }
+      */
 
       .god h1 {
         margin: 0;
@@ -121,7 +120,7 @@
       .god span.wrap {
         display: block;
         display: inline-grid;
-        max-height: 73px; /* 視窗高度 */
+        max-height: 100px; /* 視窗高度 */
         overflow: hidden;
         
         /* 滾輪質感：白色底 + 內陰影模擬圓柱彎曲 */
@@ -1450,14 +1449,14 @@
 	          const lottery_winner = winner_dict[prize_target[0]][1];
             // const target_list = Object.keys(lottery_buyer_list).filter(x=> !lottery_winner.includes(lottery_buyer_list[x]));
             const target_list = Object.keys(winner_dict[prize_target[0]][0]).filter(x=> !lottery_winner.includes(x));
-            document.getElementById("drawing_single").style.display = "inline";
+            document.getElementById("drawing_single").style.display = "flex";
             choose([target_list, ...toggle.slice(1)], ["序號","店名","中獎人"]);
             target_list.random_lottery(qty).then(x=> { onSuccess(x); });
 
           } else if (['S', 'P', 'B', 'T', 'I'].includes(prize_target[0])) {
             const exclude_winner = [prize_target[0] , ...prizes[prize_target]["排除中獎區"]?prizes[prize_target]["排除中獎區"].split(""):[]].flatMap(key => winner_dict[key][1] || []);
             const target_list = Object.keys(winner_dict[prize_target[0]][0]).filter(x=> !exclude_winner.includes(x));
-            document.getElementById("drawing_single").style.display = "inline";
+            document.getElementById("drawing_single").style.display = "flex";
             if (prize_target[0] === "T") {
               const tables = [...new Set(Object.values(table_name_list).map(x=> x["桌號"]))];
               choose([tables, tables, tables], ["桌號","桌號","桌號"]);
@@ -1474,7 +1473,7 @@
             // const winner = Object.keys(winner_list).filter(y=> winner_list[y]["獎項編號"][0]!=="L");
             const winner = winner_dict[prize_target[0]][1];
             const target_list = Object.keys(winner_dict[prize_target[0]][0]).filter(x=> shop_list[winner_dict[prize_target[0]][0][x]["店名"]]["桶別"]===prizes[prize_target]["桶別"]).filter(x=> !winner.includes(x));
-            document.getElementById("drawing_single").style.display = "inline";
+            document.getElementById("drawing_single").style.display = "flex";
             choose(toggle, ["桶別","店名","中獎人"]);
             target_list.random(qty).then(x=> { onSuccess(x); });
             // target_list.random(qty).then(x=> { onSuccess_formpost(x); });
