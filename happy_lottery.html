@@ -1637,6 +1637,7 @@
 		        liffId: liffId
 		    }).then(function() {
 		        if (!liff.isLoggedIn()) {
+					console.log(window.location.href);
 		            liff.login({ redirectUri: window.location.href });
 		        } else {
 		            setStringifiedStorageItem(window.messagesKey, zt);
