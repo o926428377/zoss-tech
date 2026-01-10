@@ -1402,11 +1402,11 @@
         })
       }
 
-      function lucky_draw() {
+      async function lucky_draw() {
         // if (typeof window.happy_lottery_tab === "function") {
         //   window.happy_lottery_tab();
         // }
-		const _chk = login();
+		const _chk = await login();
 		if (!_chk) {
 			return
 		}
