@@ -1576,19 +1576,13 @@
             window.happy_lottery_tab = window.open(`about:blank`, "happy-lottery",'toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=yes,width=1,height=1');
           }
       }
-
-	  window.messagesKey = 'zoss_login_process';
-
-	  window.setStringifiedStorageItem = function (key, value) {
-	      localStorage.setItem(key, value);
-	  }
-		
-	  window.handleNewMessage = function ({ key, newValue}) {
+	
+	  window.handleNewLogin = function ({ key, newValue}) {
 	      if (window.zt === newValue) {
 			  document.getElementById("loading").style.display = "none";
 	          window.liff_auth.close();
-	          window.removeEventListener('storage', window.handleNewMessage, false);
-	          vue_export.$refs.report_report.$refs.form_wizard.nextTab();
+	          window.removeEventListener('storage', window.handleNewLogin, false);
+
 	      }
 	  }
 
@@ -1602,7 +1596,7 @@
 					var timestamp = new Date();
 					window.zt = timestamp.getTime().toString();
 					setStringifiedStorageItem(window.messagesKey, "");
-					window.addEventListener('storage', window.handleNewMessage);
+					window.addEventListener('storage', window.handleNewLogin);
 					var liff_url = `${window.location.href.split('?')[0]}?sid=${params.get("sid")}&liff=${liffId}&zt=${window.zt}`;
 					window.liff_auth = window.open(liff_url, "_new", "width=480,height=639,left=0,0,top=0,status=0,");
 					resolve(false);
