@@ -187,8 +187,8 @@
       if (params.has("liffRedirectUri")) {
         params = new URL(decodeURIComponent(params.get("liffRedirectUri"))).searchParams;
       }
-      if (!params.has("liff") || !params.has("sid")) {
-        sys_error("無效參數");
+      if (!params.has("liff") || (!params.has("sid")&&!params.has("app"))) {
+          sys_error("無效參數");
 	      _continue
       } else if (params.has("type") && params.has("prize_no")) {
 	      var _type = params.get("type");
@@ -204,9 +204,14 @@
           		_continue
 	          }
       }
-      var liffId = params.get("liff");
-      var url = `https://script.google.com/macros/s/${params.get("sid")}/exec`;
 
+      var liffId = params.get("liff");
+      var url;
+	  if (params.get("sid")) {
+	    url = `https://script.google.com/macros/s/${params.get("sid")}/exec`;
+	  } else if (params.get("app")) {
+	    url = `https://${params.get("app")}.a.run.app`;
+	  }
       
 
     window.onload = async function (e) {
