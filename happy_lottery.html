@@ -1599,7 +1599,6 @@
 			window.zt = timestamp.getTime().toString();
 			setStringifiedStorageItem(window.messagesKey, "");
 			window.addEventListener('storage', window.handleNewMessage);
-			sid=AKfycbwIg-UmRaCpuHUEwMvBb__SlRqQLH_itYJuAvm0heQCYJmZx1wjN1hTk0ZlpNENAE9pDA&liff=2006657937-qA3NO2M6
 			var liff_url = `${window.location.href.split('?')[0]}?sid=${params.get("sid")}&liff=${liffId}&zt=${window.zt}`;
 			window.liff_auth = window.open(liff_url, "_new", "width=480,height=639,left=0,0,top=0,status=0,");
 			return false
