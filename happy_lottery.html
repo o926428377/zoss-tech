@@ -936,6 +936,7 @@
       }
 
       var liffId = params.get("liff");
+	  const zt = params.get('zt');
       var url = `https://script.google.com/macros/s/${params.get("sid")}/exec`;
       var text;
       var prize_result;
@@ -1405,6 +1406,10 @@
         // if (typeof window.happy_lottery_tab === "function") {
         //   window.happy_lottery_tab();
         // }
+		const _chk = login();
+		if (!_chk) {
+			return
+		}
         document.getElementById('prize_sn').disabled = true;
         document.getElementById('shoot').disabled = true;
         //即將開獎
@@ -1572,6 +1577,36 @@
           }
       }
 
+	  window.messagesKey = 'zoss_login_process';
+
+	  window.setStringifiedStorageItem = function (key, value) {
+	      localStorage.setItem(key, value);
+	  }
+		
+	  window.handleNewMessage = function ({ key, newValue}) {
+	      if (window.zt === newValue) {
+			  document.getElementById("loading").style.display = "none";
+	          window.liff_auth.close();
+	          window.removeEventListener('storage', window.handleNewMessage, false);
+	          vue_export.$refs.report_report.$refs.form_wizard.nextTab();
+	      }
+	  }
+
+	function login() {
+	    if (!liff.isLoggedIn()) {
+			document.getElementById("loading").style.display = "inline";
+			var timestamp = new Date();
+			window.zt = timestamp.getTime().toString();
+			setStringifiedStorageItem(window.messagesKey, "");
+			window.addEventListener('storage', window.handleNewMessage);
+			sid=AKfycbwIg-UmRaCpuHUEwMvBb__SlRqQLH_itYJuAvm0heQCYJmZx1wjN1hTk0ZlpNENAE9pDA&liff=2006657937-qA3NO2M6
+			var liff_url = `${window.location.href.split('?')[0]}?sid=${params.get("sid")}&liff=${liffId}&zt=${window.zt}`;
+			window.liff_auth = window.open(liff_url, "_new", "width=480,height=639,left=0,0,top=0,status=0,");
+			return false
+		} else {
+			return true
+		}
+	}
       // window.onload = function () {
       //     load_config();
       // };
@@ -1595,6 +1630,17 @@
 
     window.onload = async function (e) {
         // load_config();
+		if (zt) {
+		    liff.init({
+		        liffId: liffId
+		    }).then(function() {
+		        if (!liff.isLoggedIn()) {
+		            liff.login({ redirectUri: window.location.href });
+		        } else {
+		            setStringifiedStorageItem(window.messagesKey, zt);
+		        }
+		    })
+		}
         getToken(liffId).then(function(params){
             sendPost(`${url}?role=login`, params).then(function(response){
                 if (typeof response.msg !== "undefined") {
