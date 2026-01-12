@@ -358,11 +358,12 @@
             
             setTimeout(() => {
                 const urlParams = new URLSearchParams(window.location.search);
+                var queryParam;
                 if (urlParams.has("liff.state")) {
                     var tmp = getAllUrlParams(decodeURIComponent(urlParams.get("liff.state")));
-                    const queryParam = tmp.q;
+                    queryParam = tmp.q;
                 } else {
-                    const queryParam = urlParams.get('q');
+                    queryParam = urlParams.get('q');
                 }
                 if (queryParam) {
                     const searchInput = document.getElementById('searchInput');
