@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>快樂49忘年會座位分布圖</title>
+    <title>尾牙活動桌位分布圖 - 黑金專業完整版</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
@@ -11,7 +11,7 @@
             font-family: 'Noto Sans TC', sans-serif;
             background-color: #0a0a0a;
             color: #d4af37;
-            overflow-x: hidden;
+            /* 移除限制，允許水平捲動以解決行動版卡住問題 */
         }
 
         .gold-text {
@@ -21,7 +21,7 @@
             font-weight: bold;
         }
 
-        /* 圓桌樣式 - 調整高度以容納更多文字 */
+        /* 圓桌樣式 */
         .table-circle {
             width: 85px;
             height: 85px;
@@ -37,6 +37,8 @@
             cursor: pointer;
             position: relative;
             padding: 8px;
+            flex-shrink: 0;
+            scroll-margin-top: 150px; /* 搜尋時捲動停留的頂部間距 */
         }
 
         .table-circle:hover {
@@ -75,20 +77,21 @@
         .highlight-pulse {
             animation: pulse-gold 1.5s infinite;
             border-color: #ffffff !important;
-            transform: scale(1.2);
+            transform: scale(1.25);
             z-index: 60;
         }
 
         @keyframes pulse-gold {
             0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.8); }
-            70% { box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
+            70% { box-shadow: 0 0 0 20px rgba(255, 255, 255, 0); }
             100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
         }
 
         /* 紅毯走道 */
         .aisle {
             background: linear-gradient(to bottom, transparent, rgba(153, 27, 27, 0.2), transparent);
-            width: 70px;
+            width: 60px;
+            min-width: 60px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -108,20 +111,21 @@
             align-items: center;
             justify-content: center;
             color: #d4af37;
-            font-size: 0.9rem;
-            letter-spacing: 1em;
+            font-size: 0.8rem;
+            letter-spacing: 0.8em;
             background: rgba(212, 175, 55, 0.08);
             border-top: 1px solid rgba(212, 175, 55, 0.15);
             border-bottom: 1px solid rgba(212, 175, 55, 0.15);
             margin: 15px 0;
             font-weight: 300;
+            white-space: nowrap;
         }
 
         /* 網格系統 */
         .seating-grid {
             display: grid;
-            grid-template-columns: repeat(4, 90px);
-            gap: 15px;
+            grid-template-columns: repeat(4, 85px);
+            gap: 12px;
             align-content: start;
         }
 
@@ -131,49 +135,66 @@
             z-index: 100;
             background: rgba(10, 10, 10, 0.95);
             backdrop-filter: blur(12px);
-            padding: 1.5rem;
+            padding: 1rem;
             border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        /* 解決行動版容器 */
+        .scroll-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 20px 0;
+        }
+        
+        .layout-container {
+            min-width: 850px; /* 確保內容不會被壓縮 */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin: 0 auto;
         }
     </style>
 </head>
 <body>
 
     <div class="search-container text-center">
-        <h1 class="text-3xl font-bold gold-text mb-4 tracking-[0.3em]">快樂49忘年會座位分布圖</h1>
+        <h1 class="text-2xl md:text-3xl font-bold gold-text mb-3 tracking-[0.2em] md:tracking-[0.3em]">快樂49忘年會座位分布圖</h1>
         <div class="relative max-w-lg mx-auto">
-            <input type="text" id="searchInput" placeholder="搜尋分店關鍵字 (如：大里、府中、VIP 或桌號)" 
-                class="w-full bg-zinc-900 border border-amber-600/30 rounded-full py-3.5 px-8 text-amber-100 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all shadow-xl">
-            <span class="absolute right-6 top-3 text-amber-600/50 text-xl">🔍</span>
+            <input type="text" id="searchInput" placeholder="搜尋分店關鍵字或桌號" 
+                class="w-full bg-zinc-900 border border-amber-600/30 rounded-full py-2.5 px-6 text-amber-100 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all shadow-xl text-sm">
+            <span class="absolute right-5 top-2.5 text-amber-600/50 text-lg">🔍</span>
         </div>
     </div>
 
     <div class="max-w-7xl mx-auto p-4 flex flex-col items-center">
         
-        <div class="w-full text-center py-6 mb-8 border-b border-amber-900/20">
-            <span class="text-2xl font-thin tracking-[2em] text-amber-900/60 ml-[2em]">主舞台 STAGE</span>
+        <div class="w-full text-center py-6 mb-4 border-b border-amber-900/20">
+            <span class="text-xl md:text-2xl font-thin tracking-[1.5em] text-amber-900/60 ml-[1.5em]">主舞台 STAGE</span>
         </div>
 
-        <div class="flex justify-center items-start">
-            
-            <!-- 左側區域 -->
-            <div id="leftArea" class="seating-grid"></div>
+        <!-- 橫向捲動包裝層 -->
+        <div class="scroll-wrapper">
+            <div class="layout-container">
+                <!-- 左側區域 -->
+                <div id="leftArea" class="seating-grid"></div>
 
-            <!-- 中央紅毯 -->
-            <div class="aisle mx-10 self-stretch">
-                紅 毯 走 道
+                <!-- 中央紅毯 -->
+                <div class="aisle mx-8 self-stretch">
+                    紅 毯 走 道
+                </div>
+
+                <!-- 右側區域 -->
+                <div id="rightArea" class="seating-grid"></div>
             </div>
-
-            <!-- 右側區域 -->
-            <div id="rightArea" class="seating-grid"></div>
         </div>
 
-        <div class="mt-24 mb-12 text-center text-amber-900/30 text-xs tracking-[0.5em] uppercase">
-            Designed by ZOSS Tech
+        <div class="mt-20 mb-12 text-center text-amber-900/30 text-[10px] tracking-[0.4em] uppercase">
+            Designed for Excellence • Premium Banquet Seating
         </div>
     </div>
 
     <script>
-        // 完整的桌次資料清單
         const leftTables = [
             { id: 1, name: '大里 10' },
             { id: 2, name: '大里 5 / 精明一 4 / 精誠 1' },
@@ -297,36 +318,63 @@
             `;
         }
 
-        // 執行搜尋邏輯
-        function performSearch(keyword) {
+        // 執行搜尋邏輯並自動捲動
+        let scrollTimeout;
+        function performSearch(keyword, shouldScroll = true) {
             const val = keyword.toLowerCase().trim();
-            document.querySelectorAll('.table-circle').forEach(el => {
+            const allTables = document.querySelectorAll('.table-circle');
+            let firstMatch = null;
+
+            allTables.forEach(el => {
                 const name = el.getAttribute('data-name').toLowerCase();
                 const id = el.getAttribute('data-id');
                 if (val !== "" && (name.includes(val) || id === val)) {
                     el.classList.add('highlight-pulse');
+                    if (!firstMatch) firstMatch = el;
                 } else {
                     el.classList.remove('highlight-pulse');
                 }
             });
+
+            // 自動捲動到第一個匹配項
+            if (shouldScroll && firstMatch) {
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    // 垂直捲動
+                    firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    
+                    // 水平捲動（針對手機版 wrapper）
+                    const wrapper = document.querySelector('.scroll-wrapper');
+                    const rect = firstMatch.getBoundingClientRect();
+                    const wrapperRect = wrapper.getBoundingClientRect();
+                    const scrollLeft = wrapper.scrollLeft + rect.left - (wrapperRect.width / 2) + (rect.width / 2);
+                    
+                    wrapper.scrollTo({
+                        left: scrollLeft,
+                        behavior: 'smooth'
+                    });
+                }, 300);
+            }
         }
 
         function render() {
             document.getElementById('leftArea').innerHTML = leftTables.map(createEl).join('');
             document.getElementById('rightArea').innerHTML = rightTables.map(createEl).join('');
             
-            // 檢查 URL 參數
-            const urlParams = new URLSearchParams(window.location.search);
-            const queryParam = urlParams.get('q');
-            if (queryParam) {
-                const searchInput = document.getElementById('searchInput');
-                searchInput.value = queryParam;
-                performSearch(queryParam);
-            }
+            // 延遲一點點執行 URL 參數檢查，確保 DOM 已完全排版
+            setTimeout(() => {
+                const urlParams = new URLSearchParams(window.location.search);
+                const queryParam = urlParams.get('q');
+                if (queryParam) {
+                    const searchInput = document.getElementById('searchInput');
+                    searchInput.value = queryParam;
+                    performSearch(queryParam, true);
+                }
+            }, 500);
         }
 
         document.getElementById('searchInput').addEventListener('input', (e) => {
-            performSearch(e.target.value);
+            performSearch(e.target.value, true);
         });
 
         window.onload = render;
