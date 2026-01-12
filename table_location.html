@@ -11,7 +11,6 @@
             font-family: 'Noto Sans TC', sans-serif;
             background-color: #0a0a0a;
             color: #d4af37;
-            /* 移除限制，允許水平捲動以解決行動版卡住問題 */
         }
 
         .gold-text {
@@ -38,7 +37,7 @@
             position: relative;
             padding: 8px;
             flex-shrink: 0;
-            scroll-margin-top: 150px; /* 搜尋時捲動停留的頂部間距 */
+            scroll-margin-top: 150px; 
         }
 
         .table-circle:hover {
@@ -139,16 +138,16 @@
             border-bottom: 1px solid rgba(212, 175, 55, 0.2);
         }
 
-        /* 解決行動版容器 */
+        /* 解決行動版容器裁切問題 */
         .scroll-wrapper {
             width: 100%;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
-            padding: 20px 0;
+            padding: 20px 24px; /* 加入足夠的左右內距防止最左/最右被裁切 */
         }
         
         .layout-container {
-            min-width: 850px; /* 確保內容不會被壓縮 */
+            min-width: 820px; 
             display: flex;
             justify-content: center;
             align-items: flex-start;
@@ -167,7 +166,7 @@
         </div>
     </div>
 
-    <div class="max-w-7xl mx-auto p-4 flex flex-col items-center">
+    <div class="max-w-7xl mx-auto p-2 md:p-4 flex flex-col items-center">
         
         <div class="w-full text-center py-6 mb-4 border-b border-amber-900/20">
             <span class="text-xl md:text-2xl font-thin tracking-[1.5em] text-amber-900/60 ml-[1.5em]">主舞台 STAGE</span>
@@ -318,7 +317,6 @@
             `;
         }
 
-        // 執行搜尋邏輯並自動捲動
         let scrollTimeout;
         function performSearch(keyword, shouldScroll = true) {
             const val = keyword.toLowerCase().trim();
@@ -336,14 +334,11 @@
                 }
             });
 
-            // 自動捲動到第一個匹配項
             if (shouldScroll && firstMatch) {
                 clearTimeout(scrollTimeout);
                 scrollTimeout = setTimeout(() => {
-                    // 垂直捲動
                     firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     
-                    // 水平捲動（針對手機版 wrapper）
                     const wrapper = document.querySelector('.scroll-wrapper');
                     const rect = firstMatch.getBoundingClientRect();
                     const wrapperRect = wrapper.getBoundingClientRect();
@@ -361,10 +356,14 @@
             document.getElementById('leftArea').innerHTML = leftTables.map(createEl).join('');
             document.getElementById('rightArea').innerHTML = rightTables.map(createEl).join('');
             
-            // 延遲一點點執行 URL 參數檢查，確保 DOM 已完全排版
             setTimeout(() => {
                 const urlParams = new URLSearchParams(window.location.search);
-                const queryParam = urlParams.get('q');
+                if (urlParams.has("liff.state")) {
+                    var tmp = getAllUrlParams(decodeURIComponent(urlParams.get("liff.state")));
+                    const queryParam = tmp.q;
+                } else {
+                    const queryParam = urlParams.get('q');
+                }
                 if (queryParam) {
                     const searchInput = document.getElementById('searchInput');
                     searchInput.value = queryParam;
