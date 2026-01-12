@@ -11,6 +11,8 @@
             font-family: 'Noto Sans TC', sans-serif;
             background-color: #0a0a0a;
             color: #d4af37;
+            margin: 0;
+            padding: 0;
         }
 
         .gold-text {
@@ -124,7 +126,7 @@
         .seating-grid {
             display: grid;
             grid-template-columns: repeat(4, 85px);
-            gap: 12px;
+            gap: 15px;
             align-content: start;
         }
 
@@ -138,16 +140,16 @@
             border-bottom: 1px solid rgba(212, 175, 55, 0.2);
         }
 
-        /* 解決行動版容器裁切問題 */
+        /* 解決行動版容器裁切問題的核心修正 */
         .scroll-wrapper {
             width: 100%;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
-            padding: 20px 24px; /* 加入足夠的左右內距防止最左/最右被裁切 */
+            padding: 30px 40px; /* 增加更寬的左右 Padding 確保邊緣不被裁切 */
         }
         
         .layout-container {
-            min-width: 820px; 
+            width: max-content; /* 根據內容自動伸縮，不寫死 min-width */
             display: flex;
             justify-content: center;
             align-items: flex-start;
@@ -179,7 +181,7 @@
                 <div id="leftArea" class="seating-grid"></div>
 
                 <!-- 中央紅毯 -->
-                <div class="aisle mx-8 self-stretch">
+                <div class="aisle mx-12 self-stretch">
                     紅 毯 走 道
                 </div>
 
@@ -189,7 +191,7 @@
         </div>
 
         <div class="mt-20 mb-12 text-center text-amber-900/30 text-[10px] tracking-[0.4em] uppercase">
-            Designed for Excellence • Premium Banquet Seating
+            Designed By ZOSS Tech
         </div>
     </div>
 
@@ -337,11 +339,15 @@
             if (shouldScroll && firstMatch) {
                 clearTimeout(scrollTimeout);
                 scrollTimeout = setTimeout(() => {
+                    // 先捲動垂直位置
                     firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     
+                    // 針對 scroll-wrapper 捲動水平位置
                     const wrapper = document.querySelector('.scroll-wrapper');
                     const rect = firstMatch.getBoundingClientRect();
                     const wrapperRect = wrapper.getBoundingClientRect();
+                    
+                    // 計算目標在捲動容器內的相對位移
                     const scrollLeft = wrapper.scrollLeft + rect.left - (wrapperRect.width / 2) + (rect.width / 2);
                     
                     wrapper.scrollTo({
