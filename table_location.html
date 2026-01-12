@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快樂49忘年會座位分布圖</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #0a0a0a;
+            color: #d4af37;
+            overflow-x: hidden;
+        }
+
+        .gold-text {
+            background: linear-gradient(to bottom, #f9f295, #e0aa3e, #b8860b, #e0aa3e, #f9f295);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+
+        /* 圓桌樣式 - 調整高度以容納更多文字 */
+        .table-circle {
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle, #2a2a2a 0%, #000000 100%);
+            border: 2px solid #d4af37;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(212, 175, 55, 0.2);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            padding: 8px;
+        }
+
+        .table-circle:hover {
+            transform: scale(1.15);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.9);
+            z-index: 50;
+            border-color: #f9f295;
+        }
+
+        /* VIP 桌 */
+        .table-vip {
+            border: 3px solid #f9f295;
+            box-shadow: 0 0 20px rgba(249, 242, 149, 0.3);
+            background: radial-gradient(circle, #4d4126 0%, #1a1500 100%);
+        }
+
+        /* 攝影器材 */
+        .camera-box {
+            width: 85px;
+            height: 85px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #000000 100%);
+            border: 2px solid #3b82f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #93c5fd;
+            font-size: 0.8rem;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(30, 64, 175, 0.6);
+            letter-spacing: 0.2em;
+        }
+
+        /* 搜尋命中 */
+        .highlight-pulse {
+            animation: pulse-gold 1.5s infinite;
+            border-color: #ffffff !important;
+            transform: scale(1.2);
+            z-index: 60;
+        }
+
+        @keyframes pulse-gold {
+            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.8); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        }
+
+        /* 紅毯走道 */
+        .aisle {
+            background: linear-gradient(to bottom, transparent, rgba(153, 27, 27, 0.2), transparent);
+            width: 70px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            writing-mode: vertical-rl;
+            letter-spacing: 1.2em;
+            color: #991b1b;
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        /* 燈光音響橫帶 */
+        .divider-row {
+            grid-column: span 4;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #d4af37;
+            font-size: 0.9rem;
+            letter-spacing: 1em;
+            background: rgba(212, 175, 55, 0.08);
+            border-top: 1px solid rgba(212, 175, 55, 0.15);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+            margin: 15px 0;
+            font-weight: 300;
+        }
+
+        /* 網格系統 */
+        .seating-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 90px);
+            gap: 15px;
+            align-content: start;
+        }
+
+        .search-container {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(12px);
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="search-container text-center">
+        <h1 class="text-3xl font-bold gold-text mb-4 tracking-[0.3em]">快樂49忘年會座位分布圖</h1>
+        <div class="relative max-w-lg mx-auto">
+            <input type="text" id="searchInput" placeholder="搜尋分店關鍵字 (如：大里、府中、VIP 或桌號)" 
+                class="w-full bg-zinc-900 border border-amber-600/30 rounded-full py-3.5 px-8 text-amber-100 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all shadow-xl">
+            <span class="absolute right-6 top-3 text-amber-600/50 text-xl">🔍</span>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto p-4 flex flex-col items-center">
+        
+        <div class="w-full text-center py-6 mb-8 border-b border-amber-900/20">
+            <span class="text-2xl font-thin tracking-[2em] text-amber-900/60 ml-[2em]">主舞台 STAGE</span>
+        </div>
+
+        <div class="flex justify-center items-start">
+            
+            <!-- 左側區域 -->
+            <div id="leftArea" class="seating-grid"></div>
+
+            <!-- 中央紅毯 -->
+            <div class="aisle mx-10 self-stretch">
+                紅 毯 走 道
+            </div>
+
+            <!-- 右側區域 -->
+            <div id="rightArea" class="seating-grid"></div>
+        </div>
+
+        <div class="mt-24 mb-12 text-center text-amber-900/30 text-xs tracking-[0.5em] uppercase">
+            Designed by ZOSS Tech
+        </div>
+    </div>
+
+    <script>
+        // 完整的桌次資料清單
+        const leftTables = [
+            { id: 1, name: '大里 10' },
+            { id: 2, name: '大里 5 / 精明一 4 / 精誠 1' },
+            { id: 3, name: '精誠 10' },
+            { id: 4, name: 'VIP (1素)', isVIP: true, veg: 1 },
+            { id: 9, name: '興祥 10' },
+            { id: 10, name: '尊爵 6 / 興祥 4' },
+            { id: 11, name: '藝文 8 / 兒童 3' },
+            { id: 12, name: 'VIP', isVIP: true },
+            { id: 17, name: '大里二 10 (1兒童座椅)' },
+            { id: 18, name: '文心 8+2' },
+            { type: 'camera' },
+            { id: 19, name: 'VIP', isVIP: true },
+            { id: 24, name: '市政 10 (2素)', veg: 2 },
+            { id: 25, name: '市政 3(1素) / 漢口 7(1素)', veg: 2 },
+            { id: 26, name: '太平 8+2' },
+            { id: 27, name: '西湖 7 / 正義 3' },
+            { id: 32, name: '員林 7 / 豐一 1 / 豐二 1 / 豐三 1' },
+            { id: 33, name: '豐二 10' },
+            { id: 34, name: '大直 10' },
+            { id: 35, name: '天母 4 / 北投 6' },
+            { id: 40, name: '豐一 10' },
+            { id: 41, name: '豐三 10' },
+            { id: 42, name: '天母 10' },
+            { id: 43, name: '北投 10 (1兒童座椅)' },
+            { type: 'divider', name: '燈光音響控制區' },
+            { id: 48, name: '市府 6 / 松山 4' },
+            { id: 49, name: '市府 10' },
+            { id: 50, name: '樂群 10' },
+            { id: 51, name: '宜蘭 10 (1素)', veg: 1 },
+            { id: 56, name: '府中 10' },
+            { id: 57, name: '府中 10' },
+            { id: 58, name: '永吉 10' },
+            { id: 59, name: '樂群 3 / 永吉 7' },
+            { id: 64, name: '北屯 10' },
+            { id: 65, name: '北屯 3 / 北平 4 / 大墩 3' },
+            { id: 66, name: '大墩 1 / 中科 9 (1素)', veg: 1 },
+            { id: 67, name: '崇德 10' },
+            { id: 71, name: '大墩 10' },
+            { id: 72, name: '北平 10' },
+            { id: 73, name: '延和 10' },
+            { id: 74, name: '中央 10' },
+            { id: 79, name: '北大學城 10 (1素)', veg: 1 },
+            { id: 80, name: '裕民 10' },
+            { id: 81, name: '泰山 10' },
+            { id: 82, name: '板橋 10' }
+        ];
+
+        const rightTables = [
+            { id: 5, name: 'VIP', isVIP: true },
+            { id: 6, name: '憶璇 10 (2素)', veg: 2 },
+            { id: 7, name: '憶璇 5 / 雙和 5' },
+            { id: 8, name: '木柵 2 / 新莊 8 (1素)', veg: 1 },
+            { id: 13, name: 'VIP', isVIP: true },
+            { id: 14, name: '育德 10' },
+            { id: 15, name: '雙和 10' },
+            { id: 16, name: '木柵 10' },
+            { id: 20, name: 'VIP', isVIP: true },
+            { id: 21, name: '育德 6 / 林口 4' },
+            { id: 22, name: '雙和 1 / 永樂 9' },
+            { id: 23, name: '中正 10' },
+            { id: 28, name: 'VIP', isVIP: true },
+            { id: 29, name: 'VIP', isVIP: true },
+            { id: 30, name: '東湖 10 (1素)', veg: 1 },
+            { id: 31, name: '中正 10 (1素)', veg: 1 },
+            { id: 36, name: 'VIP', isVIP: true },
+            { id: 37, name: 'VIP', isVIP: true },
+            { id: 38, name: '東湖 10' },
+            { id: 39, name: '文華 10' },
+            { id: 44, name: '伊通 10' },
+            { id: 45, name: '雙城 10' },
+            { id: 46, name: '民生 10' },
+            { id: 47, name: '民生 10' },
+            { type: 'divider', name: '燈光音響控制區' },
+            { id: 52, name: '埔墘 10' },
+            { id: 53, name: '埔墘 10' },
+            { id: 54, name: '埔墘 10' },
+            { id: 55, name: '樹林 10 (1素)', veg: 1 },
+            { id: 60, name: 'GENIC 漢娜 10' },
+            { id: 61, name: 'GENIC 漢娜 3 / 竹北 7' },
+            { id: 62, name: 'GENIC 中山 5 / 新竹 5' },
+            { id: 63, name: '板橋 10' },
+            { type: 'camera' },
+            { id: 68, name: 'GENIC 竹北 10' },
+            { id: 69, name: '友愛 10' },
+            { id: 70, name: '友愛 10' },
+            { id: 75, name: '青年 10' },
+            { id: 76, name: '嘉義 10' },
+            { id: 77, name: '屏東 10 (1素)', veg: 1 },
+            { id: 78, name: '鳳玲 7 / 屏東 3' },
+            { id: 83, name: '興業 4 / 青年 6' },
+            { id: 84, name: '興業 10' },
+            { id: 85, name: '屏東 3 / 嘉義 2 / 五福 5' },
+            { id: 86, name: '鳳玲 10' },
+            { id: 87, name: '新天地 10' },
+            { id: 88, name: '南紡 10' },
+            { id: 89, name: '陽明 10' },
+            { id: 90, name: '五福 10' }
+        ];
+
+        function createEl(data) {
+            if (data.type === 'camera') {
+                return `<div class="camera-box">攝影<br>器材</div>`;
+            }
+            if (data.type === 'divider') {
+                return `<div class="divider-row">${data.name}</div>`;
+            }
+            
+            const vegHtml = data.veg ? `<span class="absolute -right-1 -top-1 text-[11px] bg-black/80 rounded-full px-1 shadow-sm">🌿</span>` : '';
+            const vipClass = data.isVIP ? 'table-vip' : '';
+            
+            return `
+                <div class="table-circle ${vipClass}" data-name="${data.name}" data-id="${data.id}">
+                    <span class="text-[9px] text-amber-700/60 font-light -mb-0.5">TABLE</span>
+                    <span class="text-xl font-bold gold-text">${data.id}</span>
+                    <div class="text-[7.5px] text-zinc-300 mt-0.5 leading-[1.1] text-center w-full px-1 overflow-visible break-words">
+                        ${data.name}
+                    </div>
+                    ${vegHtml}
+                </div>
+            `;
+        }
+
+        // 執行搜尋邏輯
+        function performSearch(keyword) {
+            const val = keyword.toLowerCase().trim();
+            document.querySelectorAll('.table-circle').forEach(el => {
+                const name = el.getAttribute('data-name').toLowerCase();
+                const id = el.getAttribute('data-id');
+                if (val !== "" && (name.includes(val) || id === val)) {
+                    el.classList.add('highlight-pulse');
+                } else {
+                    el.classList.remove('highlight-pulse');
+                }
+            });
+        }
+
+        function render() {
+            document.getElementById('leftArea').innerHTML = leftTables.map(createEl).join('');
+            document.getElementById('rightArea').innerHTML = rightTables.map(createEl).join('');
+            
+            // 檢查 URL 參數
+            const urlParams = new URLSearchParams(window.location.search);
+            const queryParam = urlParams.get('q');
+            if (queryParam) {
+                const searchInput = document.getElementById('searchInput');
+                searchInput.value = queryParam;
+                performSearch(queryParam);
+            }
+        }
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            performSearch(e.target.value);
+        });
+
+        window.onload = render;
+    </script>
+</body>
+</html>
