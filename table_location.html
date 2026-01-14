@@ -448,6 +448,9 @@
                 if (['快樂總部', '營運中心'].includes(queryParam)) {
                     queryParam = 'VIP';
                 }
+                if (['嘉義G'].includes(queryParam)) {
+                    queryParam = '友愛';
+                }
                 if (queryParam) {
                     const searchInput = document.getElementById('searchInput');
                     searchInput.value = queryParam;
