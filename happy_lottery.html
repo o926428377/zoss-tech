@@ -966,7 +966,9 @@
           return new Promise((resolve) => {
               // 優化：只取需要的數量，不洗牌整個陣列
               setTimeout(() => {
-                const rr = getRandomElements(this, qty);
+				const uniquePool = [...new Set(this)];
+                const rr = getRandomElements(uniquePool, qty);
+                // const rr = getRandomElements(this, qty);
                 resolve(rr);
               }, sleep_interval); 
           });
@@ -1023,7 +1025,9 @@
               // 與 random 邏輯相同，使用高效抽取
               
               setTimeout(() => {
-                const rr = getRandomElements(this, qty);
+			    const uniquePool = [...new Set(this)];
+                const rr = getRandomElements(uniquePool, qty);
+                // const rr = getRandomElements(this, qty);
                 resolve(rr);
               }, sleep_interval); 
           });
