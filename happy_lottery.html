@@ -944,65 +944,58 @@
       if (last_winner_list) {
         last_winner_list = JSON.parse(last_winner_list);
       }
-      var sleep_interval = 300;
-      // 只對陣列進行局部洗牌，取前 count 個，效能極高
-      function getRandomElements(arr, count) {
-          if (count > arr.length) count = arr.length;
-          
-          // 複製陣列以避免修改到原始資料 (若不介意修改原始資料，可去掉 .slice())
-          const result = arr.slice(); 
-          
-          for (let i = 0; i < count; i++) {
-              const j = Math.floor(Math.random() * (result.length - i)) + i;
-              [result[i], result[j]] = [result[j], result[i]]; // 交換
-          }
-          
-          return result.slice(0, count);
-      }
+
 
       // ---------------------------------------------------
 
-      	// 1. 一般隨機抽獎
+      	// 核心抽獎演算法 (Fisher-Yates) - 記得要把這個函式放在全域或可存取的地方
+		function getRandomElements(arr, qty) {
+		    const result = [...arr];
+		    const n = result.length;
+		    const count = Math.min(qty, n);
+		    for (let i = 0; i < count; i++) {
+		        const j = Math.floor(Math.random() * (n - i)) + i;
+		        [result[i], result[j]] = [result[j], result[i]];
+		    }
+		    return result.slice(0, count);
+		}
+		
+		// 修改後的 Prototype 方法
 		Array.prototype.random = function(qty) {
-			// 建議在資料傳入前就先做完 [...new Set(data)]，不要在抽獎當下做
-			// 如果必須在這裡做，保持原樣即可，900筆資料 Set 很快
-			const uniquePool = [...new Set(this)];
-			return getRandomElements(uniquePool, qty);
-		};
+		    const uniquePool = [...new Set(this)];
+		    const rr = getRandomElements(uniquePool, qty);
+		    
+		    // 關鍵修改：用 Promise.resolve 包起來，讓外面的 .then() 可以繼續用
+		    return Promise.resolve(rr); 
+		}
 		
-		// 2. 隨機抽桌號 (抽出該桌所有人)
 		Array.prototype.random_table = function(qty) {
-			if (this.length === 0) return [];
+		     if (this.length === 0) return Promise.resolve([]);
 		
-			// 邏輯優化：你原本的邏輯是「隨機選一個人 -> 取他的桌號」。
-			// 這會導致「人數多的桌子」中獎機率較高（權重不均）。
-			// 如果這是你想要的，請保留。
-			// 如果想要「所有桌子中獎機率一樣」，應該先取出所有唯一的桌號再抽。
-			
-			// 這裡保留你原本的邏輯（權重偏向大桌）：
-			const randomIndex = Math.floor(Math.random() * this.length);
-			const target_id = this[randomIndex]["桌號"];
+		     const randomIndex = Math.floor(Math.random() * this.length);
+		     const target_id = this[randomIndex]["桌號"];
+		     const candidates = this.filter(x => x["桌號"] === target_id);
+		     
+		     const rr = getRandomElements(candidates, qty);
+		     return Promise.resolve(rr);
+		}
 		
-			const candidates = this.filter(x => x["桌號"] === target_id);
-			return getRandomElements(candidates, qty);
-		};
-		
-		// 3. 隨機抽身分證/尾號
 		Array.prototype.random_idnumber = function(qty) {
-			if (this.length === 0) return [];
+		     if (this.length === 0) return Promise.resolve([]);
 		
-			const randomIndex = Math.floor(Math.random() * this.length);
-			const target_id = this[randomIndex]["尾號"];
+		     const randomIndex = Math.floor(Math.random() * this.length);
+		     const target_id = this[randomIndex]["尾號"];
+		     const candidates = this.filter(x => x["尾號"] === target_id);
+		     
+		     const rr = getRandomElements(candidates, qty);
+		     return Promise.resolve(rr);
+		}
 		
-			const candidates = this.filter(x => x["尾號"] === target_id);
-			return getRandomElements(candidates, qty);
-		};
-		
-		// 4. Lottery (看起來跟 random 一樣)
 		Array.prototype.random_lottery = function(qty) {
-			const uniquePool = [...new Set(this)];
-			return getRandomElements(uniquePool, qty);
-		};
+		    const uniquePool = [...new Set(this)];
+		    const rr = getRandomElements(uniquePool, qty);
+		    return Promise.resolve(rr);
+		}
       
       var slave_mode = false;
       var prizes = {};
