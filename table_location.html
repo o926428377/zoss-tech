@@ -216,12 +216,12 @@
         const leftTables = [
             // Row 1 & 2: 1桌與8桌左側留空
             { type: 'empty' }, { id: 1, name: '大里 5 / 精明一 4 / 精誠 1' }, { id: 2, name: '精誠 10' }, { id: 3, name: 'VIP (1素)', isVIP: true, veg: 1 },
-            { type: 'empty' }, { id: 8, name: '大里 10' }, { id: 9, name: '藝文 8 / 兒童 3' }, { id: 10, name: 'VIP', isVIP: true },
+            { type: 'empty' }, { id: 8, name: '大里 10' }, { id: 9, name: '藝文 8 (3兒童座椅)', kid: true }, { id: 10, name: 'VIP', isVIP: true },
             // Row 3: 15桌有兒童座椅
-            { id: 15, name: '大里2 10', kid: true }, { id: 16, name: '文心 10' }, { type: 'camera' }, { id: 17, name: 'VIP', isVIP: true },
+            { id: 15, name: '大里2 10 (1兒童座椅)', kid: true }, { id: 16, name: '文心 10' }, { type: 'camera' }, { id: 17, name: 'VIP', isVIP: true },
             { id: 22, name: '興祥 10' }, { id: 23, name: '市政 3 (1素) / 漢口 7 (1素)', veg: 2 }, { id: 24, name: '太平 10 (8+2)' }, { id: 25, name: '西湖 7 / 正義 3' },
             { id: 30, name: '尊爵 6 / 興祥 4' }, { id: 31, name: '市政 10 (2素)', veg: 2 }, { id: 32, name: '大直 10' }, { id: 33, name: '天母 4 / 北投 6' },
-            { id: 38, name: '員林 7 / 豐原 1 / 豐原2 1 / 豐原3 1' }, { id: 39, name: '豐原2 10' }, { id: 40, name: '天母 10' }, { id: 41, name: '北投 10', kid: true },
+            { id: 38, name: '員林 7 / 豐原 1 / 豐原2 1 / 豐原3 1' }, { id: 39, name: '豐原2 10' }, { id: 40, name: '天母 10' }, { id: 41, name: '北投 10 (1兒童座椅)', kid: true },
             // Row 7: 燈光音響長方形靠走道
             { id: 46, name: '豐原 10' }, { id: 47, name: '豐原3 10' }, { type: 'light-rect' },
             // 下半部
@@ -242,7 +242,7 @@
             // Row 7: 燈光音響長方形靠走道，其右側無桌位
             { type: 'light-rect' }, { type: 'empty' }, { type: 'empty' },
             { id: 52, name: '埔墘 10' }, { id: 53, name: '埔墘 10' }, { id: 54, name: '埔墘 10' }, { id: 55, name: '樹林 10 (1素)', veg: 1 },
-            { id: 60, name: '漢克娜娜 10' }, { id: 61, name: '漢克娜娜 3 / 竹北 7' }, { id: 62, name: '中山 5 / 新竹 5' }, { id: 63, name: '板橋 10' },
+            { id: 60, name: '漢克娜娜 10' }, { id: 61, name: '漢克娜娜 3 / 竹北 7' }, { id: 62, name: '中山 5 / 新竹 5' }, { id: 63, name: '板林 10' },
             { type: 'camera' }, { id: 68, name: '竹北 10' }, { id: 69, name: '友愛 10' }, { id: 70, name: '友愛 10' },
             { id: 75, name: '青年 10' }, { id: 76, name: '嘉義 10' }, { id: 77, name: '屏東 10 (1素)', veg: 1 }, { id: 78, name: '鳳玲 7 / 屏東 3' },
             { id: 83, name: '興業 4 / 青年 6' }, { id: 84, name: '興業 10' }, { id: 85, name: '屏東 3 / 嘉義 2 / 五福 5' }, { id: 86, name: '鳳玲 10' },
