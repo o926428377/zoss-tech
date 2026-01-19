@@ -962,76 +962,47 @@
 
       // ---------------------------------------------------
 
-      Array.prototype.random = function(qty) {
-          return new Promise((resolve) => {
-              // 優化：只取需要的數量，不洗牌整個陣列
-              setTimeout(() => {
-				const uniquePool = [...new Set(this)];
-                const rr = getRandomElements(uniquePool, qty);
-                // const rr = getRandomElements(this, qty);
-                resolve(rr);
-              }, sleep_interval); 
-          });
-      }
-
-      Array.prototype.random_table = function(qty) {
-          return new Promise((resolve) => {
-              if (this.length === 0) {
-                  resolve([]);
-                  return;
-              }
-
-              // 優化重點 1: 不需要 map 全部的桌號再洗牌
-              // 直接隨機取一個索引，拿該索引的桌號作為目標
-              const randomIndex = Math.floor(Math.random() * this.length);
-              const target_id = this[randomIndex]["桌號"];
-
-              // 優化重點 2: 篩選出該桌的人
-              const candidates = this.filter(x => x["桌號"] === target_id);
-              
-              // 優化重點 3: 從候選人中隨機抽取
-              const rr = getRandomElements(candidates, qty);
-              
-              resolve(rr);
-              setTimeout(() => {
-                const rr = getRandomElements(candidates, qty);
-                resolve(rr);
-              }, sleep_interval); 
-          });
-      }
-
-      Array.prototype.random_idnumber = function(qty) {
-          return new Promise((resolve) => {
-              if (this.length === 0) {
-                  resolve([]);
-                  return;
-              }
-
-              // 優化同上：直接隨機取一個尾號
-              const randomIndex = Math.floor(Math.random() * this.length);
-              const target_id = this[randomIndex]["尾號"];
-
-              const candidates = this.filter(x => x["尾號"] === target_id);
-              setTimeout(() => {
-                const rr = getRandomElements(candidates, qty);
-                resolve(rr);
-              }, sleep_interval); 
-              
-          });
-      }
-
-      Array.prototype.random_lottery = function(qty) {
-          return new Promise((resolve) => {
-              // 與 random 邏輯相同，使用高效抽取
-              
-              setTimeout(() => {
-			    const uniquePool = [...new Set(this)];
-                const rr = getRandomElements(uniquePool, qty);
-                // const rr = getRandomElements(this, qty);
-                resolve(rr);
-              }, sleep_interval); 
-          });
-      }
+      	// 1. 一般隨機抽獎
+		Array.prototype.random = function(qty) {
+			// 建議在資料傳入前就先做完 [...new Set(data)]，不要在抽獎當下做
+			// 如果必須在這裡做，保持原樣即可，900筆資料 Set 很快
+			const uniquePool = [...new Set(this)];
+			return getRandomElements(uniquePool, qty);
+		};
+		
+		// 2. 隨機抽桌號 (抽出該桌所有人)
+		Array.prototype.random_table = function(qty) {
+			if (this.length === 0) return [];
+		
+			// 邏輯優化：你原本的邏輯是「隨機選一個人 -> 取他的桌號」。
+			// 這會導致「人數多的桌子」中獎機率較高（權重不均）。
+			// 如果這是你想要的，請保留。
+			// 如果想要「所有桌子中獎機率一樣」，應該先取出所有唯一的桌號再抽。
+			
+			// 這裡保留你原本的邏輯（權重偏向大桌）：
+			const randomIndex = Math.floor(Math.random() * this.length);
+			const target_id = this[randomIndex]["桌號"];
+		
+			const candidates = this.filter(x => x["桌號"] === target_id);
+			return getRandomElements(candidates, qty);
+		};
+		
+		// 3. 隨機抽身分證/尾號
+		Array.prototype.random_idnumber = function(qty) {
+			if (this.length === 0) return [];
+		
+			const randomIndex = Math.floor(Math.random() * this.length);
+			const target_id = this[randomIndex]["尾號"];
+		
+			const candidates = this.filter(x => x["尾號"] === target_id);
+			return getRandomElements(candidates, qty);
+		};
+		
+		// 4. Lottery (看起來跟 random 一樣)
+		Array.prototype.random_lottery = function(qty) {
+			const uniquePool = [...new Set(this)];
+			return getRandomElements(uniquePool, qty);
+		};
       
       var slave_mode = false;
       var prizes = {};
