@@ -1305,70 +1305,88 @@
       }
 
       function onSuccess(result) {
-        const draw_type_dict = {
-          'A':'prize',
-          'L':'lottery',
-          'S':'special',
-          'P':'gift',
-          'B':'bonus',
-          'T':'table',
-          'I':'idnumber'
-        };
-        const prize_target = document.getElementById("box_no").selectedOptions[0].value;
-        getToken(liffId).then(function(params){
-          fetch(url, {
-            method: "POST",
-            redirect: "follow", 
-            // mode: "cors", 
-            //cache: "no-cache",
-            headers: {
-            "Content-Type": "text/plain",
-            },
-            // credentials: "include",
-            body: JSON.stringify(
-            {"to_add": result.map(x=> [x, prize_target]),...params}
-            )
-          })
-          .then(response => response.text())
-          .then(context => {
-            //抽獎中
-            console.log(context);
-            document.getElementById("drawing_single").style.display = "none";
-            var chk = JSON.parse(context)["to_add"];
-            if (chk === "Failed") {
-            Swal.fire({
-              title: "系統錯誤",
-              text: "請重新操作",
-              icon: "error",
-              showConfirmButton: false,
-              timer: 1500
-            });
-            gen_prizes_options();
-            } else {
-              text = chk;
-              load_config();
-              gen_prizes_options();
-              //中獎名單
-              document.getElementById("drawn").style.display = "inline";
-              var span = document.getElementById("prize_name");
-              if (["S", "P", "L", "B"].includes(prizes[prize_target]["獎項編號"][0])) {
-                span.innerText = span.textContent = `${prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,')}-中獎名單`;
-              } else if (["T"].includes(prizes[prize_target]["獎項編號"][0])) {
-                span.innerText = span.textContent = `${prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,')}(${prizes[prize_target]["桶別"]}:${entire_name_list[result[0]]["桌號"]})-中獎名單`;
-              } else if (["I"].includes(prizes[prize_target]["獎項編號"][0])) {
-                span.innerText = span.textContent = `${prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,')}(${prizes[prize_target]["桶別"]}:${entire_name_list[result[0]]["尾號"]})-中獎名單`;
-              } else {
-                span.innerText = span.textContent = `${prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,')}(${prizes[prize_target]["桶別"]}:${group_list[prizes[prize_target]["桶別"]]})-中獎名單`;
-              }
-              var drawn_list = document.getElementById("drawn_list");
-              console.log(result);
-              const _type = draw_type_dict[prizes[prize_target]["獎項編號"][0]];
-              drawn_list.innerHTML = gen_list(result, _type);
-
-            }
-          })
-        })
-      }
+		    const draw_type_dict = {
+		        'A': 'prize',
+		        'L': 'lottery',
+		        'S': 'special',
+		        'P': 'gift',
+		        'B': 'bonus',
+		        'T': 'table',
+		        'I': 'idnumber'
+		    };
+		    const prize_target = document.getElementById("box_no").selectedOptions[0].value;
+		
+		    // ==========================================
+		    // 優化重點：這裡直接先執行 UI 顯示，不等待 fetch
+		    // ==========================================
+		    
+		    // 1. 隱藏老虎機 / 顯示結果區塊
+		    document.getElementById("drawing_single").style.display = "none";
+		    document.getElementById("drawn").style.display = "inline";
+		
+		    // 2. 更新標題文字
+		    var span = document.getElementById("prize_name");
+		    // 這裡保留你原本的判斷邏輯
+		    if (["S", "P", "L", "B"].includes(prizes[prize_target]["獎項編號"][0])) {
+		        span.innerText = span.textContent = `${prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,')}-中獎名單`;
+		    } else if (["T"].includes(prizes[prize_target]["獎項編號"][0])) {
+		        span.innerText = span.textContent = `${prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,')}(${prizes[prize_target]["桶別"]}:${entire_name_list[result[0]]["桌號"]})-中獎名單`;
+		    } else if (["I"].includes(prizes[prize_target]["獎項編號"][0])) {
+		        span.innerText = span.textContent = `${prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,')}(${prizes[prize_target]["桶別"]}:${entire_name_list[result[0]]["尾號"]})-中獎名單`;
+		    } else {
+		        span.innerText = span.textContent = `${prizes[prize_target]["獎項"].replace(/(\d)(?=(\d{3})+$)/g, '$1,')}(${prizes[prize_target]["桶別"]}:${group_list[prizes[prize_target]["桶別"]]})-中獎名單`;
+		    }
+		
+		    // 3. 產生並插入列表 HTML
+		    var drawn_list = document.getElementById("drawn_list");
+		    const _type = draw_type_dict[prizes[prize_target]["獎項編號"][0]];
+		    drawn_list.innerHTML = gen_list(result, _type);
+		
+		    // ==========================================
+		    // 背景作業：默默地去 Google 存檔 (使用者感覺不到延遲)
+		    // ==========================================
+		    getToken(liffId).then(function(params) {
+		        fetch(url, {
+		            method: "POST",
+		            redirect: "follow",
+		            headers: {
+		                "Content-Type": "text/plain",
+		            },
+		            body: JSON.stringify({
+		                "to_add": result.map(x => [x, prize_target]),
+		                ...params
+		            })
+		        })
+		        .then(response => response.text())
+		        .then(context => {
+		            console.log("背景存檔完成:", context);
+		            
+		            // 這裡只需要處理錯誤狀況，成功的話使用者已經看到名單了
+		            var chk = JSON.parse(context)["to_add"];
+		            if (chk === "Failed") {
+		                Swal.fire({
+		                    title: "系統錯誤",
+		                    text: "存檔失敗，請截圖目前畫面通知管理員", // 修正提示，因為畫面已經顯示中獎者了
+		                    icon: "error"
+		                });
+		            } else {
+		                // 如果需要更新本地變數以防止重複抽獎，可以在這裡更新
+		                text = chk;
+		                load_config();
+						gen_prizes_options();
+		            }
+		        })
+		        .catch(err => {
+		            console.error("網路錯誤", err);
+		            // 建議加上一點錯誤提示，因為畫面已經顯示中獎，但後端沒存到
+		            Swal.fire({
+		                title: "連線異常",
+		                text: "中獎結果已顯示，但伺服器連線失敗，請務必截圖保存結果！",
+		                icon: "warning"
+		            });
+		        });
+		    });
+		}
 
       async function lucky_draw() {
         // if (typeof window.happy_lottery_tab === "function") {
