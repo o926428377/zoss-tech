@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>活動新增請求表單</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- LINE LIFF SDK -->
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+  <!-- 自訂樣式 -->
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    /* 自訂滾動條樣式 */
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    
+    /* Toast 動畫 */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in-up {
+      animation: fadeInUp 0.3s ease-out forwards;
+    }
+    
+    @keyframes fadeOutDown {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(20px); }
+    }
+    .animate-fade-out-down {
+      animation: fadeOutDown 0.3s ease-in forwards;
+    }
+
+    /* 隱藏預設箭頭顏色 */
+    .sort-icon { color: #d1d5db; }
+    .sort-icon.active { color: #4f46e5; }
+  </style>
+</head>
+<body class="min-h-screen bg-gray-50 p-4 md:p-8 text-gray-800 relative">
+
+  <!-- 系統登入 Loading 畫面 -->
+  <div id="loading" class="fixed inset-0 bg-gray-900 bg-opacity-90 z-[999] flex flex-col items-center justify-center">
+    <div class="inline-block w-20 h-20 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-6" role="status"></div>
+    <div class="text-3xl text-white font-semibold">登入系統中...</div>
+  </div>
+
+  <!-- 頂部標題 -->
+  <div class="max-w-7xl mx-auto mb-6">
+    <h1 class="text-3xl font-bold text-gray-900 flex items-center space-x-3">
+      <i data-lucide="file-text" class="w-8 h-8 text-indigo-600"></i>
+      <span>活動新增請求表單</span>
+    </h1>
+    <p class="text-gray-500 mt-2 ml-11">請填寫會議基本資訊，並從右側列表挑選與會人員。</p>
+  </div>
+
+  <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-6">
+    
+    <!-- 左側：表單與已選人員區 -->
+    <div class="w-full lg:w-1/3 flex flex-col gap-6">
+      
+      <!-- 基本資料卡片 -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h2 class="text-lg font-bold text-gray-800 mb-5 flex items-center border-b pb-3">
+          <i data-lucide="calendar" class="w-5 h-5 mr-2 text-indigo-500"></i>
+          會議基本資料
+        </h2>
+        
+        <form id="meeting-form" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">會議名稱 <span class="text-red-500">*</span></label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i data-lucide="file-text" class="h-4 w-4 text-gray-400"></i>
+              </div>
+              <input type="text" id="meetingName" placeholder="請輸入會議名稱" required
+                class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-shadow">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">會議日期 <span class="text-red-500">*</span></label>
+            <input type="date" id="meetingDate" required
+              class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-shadow">
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">報到開始時間 <span class="text-red-500">*</span></label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i data-lucide="clock" class="h-4 w-4 text-gray-400"></i>
+                </div>
+                <input type="time" id="startTime" required
+                  class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-shadow">
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">報到結束時間 <span class="text-red-500">*</span></label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i data-lucide="clock" class="h-4 w-4 text-gray-400"></i>
+                </div>
+                <input type="time" id="endTime" required
+                  class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-shadow">
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- 已選人員卡片 -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex-1 flex flex-col">
+        <h2 class="text-lg font-bold text-gray-800 mb-2 flex items-center justify-between border-b pb-3">
+          <div class="flex items-center">
+            <i data-lucide="users" class="w-5 h-5 mr-2 text-indigo-500"></i>
+            與會人員 <span class="text-red-500 ml-1">*</span>
+          </div>
+          <span id="selected-count" class="bg-indigo-100 text-indigo-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+            已選 0 人
+          </span>
+        </h2>
+        
+        <div id="selected-attendees-container" class="flex-1 min-h-[150px] max-h-[300px] overflow-y-auto pt-3 pb-2 custom-scrollbar">
+          <!-- 這裡會由 JS 動態產生已選人員標籤 -->
+          <div class="h-full flex flex-col items-center justify-center text-gray-400 space-y-2" id="empty-state">
+            <i data-lucide="users" class="w-10 h-10 opacity-20"></i>
+            <p class="text-sm">尚未選擇人員，請從右側列表加入</p>
+          </div>
+        </div>
+
+        <!-- 建立按鈕 -->
+        <div class="mt-4 pt-4 border-t border-gray-100">
+          <button id="submit-btn" class="w-full flex items-center justify-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+            <i data-lucide="send" class="w-5 h-5"></i>
+            <span>建立活動</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右側：人員選擇器 (資料表) -->
+    <div class="w-full lg:w-2/3 bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col overflow-hidden h-[700px]">
+      
+      <!-- 表格工具列 -->
+      <div class="p-4 border-b border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <h2 class="text-lg font-bold text-gray-800 flex items-center">
+          選擇人員列表
+        </h2>
+        <div class="relative w-full sm:w-72">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i data-lucide="search" class="h-4 w-4 text-gray-400"></i>
+          </div>
+          <input type="text" id="search-input" placeholder="搜尋區、店碼、姓名、職稱..."
+            class="block w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white shadow-sm">
+        </div>
+      </div>
+
+      <!-- 資料表容器 -->
+      <div class="flex-1 overflow-auto custom-scrollbar">
+        <table class="min-w-full w-full border-collapse text-sm">
+          <thead class="bg-gray-50 sticky top-0 z-10 shadow-sm border-b border-gray-200">
+            <tr>
+              <th class="w-16 px-4 py-3 text-center font-semibold text-gray-700">加入</th>
+              <th class="px-4 py-3 text-left font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 select-none whitespace-nowrap sortable-header" data-sort="region">
+                <div class="flex items-center space-x-1">
+                  <span>區</span>
+                  <span class="flex flex-col"><i data-lucide="chevron-up" class="w-3 h-3 -mb-1 sort-icon" id="sort-up-region"></i><i data-lucide="chevron-down" class="w-3 h-3 sort-icon" id="sort-down-region"></i></span>
+                </div>
+              </th>
+              <th class="px-4 py-3 text-left font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 select-none whitespace-nowrap sortable-header" data-sort="storeCode">
+                <div class="flex items-center space-x-1">
+                  <span>店碼</span>
+                  <span class="flex flex-col"><i data-lucide="chevron-up" class="w-3 h-3 -mb-1 sort-icon" id="sort-up-storeCode"></i><i data-lucide="chevron-down" class="w-3 h-3 sort-icon" id="sort-down-storeCode"></i></span>
+                </div>
+              </th>
+              <th class="px-4 py-3 text-left font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 select-none whitespace-nowrap sortable-header" data-sort="storeName">
+                <div class="flex items-center space-x-1">
+                  <span>分店</span>
+                  <span class="flex flex-col"><i data-lucide="chevron-up" class="w-3 h-3 -mb-1 sort-icon" id="sort-up-storeName"></i><i data-lucide="chevron-down" class="w-3 h-3 sort-icon" id="sort-down-storeName"></i></span>
+                </div>
+              </th>
+              <th class="px-4 py-3 text-left font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 select-none whitespace-nowrap sortable-header" data-sort="title">
+                <div class="flex items-center space-x-1">
+                  <span>職稱</span>
+                  <span class="flex flex-col"><i data-lucide="chevron-up" class="w-3 h-3 -mb-1 sort-icon" id="sort-up-title"></i><i data-lucide="chevron-down" class="w-3 h-3 sort-icon" id="sort-down-title"></i></span>
+                </div>
+              </th>
+              <th class="px-4 py-3 text-left font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 select-none whitespace-nowrap sortable-header" data-sort="name">
+                <div class="flex items-center space-x-1">
+                  <span>姓名</span>
+                  <span class="flex flex-col"><i data-lucide="chevron-up" class="w-3 h-3 -mb-1 sort-icon" id="sort-up-name"></i><i data-lucide="chevron-down" class="w-3 h-3 sort-icon" id="sort-down-name"></i></span>
+                </div>
+              </th>
+              <th class="px-4 py-3 text-left font-semibold text-gray-700 cursor-pointer hover:bg-gray-100 select-none whitespace-nowrap sortable-header" data-sort="nickname">
+                <div class="flex items-center space-x-1">
+                  <span>暱稱</span>
+                  <span class="flex flex-col"><i data-lucide="chevron-up" class="w-3 h-3 -mb-1 sort-icon" id="sort-up-nickname"></i><i data-lucide="chevron-down" class="w-3 h-3 sort-icon" id="sort-down-nickname"></i></span>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody id="table-body" class="divide-y divide-gray-100 bg-white">
+            <!-- 這裡會由 JS 動態產生表格資料 -->
+          </tbody>
+        </table>
+      </div>
+      <!-- 表格底部資訊 -->
+      <div id="table-footer" class="p-3 border-t border-gray-100 bg-gray-50 text-xs text-gray-500 text-right">
+        共顯示 0 筆資料
+      </div>
+    </div>
+  </div>
+
+  <!-- 提示訊息 (Toast) 容器 -->
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 hidden">
+    <!-- Toast 內容由 JS 動態填入 -->
+  </div>
+
+  <script>
+    // 狀態變數 (接收後端資料)
+    let user_list = [];
+    let selectedAttendees = [];
+    let searchQuery = '';
+    let sortConfig = { key: null, direction: 'asc' };
+    let liffId = '';
+    let apiUrl = '';
+
+    // 初始化 Lucide 圖示
+    lucide.createIcons();
+
+    // 取得 DOM 元素
+    const tableBody = document.getElementById('table-body');
+    const searchInput = document.getElementById('search-input');
+    const selectedContainer = document.getElementById('selected-attendees-container');
+    const selectedCount = document.getElementById('selected-count');
+    const tableFooter = document.getElementById('table-footer');
+    const submitBtn = document.getElementById('submit-btn');
+    const toastContainer = document.getElementById('toast-container');
+    const sortableHeaders = document.querySelectorAll('.sortable-header');
+
+    // --- LIFF & API 驗證整合邏輯 ---
+    function getAllUrlParams(url) {
+      var queryString = url ? url.split('?')[1] : window.location.search.slice(1);
+      var obj = {};
+      if (queryString) {
+        queryString = queryString.split('#')[0];
+        var arr = queryString.split('&');
+        for (var i = 0; i < arr.length; i++) {
+          var a = arr[i].split('=');
+          var paramName = a[0];
+          var paramValue = typeof(a[1]) === 'undefined' ? true : a[1];
+          if (paramName.match(/\[(\d+)?\]$/)) {
+            var key = paramName.replace(/\[(\d+)?\]/, '');
+            if (!obj[key]) obj[key] = [];
+            if (paramName.match(/\[\d+\]$/)) {
+              var index = /\[(\d+)\]/.exec(paramName)[1];
+              obj[key][index] = paramValue;
+            } else {
+              obj[key].push(paramValue);
+            }
+          } else {
+            if (!obj[paramName]) {
+              obj[paramName] = paramValue;
+            } else if (obj[paramName] && typeof obj[paramName] === 'string') {
+              obj[paramName] = [obj[paramName]];
+              obj[paramName].push(paramValue);
+            } else {
+              obj[paramName].push(paramValue);
+            }
+          }
+        }
+      }
+      return obj;
+    }
+
+    function getToken(liffId) {
+      return new Promise(function(resolve, reject) {
+        liff.init({
+          liffId: liffId,
+          withLoginOnExternalBrowser: true
+        }).then(function (data) {
+          liff.getProfile().then(function (profile) {
+            var params = {};
+            params['userId'] = profile.userId;
+            const accessToken = liff.getAccessToken();
+            if (!accessToken) {
+              params['accessToken'] = 'Error';
+            }
+            params['accessToken'] = accessToken;
+            resolve(params);
+          }).catch(function (error) {
+            window.alert("Error getting profile: " + error);
+            reject(params);
+          });
+        });
+      });
+    }
+
+    function sendPost(url, _params) {
+      var form = document.createElement("form");
+      form.setAttribute("method", "post");
+      form.setAttribute("action", url);
+      for (var key in _params) {
+        var hiddenField = document.createElement("input");
+        hiddenField.setAttribute("type", "hidden");
+        hiddenField.setAttribute("name", key);
+        hiddenField.setAttribute("value", _params[key]);
+        form.appendChild(hiddenField);
+      }
+      var hiddenSubmit = document.createElement("input");
+      hiddenSubmit.setAttribute("type", "submit");
+      hiddenSubmit.setAttribute("style", "display:none;");
+      form.appendChild(hiddenSubmit);
+      document.body.appendChild(form);
+      
+      return new Promise(function(resolve, reject) {
+        fetch(`${url}`, {
+          method: "POST",
+          redirect: "follow", 
+          headers: {
+            "Content-Type": "text/plain",
+          },
+          body: JSON.stringify(_params)
+        })
+        .then(response => response.text())
+        .then(context => {
+          var data = JSON.parse(context);
+          resolve(data);
+        });
+      });
+    }
+
+    function sys_error(msg) {
+      Swal.fire({
+        title: '系統錯誤',
+        text: msg,
+        icon: "error",
+        timer: 5000
+      }).then(function(){
+        if(typeof liff !== 'undefined') liff.closeWindow();
+      });
+    }
+
+    // --- 初始化執行階段 (onload) ---
+    window.onload = async function (e) {
+      var params = new URL(document.location.toString()).searchParams;
+      if (params.has("liffRedirectUri")) {
+        params = new URL(decodeURIComponent(params.get("liffRedirectUri"))).searchParams;
+      }
+      
+      if (!params.has("liff") || (!params.has("sid") && !params.has("app"))) {
+        sys_error("無效參數");
+        return;
+      }
+
+      liffId = params.get("liff");
+      if (params.get("sid")) {
+        apiUrl = `https://script.google.com/macros/s/${params.get("sid")}/exec`;
+      } else if (params.get("app")) {
+        apiUrl = `https://${params.get("app")}.a.run.app`;
+      }
+
+      // 開始讀取與驗證
+      getToken(liffId).then(function(tokenParams){
+        sendPost(`${apiUrl}?role=get_event_user_list`, tokenParams).then(function(response){
+          if (response.result === "NoPermission") {
+            sys_error("您的帳號未授權操作，請聯繫管理員!");
+          } else if (response.result === "OK") {
+            // 將 API 資料存入 user_list 中
+            user_list = response.data || [];
+            
+            // 隱藏 Loading 動畫並渲染初始畫面
+            document.getElementById('loading').style.display = 'none';
+            renderTable();
+            renderSelectedAttendees();
+          }
+        });
+      }).catch(function (error) {
+        Swal.fire({
+          title: '系統錯誤',
+          text: "請重新操作",
+          icon: "error",
+          timer: 5000
+        }).then(function(){
+          if(typeof liff !== 'undefined') liff.closeWindow();
+        })
+      });
+    };
+
+    // --- 核心渲染邏輯 ---
+
+    // 渲染表格
+    function renderTable() {
+      // 1. 過濾資料
+      let filteredData = user_list.filter(item => {
+        if (!searchQuery) return true;
+        const q = searchQuery.toLowerCase();
+        return (
+          item.region.toLowerCase().includes(q) ||
+          item.storeCode.toLowerCase().includes(q) ||
+          item.storeName.toLowerCase().includes(q) ||
+          item.title.toLowerCase().includes(q) ||
+          item.name.toLowerCase().includes(q) ||
+          item.nickname.toLowerCase().includes(q)
+        );
+      });
+
+      // 2. 排序資料
+      if (sortConfig.key) {
+        filteredData.sort((a, b) => {
+          if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
+          if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
+          return 0;
+        });
+      }
+
+      // 3. 產生 HTML
+      tableBody.innerHTML = '';
+      
+      if (filteredData.length === 0) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colSpan="7" class="px-4 py-12 text-center text-gray-500">
+              <div class="flex flex-col items-center justify-center space-y-3">
+                <i data-lucide="search" class="w-8 h-8 text-gray-300"></i>
+                <p>找不到符合「${searchQuery}」的資料</p>
+              </div>
+            </td>
+          </tr>
+        `;
+      } else {
+        filteredData.forEach(row => {
+          const isSelected = selectedAttendees.some(a => a.lineUid === row.lineUid);
+          const tr = document.createElement('tr');
+          tr.className = `hover:bg-indigo-50/40 transition-colors ${isSelected ? 'bg-gray-50' : ''}`;
+          
+          let titleBadgeClass = 'bg-gray-100 text-gray-700';
+          if (row.title === '店長') titleBadgeClass = 'bg-purple-100 text-purple-700';
+          if (row.title === '副店長') titleBadgeClass = 'bg-blue-100 text-blue-700';
+
+          tr.innerHTML = `
+            <td class="px-4 py-3 text-center whitespace-nowrap">
+              <button
+                data-uid="${row.lineUid}"
+                ${isSelected ? 'disabled' : ''}
+                class="add-btn p-1.5 rounded-lg transition-all flex items-center justify-center mx-auto ${
+                  isSelected 
+                    ? 'bg-green-100 text-green-600 cursor-not-allowed' 
+                    : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white shadow-sm'
+                }"
+                title="${isSelected ? '已加入' : '加入人員'}"
+              >
+                ${isSelected ? '<i data-lucide="check" class="w-4 h-4"></i>' : '<i data-lucide="plus" class="w-4 h-4"></i>'}
+              </button>
+            </td>
+            <td class="px-4 py-3 text-gray-700 whitespace-nowrap">${row.region}</td>
+            <td class="px-4 py-3 text-gray-500 font-mono text-xs whitespace-nowrap">${row.storeCode}</td>
+            <td class="px-4 py-3 text-gray-800 font-medium whitespace-nowrap">${row.storeName}</td>
+            <td class="px-4 py-3 text-gray-600 whitespace-nowrap">
+              <span class="px-2 py-1 rounded-md text-xs font-medium ${titleBadgeClass}">${row.title}</span>
+            </td>
+            <td class="px-4 py-3 text-gray-800 whitespace-nowrap">${row.name}</td>
+            <td class="px-4 py-3 text-gray-500 whitespace-nowrap">${row.nickname}</td>
+          `;
+          tableBody.appendChild(tr);
+        });
+      }
+
+      // 更新筆數
+      tableFooter.textContent = `共顯示 ${filteredData.length} 筆資料`;
+
+      // 重新建立新增出的圖示
+      lucide.createIcons();
+
+      // 綁定「加入」按鈕事件
+      document.querySelectorAll('.add-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const uid = e.currentTarget.getAttribute('data-uid');
+          handleAddAttendee(uid);
+        });
+      });
+    }
+
+    // 渲染已選人員列表
+    function renderSelectedAttendees() {
+      selectedCount.textContent = `已選 ${selectedAttendees.length} 人`;
+      selectedContainer.innerHTML = '';
+
+      if (selectedAttendees.length === 0) {
+        selectedContainer.innerHTML = `
+          <div class="h-full flex flex-col items-center justify-center text-gray-400 space-y-2">
+            <i data-lucide="users" class="w-10 h-10 opacity-20"></i>
+            <p class="text-sm">尚未選擇人員，請從右側列表加入</p>
+          </div>
+        `;
+      } else {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'flex flex-wrap gap-2';
+
+        selectedAttendees.forEach(person => {
+          const chip = document.createElement('div');
+          chip.className = 'group inline-flex items-center bg-indigo-50 border border-indigo-100 text-indigo-800 text-sm rounded-full pl-3 pr-1 py-1 shadow-sm transition-all hover:bg-indigo-100';
+          chip.innerHTML = `
+            <span class="font-medium">${person.storeName} - ${person.name} - ${person.title}</span>
+            <button
+              data-uid="${person.lineUid}"
+              class="remove-btn ml-2 p-1 rounded-full text-indigo-400 hover:text-red-500 hover:bg-white transition-colors focus:outline-none"
+              title="移除此人"
+            >
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          `;
+          wrapper.appendChild(chip);
+        });
+        selectedContainer.appendChild(wrapper);
+      }
+      
+      lucide.createIcons();
+
+      // 綁定「移除」按鈕事件
+      document.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const uid = e.currentTarget.getAttribute('data-uid');
+          handleRemoveAttendee(uid);
+        });
+      });
+    }
+
+    // 渲染表格標題的排序圖示狀態
+    function updateSortIcons() {
+      document.querySelectorAll('.sort-icon').forEach(icon => icon.classList.remove('active'));
+      if (sortConfig.key) {
+        const iconId = `sort-${sortConfig.direction}-${sortConfig.key}`;
+        const activeIcon = document.getElementById(iconId);
+        if (activeIcon) activeIcon.classList.add('active');
+      }
+    }
+
+    // --- 事件處理 ---
+
+    function handleAddAttendee(uid) {
+      if (!selectedAttendees.find(a => a.lineUid === uid)) {
+        const person = user_list.find(item => item.lineUid === uid);
+        if (person) {
+          selectedAttendees.push(person);
+          renderSelectedAttendees();
+          renderTable(); // 更新表格內的按鈕狀態
+        }
+      }
+    }
+
+    function handleRemoveAttendee(uid) {
+      selectedAttendees = selectedAttendees.filter(a => a.lineUid !== uid);
+      renderSelectedAttendees();
+      renderTable(); // 更新表格內的按鈕狀態
+    }
+
+    function handleSort(key) {
+      let direction = 'asc';
+      if (sortConfig.key === key && sortConfig.direction === 'asc') {
+        direction = 'desc';
+      }
+      sortConfig = { key, direction };
+      updateSortIcons();
+      renderTable();
+    }
+
+    // 搜尋功能綁定
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      renderTable();
+    });
+
+    // 排序功能綁定
+    sortableHeaders.forEach(header => {
+      header.addEventListener('click', () => {
+        const key = header.getAttribute('data-sort');
+        handleSort(key);
+      });
+    });
+
+    // 提示訊息功能
+    let toastTimeout;
+    function showToast(message, type) {
+      clearTimeout(toastTimeout);
+      
+      toastContainer.className = 'fixed bottom-6 right-6 z-50 animate-fade-in-up';
+      
+      const bgColor = type === 'success' ? 'bg-gray-900' : 'bg-red-600';
+      const icon = type === 'success' 
+        ? '<i data-lucide="check" class="w-5 h-5 text-green-400"></i>' 
+        : '<i data-lucide="x" class="w-5 h-5"></i>';
+
+      toastContainer.innerHTML = `
+        <div class="flex items-center space-x-2 px-6 py-4 rounded-xl shadow-2xl text-white font-medium ${bgColor}">
+          ${icon}
+          <span>${message}</span>
+        </div>
+      `;
+      
+      lucide.createIcons();
+      toastContainer.classList.remove('hidden');
+
+      toastTimeout = setTimeout(() => {
+        toastContainer.classList.remove('animate-fade-in-up');
+        toastContainer.classList.add('animate-fade-out-down');
+        setTimeout(() => {
+          toastContainer.classList.add('hidden');
+        }, 300); // 等待淡出動畫結束
+      }, 3000);
+    }
+
+    // 表單送出
+    submitBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      
+      const meetingName = document.getElementById('meetingName').value;
+      const meetingDate = document.getElementById('meetingDate').value;
+      const startTime = document.getElementById('startTime').value;
+      const endTime = document.getElementById('endTime').value;
+
+      // 檢查必填
+      if (!meetingName || !meetingDate || !startTime || !endTime) {
+        showToast('請填寫所有會議基本資料', 'error');
+        return;
+      }
+      if (selectedAttendees.length === 0) {
+        showToast('請至少選擇一位與會人員', 'error');
+        return;
+      }
+
+      // 產出最終格式 (將與會人員陣列轉為 JSON 字串，方便後端接收)
+      const payload = {
+        meetingName,
+        meetingDate,
+        startTime,
+        endTime,
+        attendees: JSON.stringify(selectedAttendees.map(a => a.lineUid))
+      };
+
+      // 顯示送出中的 Loading 畫面
+      const loadingEl = document.getElementById('loading');
+      loadingEl.querySelector('.text-3xl').textContent = '資料送出中...';
+      loadingEl.style.display = 'flex';
+
+      getToken(liffId).then(function(params){
+        sendPost(`${apiUrl}?role=create_event`, {...params, ...payload}).then(function(response){
+          if (response.result==="NoPermission") {
+            loadingEl.style.display = 'none';
+            sys_error("您的帳號未授權操作，請聯繫管理員!");
+          } else if (response.result==="OK") {
+            liff.sendMessages([
+              response.msg
+            ])
+            .then(() => {
+              liff.closeWindow();
+            })
+            .catch((err) => {
+              loadingEl.style.display = 'none';
+              Swal.fire({
+                title: '系統錯誤',
+                text: JSON.stringify(response.msg),
+                icon: "error"
+              }).then(function(){
+                liff.closeWindow();
+              });
+            });
+          } else {
+             loadingEl.style.display = 'none';
+             sys_error(response.msg || "發生未知錯誤");
+          }
+        });
+      }).catch(function (error) {
+        loadingEl.style.display = 'none';
+        Swal.fire({
+          title: '系統錯誤',
+          text: "請重新操作",
+          icon: "error",
+          timer: 5000
+        }).then(function(){
+          liff.closeWindow();
+        })
+      });
+    });
+
+  </script>
+</body>
+</html>
