@@ -792,22 +792,36 @@
             loadingEl.style.display = 'none';
             sys_error("您的帳號未授權操作，請聯繫管理員!");
           } else if (response.result==="OK") {
-            liff.sendMessages([
-              response.msg
-            ])
-            .then(() => {
-              liff.closeWindow();
-            })
-            .catch((err) => {
+            // 在這裡加入防呆，判斷是否支援發送訊息 (例如：不是在外部瀏覽器開啟)
+            if (liff.isInClient()) {
+              liff.sendMessages([
+                response.msg
+              ])
+              .then(() => {
+                liff.closeWindow();
+              })
+              .catch((err) => {
+                // 發送訊息失敗 (如權限未開啟)，但資料已經成功送出了
+                loadingEl.style.display = 'none';
+                Swal.fire({
+                  title: '活動已建立',
+                  text: '成功建立活動！(因未開啟 LINE 發送訊息權限，無法自動傳送聊天室通知)',
+                  icon: "success"
+                }).then(function(){
+                  liff.closeWindow();
+                });
+              });
+            } else {
+              // 在外部瀏覽器開啟，本身就不支援自動傳送訊息
               loadingEl.style.display = 'none';
               Swal.fire({
-                title: '系統錯誤',
-                text: JSON.stringify(response.msg),
-                icon: "error"
+                title: '活動已建立',
+                text: '成功建立活動！',
+                icon: "success"
               }).then(function(){
                 liff.closeWindow();
               });
-            });
+            }
           } else {
              loadingEl.style.display = 'none';
              sys_error(response.msg || "發生未知錯誤");
