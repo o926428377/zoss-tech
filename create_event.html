@@ -194,9 +194,15 @@
       
       <!-- 表格工具列 -->
       <div class="p-4 border-b border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <h2 class="text-lg font-bold text-gray-800 flex items-center">
-          選擇人員列表
-        </h2>
+        <div class="flex items-center space-x-3">
+          <h2 class="text-lg font-bold text-gray-800 flex items-center">
+            選擇人員列表
+          </h2>
+          <button id="add-all-btn" type="button" class="flex items-center space-x-1 px-3 py-1.5 bg-indigo-50 text-indigo-600 border border-indigo-200 hover:bg-indigo-600 hover:text-white rounded-lg text-sm font-medium transition-all shadow-sm">
+            <i data-lucide="user-plus" class="w-4 h-4"></i>
+            <span>全部加入</span>
+          </button>
+        </div>
         <div class="relative w-full sm:w-72">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <i data-lucide="search" class="h-4 w-4 text-gray-400"></i>
@@ -312,6 +318,7 @@
     const endPicker = document.getElementById('endTime-picker');
     const startGrid = document.getElementById('startTime-grid');
     const endGrid = document.getElementById('endTime-grid');
+    const addAllBtn = document.getElementById('add-all-btn');
 
     // --- LIFF & API 驗證整合邏輯 ---
     function getAllUrlParams(url) {
@@ -628,6 +635,48 @@
       selectedAttendees = selectedAttendees.filter(a => a.lineUid !== uid);
       renderSelectedAttendees();
       renderTable(); // 更新表格內的按鈕狀態
+    }
+
+    // 處理「全部加入」目前篩選的結果
+    function handleAddAllFiltered() {
+      // 取得目前的過濾結果
+      const q = searchQuery.toLowerCase();
+      const filteredData = user_list.filter(item => {
+        if (!q) return true;
+        return (
+          item.region.toLowerCase().includes(q) ||
+          item.storeCode.toLowerCase().includes(q) ||
+          item.storeName.toLowerCase().includes(q) ||
+          item.title.toLowerCase().includes(q) ||
+          item.name.toLowerCase().includes(q) ||
+          item.nickname.toLowerCase().includes(q)
+        );
+      });
+
+      let addedCount = 0;
+      
+      // 批次加入尚未在清單中的人員
+      filteredData.forEach(person => {
+        if (!selectedAttendees.find(a => a.lineUid === person.lineUid)) {
+          selectedAttendees.push(person);
+          addedCount++;
+        }
+      });
+
+      if (addedCount > 0) {
+        renderSelectedAttendees();
+        renderTable();
+        showToast(`已批次加入 ${addedCount} 位人員`, 'success');
+      } else if (filteredData.length === 0) {
+        showToast('目前沒有可加入的人員', 'error');
+      } else {
+        showToast('畫面中的人員已全數加入', 'success');
+      }
+    }
+
+    // 綁定「全部加入」按鈕事件
+    if (addAllBtn) {
+      addAllBtn.addEventListener('click', handleAddAllFiltered);
     }
 
     function handleSort(key) {
