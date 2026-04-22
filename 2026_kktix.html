@@ -9,29 +9,29 @@
     <!-- 引入 Lucide 圖示庫 -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        /* 避免在 JS 載入前閃爍，自定義一些小過渡效果（大部分仍使用 Tailwind） */
+        /* 避免在 JS 載入前閃爍，自定義過渡效果 */
         .reveal-on-scroll {
             will-change: opacity, transform;
         }
     </style>
 </head>
-<body class="min-h-screen bg-[#050505] text-[#f5f5f7] font-sans selection:bg-amber-600 selection:text-white overflow-x-hidden">
+<body class="min-h-screen bg-[#fafaf9] text-stone-800 font-sans selection:bg-amber-500 selection:text-white overflow-x-hidden">
 
-    <!-- 品牌 Logo 全域浮水印 (充滿全頁、傾斜 30 度) -->
-    <!-- 💡 浮水印設定已移至最下方的 <script> 中，您可以在那邊輕鬆更換網址、大小與間距 -->
-    <div id="watermark-container" class="fixed top-[-50%] left-[-50%] w-[200vw] h-[200vh] pointer-events-none z-40 opacity-[0.03] select-none flex flex-wrap justify-center overflow-hidden" style="transform: rotate(-30deg); align-content: flex-start; padding: 100px;">
+    <!-- 品牌 Logo 全域浮水印 -->
+    <!-- 💡 我將 Z 軸設為 0，並將圖片強制套用黑色 + 極低透明度，讓浮水印完美融入白底背景 -->
+    <div id="watermark-container" class="fixed top-[-50%] left-[-50%] w-[200vw] h-[200vh] pointer-events-none z-0 select-none flex flex-wrap justify-center overflow-hidden" style="transform: rotate(-30deg); align-content: flex-start; padding: 100px;">
     </div>
 
     <!-- 導覽列 -->
     <!-- <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-500 bg-transparent py-6">
         <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
-            <div class="text-xl font-bold tracking-tighter flex items-center gap-2">
-                <div class="w-8 h-8 bg-gradient-to-tr from-amber-600 to-orange-400 rounded-lg flex items-center justify-center">
+            <div class="text-xl font-bold tracking-tighter flex items-center gap-2 text-stone-900">
+                <div class="w-8 h-8 bg-gradient-to-tr from-amber-500 to-orange-400 rounded-lg flex items-center justify-center shadow-md">
                     <i data-lucide="scissors" class="w-4 h-4 text-white"></i>
                 </div>
                 <span>Premium Salon</span>
             </div>
-            <button class="bg-amber-500 text-black px-5 py-2 rounded-full font-semibold hover:scale-105 hover:bg-amber-400 transition-all text-sm flex items-center gap-2">
+            <button class="bg-amber-500 text-white px-5 py-2 rounded-full font-bold hover:scale-105 hover:bg-amber-600 transition-all text-sm flex items-center gap-2 shadow-lg shadow-amber-500/30">
                 <i data-lucide="ticket" class="w-4 h-4"></i>
                 <span class="hidden sm:inline">KKTIX 限定搶購</span>
             </button>
@@ -39,48 +39,47 @@
     </nav> -->
 
     <!-- 第 1 區塊：Hero Section (主視覺與大標題) -->
-    <section class="relative min-h-screen flex flex-col items-center justify-center pt-32 pb-20 px-6">
-        <!-- 背景光暈 (琥珀金) -->
-        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[60vw] h-[60vw] max-w-[800px] max-h-[800px] bg-amber-600/15 rounded-full blur-[120px] -z-10"></div>
+    <section class="relative min-h-screen flex flex-col items-center justify-center pt-32 pb-20 px-6 z-10">
+        <!-- 背景光暈 -->
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[60vw] h-[60vw] max-w-[800px] max-h-[800px] bg-amber-200/40 rounded-full blur-[100px] -z-10"></div>
         
         <div class="reveal-on-scroll opacity-0 translate-y-16 scale-95 transition-all duration-1000 ease-out text-center z-10 max-w-4xl mx-auto mt-12 md:mt-16" data-delay="0">
-            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 font-semibold text-sm mb-6">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-100 border border-amber-200 text-amber-700 font-semibold text-sm mb-6 shadow-sm">
                 <i data-lucide="sparkles" class="w-4 h-4"></i>
                 會員最新優惠・僅在 KKTIX 販售
             </div>
             
-            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tighter mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white via-amber-50 to-amber-200/50 leading-tight">
+            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tighter mb-6 bg-clip-text text-transparent bg-gradient-to-b from-stone-900 via-stone-700 to-amber-700 leading-tight drop-shadow-sm">
                 染 / 燙擇一 <br />
                 <span class="text-4xl md:text-6xl">& 單劑式深層護髮</span>
             </h1>
             
-            <p class="text-xl md:text-2xl text-gray-300 mb-4 max-w-2xl mx-auto font-light leading-relaxed">
-                原價 $3,778 <span class="text-amber-400 font-bold ml-2">特惠 $2,278</span>
+            <p class="text-xl md:text-2xl text-stone-500 mb-4 max-w-2xl mx-auto font-medium leading-relaxed">
+                原價 $3,778 <span class="text-amber-600 font-extrabold ml-2">特惠 $2,278</span>
             </p>
             
-            <div class="text-lg text-gray-400 mb-8 max-w-2xl mx-auto flex flex-col items-center gap-3">
-                <div class="flex items-center gap-2 bg-white/10 pl-5 pr-2 py-1.5 rounded-full border border-white/10 shadow-[0_0_20px_rgba(236,72,153,0.15)] relative">
-                    <i data-lucide="gift" class="w-5 h-5 text-pink-400 flex-shrink-0"></i>
-                    <span class="text-gray-100 font-medium pr-2">免費贈送市價 ＄980 修澀護髮素乙瓶（沖洗式）</span>
+            <div class="text-lg text-stone-600 mb-8 max-w-2xl mx-auto flex flex-col items-center gap-3">
+                <div class="flex items-center gap-2 bg-white pl-5 pr-2 py-1.5 rounded-full border border-stone-200 shadow-[0_10px_30px_rgba(236,72,153,0.15)] relative">
+                    <i data-lucide="gift" class="w-5 h-5 text-pink-500 flex-shrink-0"></i>
+                    <span class="text-stone-800 font-bold pr-2">免費贈送市價 ＄980 修澀護髮素乙瓶（沖洗式）</span>
                     
-                    <!-- 長罐護髮素 透明 PNG 預留位 -->
                     <img 
                         src="https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=100&auto=format&fit=crop" 
                         alt="護髮素贈品" 
-                        class="h-16 w-auto object-contain drop-shadow-[0_5px_15px_rgba(236,72,153,0.4)] -my-4 mix-blend-lighten"
+                        class="h-16 w-auto object-contain drop-shadow-[0_5px_15px_rgba(236,72,153,0.3)] -my-4 mix-blend-multiply"
                     />
                 </div>
-                <span class="text-sm mt-3 opacity-70">
+                <span class="text-sm mt-3 text-stone-400">
                     2026 染/燙組合僅此一檔，此優惠使用西班牙萊肯國際公司之產品
                 </span>
             </div>
             
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-6 text-gray-300 font-medium mb-12">
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-6 text-stone-600 font-bold mb-12">
                 <div class="flex items-center gap-2">
                     <i data-lucide="calendar" class="w-5 h-5 text-amber-500"></i>
                     <span>販售期間：5/8 ~ 5/14</span>
                 </div>
-                <div class="hidden sm:block w-1 h-1 bg-gray-600 rounded-full"></div>
+                <div class="hidden sm:block w-1 h-1 bg-stone-300 rounded-full"></div>
                 <div class="flex items-center gap-2">
                     <i data-lucide="alert-circle" class="w-5 h-5 text-amber-500"></i>
                     <span>可使用至 12/31</span>
@@ -88,53 +87,53 @@
             </div>
         </div>
 
-        <div class="reveal-on-scroll opacity-0 translate-y-16 scale-95 transition-all duration-1000 ease-out w-full max-w-5xl mt-4" data-delay="300">
-            <div class="relative rounded-3xl p-1 bg-gradient-to-b from-amber-500/30 to-transparent">
+        <div class="reveal-on-scroll opacity-0 translate-y-16 scale-95 transition-all duration-1000 ease-out w-full max-w-5xl mt-4 z-10" data-delay="300">
+            <div class="relative rounded-3xl p-2 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-stone-100">
                 <img 
                     src="https://static.where-e.com/Taiwan_Province_Of_China/Zoss-Color-Tai-Zhong-Yi-Dian_4396e2eedf0845bdf89d24d94b9d3c98.jpg" 
                     alt="Salon Hero Visual" 
-                    class="w-full h-[400px] md:h-[600px] object-cover rounded-[1.35rem] shadow-[0_0_80px_rgba(217,119,6,0.15)]"
+                    class="w-full h-[400px] md:h-[600px] object-cover rounded-[1.25rem]"
                 />
             </div>
         </div>
     </section>
 
     <!-- 第 2 區塊：購買說明 -->
-    <section class="py-24 px-6 relative border-t border-white/5">
+    <section class="py-24 px-6 relative border-t border-stone-200 bg-white z-10">
         <div class="max-w-6xl mx-auto">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                 <div class="reveal-on-scroll opacity-0 -translate-x-16 scale-95 transition-all duration-1000 ease-out order-2 lg:order-1 relative" data-delay="0">
                     <div class="relative">
-                        <div class="absolute inset-0 bg-gradient-to-tr from-amber-600/20 to-transparent rounded-3xl translate-x-4 translate-y-4 -z-10"></div>
+                        <div class="absolute inset-0 bg-amber-100 rounded-3xl translate-x-4 translate-y-4 -z-10"></div>
                         <img 
                             src="https://oa-profile-media.line-scdn.net/0hIwUpY1zhFlhoCQMeKHxpDzlWGClba09cD24cQRZqFBczbAtcPQQfQgZTTT03UhpvMi4fQT9iSQksRQ1bMW4QQU59ShQgRhpbMTYGVRFbDhMZY1lyHx8/w960?0" 
                             alt="Salon Experience" 
-                            class="w-full rounded-3xl shadow-2xl border border-white/10"
+                            class="w-full rounded-3xl shadow-xl border border-stone-100"
                         />
                     </div>
                 </div>
                 
                 <div class="reveal-on-scroll opacity-0 translate-x-16 scale-95 transition-all duration-1000 ease-out order-1 lg:order-2 space-y-8" data-delay="0">
-                    <h2 class="text-4xl md:text-5xl font-bold tracking-tight">
+                    <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-stone-900">
                         購買說明與方案內容
                     </h2>
-                    <div class="space-y-4 bg-[#111111] p-8 rounded-3xl border border-white/5 shadow-xl">
-                        <p class="text-amber-400 font-semibold text-lg mb-4">此方案包含：</p>
-                        <li class="flex items-center gap-3 text-lg font-medium text-gray-200">
+                    <div class="space-y-4 bg-stone-50 p-8 rounded-3xl border border-stone-200 shadow-sm">
+                        <p class="text-amber-600 font-bold text-lg mb-4">此方案包含：</p>
+                        <li class="flex items-center gap-3 text-lg font-bold text-stone-700">
                             <i data-lucide="check-circle" class="w-5 h-5 text-amber-500 flex-shrink-0"></i> 染 / 燙擇一
                         </li>
-                        <li class="flex items-center gap-3 text-lg font-medium text-gray-200">
+                        <li class="flex items-center gap-3 text-lg font-bold text-stone-700">
                             <i data-lucide="check-circle" class="w-5 h-5 text-amber-500 flex-shrink-0"></i> 洗髮及頭皮隔離
                         </li>
-                        <li class="flex items-center gap-3 text-lg font-medium text-gray-200">
+                        <li class="flex items-center gap-3 text-lg font-bold text-stone-700">
                             <i data-lucide="check-circle" class="w-5 h-5 text-amber-500 flex-shrink-0"></i> 單劑式深層髮膜護理乙次
                         </li>
-                        <li class="flex items-center gap-3 text-lg font-medium text-gray-200">
+                        <li class="flex items-center gap-3 text-lg font-bold text-stone-700">
                             <i data-lucide="check-circle" class="w-5 h-5 text-amber-500 flex-shrink-0"></i> 沖洗式護髮素乙瓶（300ml正貨）
                         </li>
                     </div>
                     
-                    <div class="space-y-3 text-gray-400 text-sm md:text-base bg-black/50 p-6 rounded-2xl border border-white/5">
+                    <div class="space-y-3 text-stone-600 text-sm md:text-base bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
                         <p class="flex items-start gap-2">
                             <span class="text-amber-500 mt-1">✦</span>
                             染髮限單色不漂、燙髮直/捲擇一。如需多色或上直下捲依價目表收費。
@@ -147,7 +146,7 @@
                             <span class="text-amber-500 mt-1">✦</span>
                             為避免客滿，請至少 10 天前預約。
                         </p>
-                        <p class="flex items-start gap-2 text-white font-semibold">
+                        <p class="flex items-start gap-2 text-stone-900 font-bold">
                             <span class="text-amber-500 mt-1">✦</span>
                             每人限購 2 組。
                         </p>
@@ -158,84 +157,84 @@
     </section>
 
     <!-- 第 3 區塊：核心產品與服務 -->
-    <section class="py-24 md:py-32 px-6 bg-[#0a0a0a] relative rounded-[3rem] md:rounded-[5rem] mx-2 md:mx-6 border border-white/5">
+    <section class="py-24 md:py-32 px-6 bg-stone-50 relative rounded-[3rem] md:rounded-[5rem] mx-2 md:mx-6 border border-stone-200 z-10 shadow-sm">
         <div class="max-w-7xl mx-auto">
             <div class="reveal-on-scroll opacity-0 translate-y-16 scale-95 transition-all duration-1000 ease-out text-center mb-16" data-delay="0">
-                <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-6">嚴選頂級髮品，細心呵護。</h2>
-                <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-stone-900 mb-6">嚴選頂級髮品，細心呵護。</h2>
+                <p class="text-lg text-stone-500 max-w-2xl mx-auto font-medium">
                     不論是染髮、燙髮或深層護理，我們皆採用頂規原料，讓您的秀髮在煥然一新時，依舊保持極致光澤與彈性。
                 </p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- 染髮 -->
-                <div class="reveal-on-scroll opacity-0 translate-y-16 scale-95 transition-all duration-1000 ease-out bg-[#151515] rounded-3xl border border-white/5 hover:border-amber-500/30 overflow-hidden flex flex-col group" data-delay="100">
-                    <div class="w-full h-56 relative overflow-hidden bg-black/50">
+                <div class="reveal-on-scroll opacity-0 translate-y-16 scale-95 transition-all duration-1000 ease-out bg-white rounded-3xl border border-stone-200 hover:border-amber-300 hover:shadow-lg transition-all overflow-hidden flex flex-col group shadow-sm" data-delay="100">
+                    <div class="w-full h-56 relative overflow-hidden bg-stone-100">
                         <img 
                             src="https://12cm-vmaker-tw.s3.amazonaws.com/vmaker/prodimage/product/fb566c58-439f-40d3-a6fc-010826987c9c.JPG" 
                             alt="Z.ONE 產品" 
                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                         />
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#151515] via-transparent to-transparent"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent"></div>
                     </div>
-                    <div class="p-8 pt-4 flex-grow">
-                        <div class="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center mb-6">
-                            <i data-lucide="droplets" class="w-6 h-6 text-amber-500"></i>
+                    <div class="p-8 pt-4 flex-grow relative z-10">
+                        <div class="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mb-6">
+                            <i data-lucide="droplets" class="w-6 h-6 text-amber-600"></i>
                         </div>
-                        <h3 class="text-2xl font-bold mb-6">Z.ONE 滋養染髮</h3>
-                        <ul class="space-y-5 text-gray-400 text-sm leading-relaxed">
-                            <li><strong class="text-gray-200 block mb-1">天然有機蜂蜜：</strong>保護頭皮、滋潤髮幹、使髮絲更柔軟好梳理。</li>
-                            <li><strong class="text-gray-200 block mb-1">牛奶蛋白質、植物性角蛋白：</strong>強化秀髮結構，染後保有光澤感。</li>
-                            <li><strong class="text-gray-200 block mb-1">藍莓萃取物：</strong>補水保濕，維持水潤彈。</li>
+                        <h3 class="text-2xl font-extrabold text-stone-900 mb-6">Z.ONE 滋養染髮</h3>
+                        <ul class="space-y-4 text-stone-600 text-sm leading-relaxed">
+                            <li><strong class="text-stone-800 block mb-1">天然有機蜂蜜：</strong>保護頭皮、滋潤髮幹、使髮絲更柔軟好梳理。</li>
+                            <li><strong class="text-stone-800 block mb-1">牛奶蛋白質、植物性角蛋白：</strong>強化秀髮結構，染後保有光澤感。</li>
+                            <li><strong class="text-stone-800 block mb-1">藍莓萃取物：</strong>補水保濕，維持水潤彈。</li>
                         </ul>
                     </div>
                 </div>
 
                 <!-- 燙髮 -->
-                <div class="reveal-on-scroll opacity-0 translate-y-16 scale-95 transition-all duration-1000 ease-out bg-[#151515] rounded-3xl border border-white/5 hover:border-amber-500/30 overflow-hidden flex flex-col group" data-delay="200">
-                    <div class="w-full h-56 relative overflow-hidden bg-black/50">
+                <div class="reveal-on-scroll opacity-0 translate-y-16 scale-95 transition-all duration-1000 ease-out bg-white rounded-3xl border border-stone-200 hover:border-pink-300 hover:shadow-lg transition-all overflow-hidden flex flex-col group shadow-sm" data-delay="200">
+                    <div class="w-full h-56 relative overflow-hidden bg-stone-100">
                         <img 
                             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTk-KFhQRrfAT7leIH15L4sBkT-PCBeUSQ7gw&s" 
                             alt="WOMO 產品" 
                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                         />
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#151515] via-transparent to-transparent"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent"></div>
                     </div>
-                    <div class="p-8 pt-4 flex-grow">
-                        <div class="w-12 h-12 rounded-full bg-pink-500/10 flex items-center justify-center mb-6">
-                            <i data-lucide="feather" class="w-6 h-6 text-pink-400"></i>
+                    <div class="p-8 pt-4 flex-grow relative z-10">
+                        <div class="w-12 h-12 rounded-full bg-pink-100 flex items-center justify-center mb-6">
+                            <i data-lucide="feather" class="w-6 h-6 text-pink-500"></i>
                         </div>
-                        <h3 class="text-2xl font-bold mb-6">WOMO 專業護理燙髮</h3>
-                        <ul class="space-y-5 text-gray-400 text-sm leading-relaxed">
-                            <li><strong class="text-gray-200 block mb-1">膠原蛋白：</strong>調理髮絲彈性度，維持燙後的輕盈感。</li>
-                            <li><strong class="text-gray-200 block mb-1">水解小麥蛋白：</strong>針對受損部份滋養髮質，提升柔順感。</li>
-                            <li><strong class="text-gray-200 block mb-1">絲蛋白：</strong>增添燙後光澤感，使秀髮更亮麗。</li>
+                        <h3 class="text-2xl font-extrabold text-stone-900 mb-6">WOMO 專業護理燙髮</h3>
+                        <ul class="space-y-4 text-stone-600 text-sm leading-relaxed">
+                            <li><strong class="text-stone-800 block mb-1">膠原蛋白：</strong>調理髮絲彈性度，維持燙後的輕盈感。</li>
+                            <li><strong class="text-stone-800 block mb-1">水解小麥蛋白：</strong>針對受損部份滋養髮質，提升柔順感。</li>
+                            <li><strong class="text-stone-800 block mb-1">絲蛋白：</strong>增添燙後光澤感，使秀髮更亮麗。</li>
                         </ul>
                     </div>
                 </div>
 
                 <!-- 護髮 (店內操作) -->
-                <div class="reveal-on-scroll opacity-0 translate-y-16 scale-95 transition-all duration-1000 ease-out bg-gradient-to-br from-[#1a1510] to-[#111] rounded-3xl border border-amber-900/30 relative overflow-hidden flex flex-col group" data-delay="300">
-                    <div class="w-full h-56 relative overflow-hidden bg-black/50 z-0">
+                <div class="reveal-on-scroll opacity-0 translate-y-16 scale-95 transition-all duration-1000 ease-out bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl border border-amber-200 relative overflow-hidden flex flex-col group shadow-md" data-delay="300">
+                    <div class="w-full h-56 relative overflow-hidden bg-stone-200 z-0">
                         <img 
                             src="https://shoplineimg.com/66739b2201514200205322f5/68f0a364b222a8000eea1711/800x.webp?source_format=jpg" 
                             alt="milk shake 瑪奇朵滋養髮膜" 
                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                         />
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#1a1510] via-transparent to-transparent"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-orange-50 via-white/30 to-transparent"></div>
                     </div>
                     <div class="p-8 pt-4 relative z-10 flex-grow">
-                        <div class="w-12 h-12 rounded-full bg-orange-500/10 flex items-center justify-center mb-6">
-                            <i data-lucide="sparkles" class="w-6 h-6 text-orange-400"></i>
+                        <div class="w-12 h-12 rounded-full bg-orange-200 flex items-center justify-center mb-6 shadow-sm">
+                            <i data-lucide="sparkles" class="w-6 h-6 text-orange-600"></i>
                         </div>
-                        <h3 class="text-2xl font-bold mb-2">深層髮膜護理</h3>
-                        <p class="text-amber-500/80 text-sm font-semibold mb-6">此為單劑式護髮於店內操作</p>
+                        <h3 class="text-2xl font-extrabold text-stone-900 mb-2">深層髮膜護理</h3>
+                        <p class="text-amber-700 text-sm font-bold mb-6">此為單劑式護髮於店內操作</p>
                         
                         <div class="mb-4">
-                            <strong class="text-lg text-white mt-2 block">milk shake 瑪奇朵滋養髮膜</strong>
+                            <strong class="text-lg text-stone-800 mt-2 block">milk shake 瑪奇朵滋養髮膜</strong>
                         </div>
                         
-                        <p class="text-gray-400 text-sm leading-relaxed">
+                        <p class="text-stone-600 text-sm leading-relaxed">
                             添加有機巴西棕櫚脂、植物基底的角蛋白與黃豆胺基酸，能深度滋養髮絲並去除毛躁。
                             在店內染/燙完，洗髮後塗抹於髮尾停留 5~10 分鐘再沖洗，即可有效吸收。
                         </p>
@@ -246,40 +245,40 @@
     </section>
 
     <!-- 第 4 區塊：贈品介紹 -->
-    <section class="py-24 md:py-32 px-6 relative overflow-hidden">
+    <section class="py-24 md:py-32 px-6 relative overflow-hidden z-10">
         <div class="max-w-7xl mx-auto">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
                 
                 <div class="reveal-on-scroll opacity-0 -translate-x-16 scale-95 transition-all duration-1000 ease-out space-y-6" data-delay="0">
-                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-pink-500/10 text-pink-400 text-sm font-bold tracking-widest mb-4">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-pink-100 text-pink-600 text-sm font-extrabold tracking-widest mb-4 shadow-sm">
                         <i data-lucide="gift" class="w-4 h-4"></i> 免費贈送・市價 $980
                     </div>
                     
-                    <h2 class="text-4xl md:text-5xl font-bold tracking-tight leading-tight flex flex-col items-start">
+                    <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-tight flex flex-col items-start">
                         <div class="inline-flex flex-col w-fit mb-4">
-                            <span class="block text-base md:text-lg text-gray-400 font-medium w-full" style="text-align-last: justify;">
+                            <span class="block text-base md:text-lg text-stone-500 font-bold w-full" style="text-align-last: justify;">
                                 義大利專業髮品
                             </span>
-                            <span class="block text-sm md:text-base text-gray-500 font-mono tracking-widest mt-1 text-center">
+                            <span class="block text-sm md:text-base text-stone-400 font-mono tracking-widest mt-1 text-center">
                                 z.oneconcept
                             </span>
                         </div>
-                        <span class="text-pink-100 block">milk_shake 修澀護髪素 300ml</span>
-                        <span class="text-pink-400/90 text-lg md:text-xl font-semibold mt-3 block">此為贈送之居家護髮</span>
+                        <span class="text-pink-600 block drop-shadow-sm">milk_shake 修澀護髪素 300ml</span>
+                        <span class="text-pink-500/90 text-lg md:text-xl font-bold mt-3 block">此為贈送之居家護髮</span>
                     </h2>
                     
-                    <div class="space-y-2 text-lg text-gray-300 leading-relaxed font-medium mt-6">
+                    <div class="space-y-2 text-lg text-stone-600 leading-relaxed font-bold mt-6">
                         <p>保濕同時護色，滋潤卻不厚重</p>
                         <p>讓你更好梳理，維根純素帶清甜花果香</p>
                         <p>特別適合受損或染漂髮質，為乾燥的髮質提供光澤</p>
                         <p>含大豆蛋白、辣木葉精粹及專利有效成分</p>
                     </div>
 
-                    <div class="bg-[#111] p-6 rounded-2xl border border-white/5 mt-8">
-                        <h4 class="text-white font-bold mb-2 flex items-center gap-2">
-                            <i data-lucide="droplets" class="w-5 h-5 text-blue-400"></i> 使用方式
+                    <div class="bg-pink-50/80 p-6 rounded-2xl border border-pink-100 mt-8 shadow-sm">
+                        <h4 class="text-pink-800 font-extrabold mb-2 flex items-center gap-2">
+                            <i data-lucide="droplets" class="w-5 h-5 text-pink-500"></i> 使用方式
                         </h4>
-                        <p class="text-gray-400 text-sm leading-relaxed">
+                        <p class="text-stone-600 text-sm font-medium leading-relaxed">
                             均勻塗抹於洗後乾淨的頭髮上，不滴水的狀態下，停留 3~5 分鐘後沖淨（請避開頭皮避免刺激）。
                         </p>
                     </div>
@@ -287,27 +286,27 @@
 
                 <div class="reveal-on-scroll opacity-0 translate-x-16 scale-95 transition-all duration-1000 ease-out relative h-full flex flex-col justify-center" data-delay="0">
                     <div class="relative group">
-                        <div class="absolute inset-0 bg-gradient-to-tr from-pink-500/20 to-purple-500/20 rounded-[2rem] blur-2xl group-hover:blur-3xl transition-all duration-700"></div>
+                        <div class="absolute inset-0 bg-gradient-to-tr from-pink-200 to-purple-200 rounded-[2rem] blur-2xl group-hover:blur-3xl transition-all duration-700 opacity-60"></div>
                         <img 
                             src="https://img.shoplineapp.com/media/image_clips/68f0ac45f12a06000a7bea76/original.jpg?1760603204=&owner_id=66739b2201514200205322f5" 
                             alt="milk_shake product" 
-                            class="relative w-full md:w-4/5 mx-auto rounded-3xl shadow-2xl border border-white/10"
+                            class="relative w-full md:w-4/5 mx-auto rounded-3xl shadow-xl border border-white/50"
                         />
                     </div>
 
-                    <div class="relative md:-mt-12 md:ml-auto w-full md:w-4/5 bg-black/80 backdrop-blur-xl p-6 md:p-8 rounded-3xl border border-white/10 shadow-2xl z-20">
-                        <h4 class="text-amber-400 font-bold mb-4 flex items-center gap-2">
-                            <i data-lucide="star" class="w-5 h-5 fill-amber-400 text-amber-400"></i> 推薦的使用族群
+                    <div class="relative md:-mt-12 md:ml-auto w-full md:w-4/5 bg-white/95 backdrop-blur-xl p-6 md:p-8 rounded-3xl border border-stone-200 shadow-2xl z-20">
+                        <h4 class="text-amber-600 font-extrabold mb-4 flex items-center gap-2">
+                            <i data-lucide="star" class="w-5 h-5 fill-amber-500 text-amber-500"></i> 推薦的使用族群
                         </h4>
                         <ul class="space-y-3">
-                            <li class="flex items-center gap-3 text-sm md:text-base text-gray-200">
-                                <i data-lucide="check-circle" class="w-5 h-5 text-green-500/70 flex-shrink-0"></i> 頭髮漂染後、需要保濕的你
+                            <li class="flex items-center gap-3 text-sm md:text-base text-stone-700 font-bold">
+                                <i data-lucide="check-circle" class="w-5 h-5 text-green-500 flex-shrink-0"></i> 頭髮漂染後、需要保濕的你
                             </li>
-                            <li class="flex items-center gap-3 text-sm md:text-base text-gray-200">
-                                <i data-lucide="check-circle" class="w-5 h-5 text-green-500/70 flex-shrink-0"></i> 喜歡花果清甜香氣的你
+                            <li class="flex items-center gap-3 text-sm md:text-base text-stone-700 font-bold">
+                                <i data-lucide="check-circle" class="w-5 h-5 text-green-500 flex-shrink-0"></i> 喜歡花果清甜香氣的你
                             </li>
-                            <li class="flex items-center gap-3 text-sm md:text-base text-gray-200">
-                                <i data-lucide="check-circle" class="w-5 h-5 text-green-500/70 flex-shrink-0"></i> 希望頭髮亮澤滑順的你
+                            <li class="flex items-center gap-3 text-sm md:text-base text-stone-700 font-bold">
+                                <i data-lucide="check-circle" class="w-5 h-5 text-green-500 flex-shrink-0"></i> 希望頭髮亮澤滑順的你
                             </li>
                         </ul>
                     </div>
@@ -318,35 +317,35 @@
     </section>
 
     <!-- 第 5 區塊：Pricing & CTA (結帳區塊) -->
-    <section class="py-24 md:py-32 px-6 relative bg-gradient-to-b from-[#050505] to-[#110e0a]">
+    <section class="py-24 md:py-32 px-6 relative bg-gradient-to-b from-stone-50 to-amber-50/50 z-10 border-t border-stone-200">
         <div class="max-w-3xl mx-auto">
             
-            <div class="reveal-on-scroll opacity-0 translate-y-16 scale-95 transition-all duration-1000 ease-out bg-[#111111] border border-amber-500/30 rounded-[2rem] p-8 md:p-12 flex flex-col relative shadow-[0_0_50px_rgba(217,119,6,0.1)] text-center overflow-hidden" data-delay="100">
-                <div class="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 blur-[80px] rounded-full"></div>
+            <div class="reveal-on-scroll opacity-0 translate-y-16 scale-95 transition-all duration-1000 ease-out bg-white border border-amber-300 rounded-[2rem] p-8 md:p-12 flex flex-col relative shadow-[0_20px_50px_rgba(217,119,6,0.1)] text-center overflow-hidden" data-delay="100">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-amber-200/40 blur-[80px] rounded-full"></div>
                 
-                <div class="absolute top-0 left-1/2 -translate-x-1/2 bg-amber-500 text-black px-6 py-1.5 rounded-b-xl text-sm font-bold tracking-widest">
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 bg-amber-500 text-white px-6 py-1.5 rounded-b-xl text-sm font-extrabold tracking-widest shadow-md">
                     限時搶購
                 </div>
                 
-                <h2 class="text-3xl md:text-4xl font-bold text-white mt-6 mb-2">會員專屬特惠組合</h2>
-                <p class="text-amber-200/70 mb-8">2026 染/燙組合僅此一檔，錯過不再</p>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-stone-900 mt-6 mb-2">會員專屬特惠組合</h2>
+                <p class="text-amber-700 font-bold mb-8">2026 染/燙組合僅此一檔，錯過不再</p>
                 
                 <div class="flex items-end justify-center gap-4 mb-10 relative z-10">
-                    <span class="text-gray-500 line-through text-2xl mb-2">原價 $3,778</span>
-                    <div class="text-6xl font-extrabold text-amber-400">
+                    <span class="text-stone-400 line-through text-2xl mb-2 font-bold">原價 $3,778</span>
+                    <div class="text-6xl font-black text-amber-600 drop-shadow-sm">
                         <span class="text-3xl mr-1">$</span>2,278
                     </div>
                 </div>
                 
-                <p class="text-gray-400 text-sm mb-10 max-w-md mx-auto relative z-10">
+                <p class="text-stone-600 font-medium text-sm mb-10 max-w-md mx-auto relative z-10 bg-amber-50/80 py-3 px-4 rounded-xl border border-amber-100">
                     包含：染/燙擇一 + 洗髮及頭皮隔離 + 單劑式深層髮膜護理乙次，再加贈市值 $980 沖洗式護髮素正貨乙瓶！
                 </p>
 
-                <button class="w-full md:w-3/4 mx-auto py-5 rounded-full bg-gradient-to-r from-amber-600 to-amber-500 text-black font-extrabold text-xl hover:scale-105 hover:shadow-[0_0_30px_rgba(245,158,11,0.4)] transition-all flex items-center justify-center gap-3 relative z-10">
+                <button class="w-full md:w-3/4 mx-auto py-5 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 text-white font-extrabold text-xl hover:scale-105 hover:shadow-[0_15px_30px_rgba(245,158,11,0.3)] transition-all flex items-center justify-center gap-3 relative z-10 shadow-lg">
                     <i data-lucide="ticket" class="w-6 h-6"></i>
                     前往 KKTIX 立即搶購
                 </button>
-                <p class="text-gray-600 text-xs mt-6 relative z-10">
+                <p class="text-stone-400 text-xs mt-6 relative z-10 font-bold">
                     點擊將跳轉至 KKTIX 官方平台進行安全結帳
                 </p>
             </div>
@@ -355,24 +354,24 @@
     </section>
 
     <!-- 第 6 區塊：購買須知 -->
-    <section class="py-16 px-6 relative bg-[#050505]">
+    <section class="py-16 px-6 relative bg-white z-10">
         <div class="max-w-5xl mx-auto">
-            <div class="reveal-on-scroll opacity-0 translate-y-16 scale-95 transition-all duration-1000 ease-out bg-[#0a0a0a] border border-white/5 rounded-[2rem] p-8 md:p-12 shadow-2xl relative overflow-hidden" data-delay="0">
-                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-600/30 to-transparent"></div>
+            <div class="reveal-on-scroll opacity-0 translate-y-16 scale-95 transition-all duration-1000 ease-out bg-stone-50 border border-stone-200 rounded-[2rem] p-8 md:p-12 shadow-sm relative overflow-hidden" data-delay="0">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent"></div>
                 
-                <div class="flex flex-col md:flex-row gap-4 items-start md:items-center mb-8 pb-6 border-b border-white/5">
-                    <div class="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0">
-                        <i data-lucide="info" class="w-6 h-6 text-amber-500"></i>
+                <div class="flex flex-col md:flex-row gap-4 items-start md:items-center mb-8 pb-6 border-b border-stone-200">
+                    <div class="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center shrink-0 shadow-sm">
+                        <i data-lucide="info" class="w-6 h-6 text-amber-600"></i>
                     </div>
                     <div>
-                        <h2 class="text-2xl font-bold text-white mb-1">購買須知與注意事項</h2>
-                        <p class="text-amber-500/80 text-sm font-semibold">
+                        <h2 class="text-2xl font-extrabold text-stone-900 mb-1">購買須知與注意事項</h2>
+                        <p class="text-amber-700 text-sm font-bold">
                             以下說明請務必先詳閱再購買，如購買即表示同意相關規範：
                         </p>
                     </div>
                 </div>
                 
-                <ul class="space-y-5 text-gray-400 text-sm md:text-base leading-relaxed">
+                <ul class="space-y-4 text-stone-600 text-sm md:text-base font-medium leading-relaxed">
                     <li class="flex items-start gap-3">
                         <span class="text-amber-500 mt-1 flex-shrink-0">✦</span>
                         <span><strong>使用期間：</strong>2026/5/8~12/31，票券購買後 1 小時才可使用。</span>
@@ -413,7 +412,7 @@
                         <span class="text-amber-500 mt-1 flex-shrink-0">✦</span>
                         <span><strong>退票期限：</strong>購買票券後如需退票，可在 7 日內（不含購票日）申請，並將收取 10% 退票手續費，退款金額為：$2,050（2,278-228），逾期恕無法受理。</span>
                     </li>
-                    <li class="flex items-start gap-3 bg-white/5 p-4 rounded-xl mt-2 border border-white/5">
+                    <li class="flex items-start gap-3 bg-white p-5 rounded-xl mt-4 border border-stone-200 shadow-sm">
                         <span class="text-amber-500 mt-1 flex-shrink-0">✦</span>
                         <span><strong>辦理退票：</strong>請私訊官方粉絲團或 IG（FB：小資族最愛 ZOSS / IG：ZOSSHAIR），退款統一使用匯退，煩請提供以下資訊：銀行名稱、銀行代號、分行名稱、帳號、姓名、電話、訂單編號，我們會在 5 個工作天內協助退款。</span>
                     </li>
@@ -423,17 +422,17 @@
     </section>
 
     <!-- Footer -->
-    <!-- <footer class="border-t border-white/10 bg-[#050505] py-12 px-6">
+    <!-- <footer class="border-t border-stone-200 bg-stone-100 py-12 px-6 z-10 relative">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-            <div class="text-xl font-bold tracking-tighter text-gray-400 flex items-center gap-2">
-                <i data-lucide="scissors" class="w-5 h-5 text-gray-500"></i>
+            <div class="text-xl font-bold tracking-tighter text-stone-600 flex items-center gap-2">
+                <i data-lucide="scissors" class="w-5 h-5 text-stone-400"></i>
                 <span>Premium Salon</span>
             </div>
-            <div class="flex gap-6 text-gray-600 text-sm">
-                <a href="#" class="hover:text-amber-400 transition-colors">隱私權政策</a>
-                <a href="#" class="hover:text-amber-400 transition-colors">服務條款</a>
+            <div class="flex gap-6 text-stone-500 text-sm font-bold">
+                <a href="#" class="hover:text-amber-600 transition-colors">隱私權政策</a>
+                <a href="#" class="hover:text-amber-600 transition-colors">服務條款</a>
             </div>
-            <div class="text-gray-600 text-sm">
+            <div class="text-stone-400 text-sm font-medium">
                 © 2026 Your Salon Name. All rights reserved.
             </div>
         </div>
@@ -444,65 +443,58 @@
         // 1. 初始化 Lucide 圖示
         lucide.createIcons();
 
-        // 2. 導覽列滾動效果
+        // 2. 導覽列滾動效果 (針對白底調整陰影與背景)
         const navbar = document.getElementById('navbar');
         window.addEventListener('scroll', () => {
             if (window.scrollY > 50) {
-                navbar.classList.add('bg-black/80', 'backdrop-blur-xl', 'border-b', 'border-white/10', 'py-3');
+                navbar.classList.add('bg-white/90', 'backdrop-blur-xl', 'border-b', 'border-stone-200', 'py-3', 'shadow-sm');
                 navbar.classList.remove('bg-transparent', 'py-6');
             } else {
                 navbar.classList.add('bg-transparent', 'py-6');
-                navbar.classList.remove('bg-black/80', 'backdrop-blur-xl', 'border-b', 'border-white/10', 'py-3');
+                navbar.classList.remove('bg-white/90', 'backdrop-blur-xl', 'border-b', 'border-stone-200', 'py-3', 'shadow-sm');
             }
         });
 
-        // 3. 滾動顯示動畫 (Scroll Reveal Effect)
-        const observerOptions = {
-            threshold: 0.1
-        };
-
+        // 3. 滾動顯示動畫
+        const observerOptions = { threshold: 0.1 };
         const observer = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const el = entry.target;
-                    
-                    // 移除隱藏與位移狀態
                     el.classList.remove('opacity-0', 'scale-95', 'translate-y-16', 'translate-x-16', '-translate-x-16');
-                    // 加上顯示與原位狀態
                     el.classList.add('opacity-100', 'translate-y-0', 'translate-x-0', 'scale-100');
-                    
-                    // 動畫觸發後取消觀察，避免重複觸發
                     observer.unobserve(el);
                 }
             });
         }, observerOptions);
 
-        // 綁定所有需要動畫的元素
         document.querySelectorAll('.reveal-on-scroll').forEach(el => {
             const delay = el.getAttribute('data-delay') || '0';
             el.style.transitionDelay = `${delay}ms`;
             observer.observe(el);
         });
 
-        // 4. 動態生成全域浮水印 (解決外部圖片安全限制)
+        // 4. 動態生成全域浮水印
         const watermarkContainer = document.getElementById('watermark-container');
         
         /* === 💡 浮水印設定區 === */
-        const logoUrl = 'https://www.zoss.com.tw/wp-content/uploads/2022/10/zoss_logo.png'; // 替換為您的 Logo 網址
-        const logoWidth = '120px'; // 控制 Logo 大小 (數字越小，Logo越精緻)
-        const gapSize = '180px';   // 控制 Logo 之間的間距 (數字越大，排版越空曠)
+        const logoUrl = 'https://www.zoss.com.tw/wp-content/uploads/2022/10/zoss_logo.png'; 
+        const logoWidth = '120px'; 
+        const gapSize = '180px';   
         /* ======================= */
 
         watermarkContainer.style.gap = gapSize;
 
-        // 生成足夠數量的 Logo 填滿背景
+        // 在白底設計中，透過 filter: brightness(0) 強制將外部Logo變成純黑，配合 opacity(0.04) 達到隱約的高級浮水印效果
         for (let i = 0; i < 300; i++) {
             const img = document.createElement('img');
             img.src = logoUrl;
             img.style.width = logoWidth;
             img.style.height = 'auto';
             img.style.objectFit = 'contain';
-            img.className = 'flex-shrink-0'; // 確保圖片不會被擠壓變形
+            // 強制轉換為純黑並降低透明度
+            img.style.filter = 'brightness(0) opacity(0.04)'; 
+            img.className = 'flex-shrink-0'; 
             watermarkContainer.appendChild(img);
         }
     </script>
