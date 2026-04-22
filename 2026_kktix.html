@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,31 +23,15 @@
         }
     </style>
 </head>
-<body class="min-h-screen bg-[#fafaf9] text-stone-800 font-sans selection:bg-amber-500 selection:text-white overflow-x-hidden flex flex-col justify-between" style="min-height: 6900px;">
+<body class="min-h-screen h-full bg-[#fafaf9] text-stone-800 font-sans selection:bg-amber-500 selection:text-white overflow-x-hidden flex flex-col">
 
     <!-- 品牌 Logo 全域浮水印 -->
     <!-- 💡 我將 Z 軸設為 0，並將圖片強制套用黑色 + 極低透明度，讓浮水印完美融入白底背景 -->
     <div id="watermark-container" class="fixed top-[-50%] left-[-50%] w-[200vw] h-[200vh] pointer-events-none z-0 select-none flex flex-wrap justify-center overflow-hidden" style="transform: rotate(-30deg); align-content: flex-start; padding: 100px;">
     </div>
 
-    <!-- 導覽列 -->
-    <!-- <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-500 bg-transparent py-6">
-        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
-            <div class="text-xl font-bold tracking-tighter flex items-center gap-2 text-stone-900">
-                <div class="w-8 h-8 bg-gradient-to-tr from-amber-500 to-orange-400 rounded-lg flex items-center justify-center shadow-md">
-                    <i data-lucide="scissors" class="w-4 h-4 text-white"></i>
-                </div>
-                <span>Premium Salon</span>
-            </div>
-            <button class="bg-amber-500 text-white px-5 py-2 rounded-full font-bold hover:scale-105 hover:bg-amber-600 transition-all text-sm flex items-center gap-2 shadow-lg shadow-amber-500/30">
-                <i data-lucide="ticket" class="w-4 h-4"></i>
-                <span class="hidden sm:inline">KKTIX 限定搶購</span>
-            </button>
-        </div>
-    </nav> -->
-
     <!-- 第 1 區塊：Hero Section (主視覺與大標題) -->
-    <!-- 移除了左右的 px-6，讓內容盡可能延展 -->
+    <!-- flex-1 讓它自動延伸吸收剩餘空白 -->
     <section class="relative flex flex-col items-center justify-center pt-32 md:pt-48 pb-24 md:pb-32 z-10 w-full flex-1">
         <!-- 背景光暈 -->
         <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[60vw] h-[60vw] max-w-[800px] max-h-[800px] bg-amber-200/40 rounded-full blur-[100px] -z-10"></div>
@@ -97,7 +81,6 @@
         </div>
 
         <div class="reveal-on-scroll opacity-0 translate-y-16 scale-95 transition-all duration-1000 ease-out w-full max-w-5xl z-10 px-0 md:px-4" data-delay="300">
-            <!-- 移除了 p-2 和大圓角，讓圖片在手機上更貼邊 -->
             <div class="relative bg-white shadow-none md:shadow-[0_20px_50px_rgba(0,0,0,0.05)] border-y md:border border-stone-100 rounded-none md:rounded-3xl">
                 <img 
                     src="https://static.where-e.com/Taiwan_Province_Of_China/Zoss-Color-Tai-Zhong-Yi-Dian_4396e2eedf0845bdf89d24d94b9d3c98.jpg" 
@@ -167,7 +150,6 @@
     </section>
 
     <!-- 第 3 區塊：核心產品與服務 -->
-    <!-- 移除了外圍的 rounded 和 mx，讓背景色填滿 -->
     <section class="py-24 md:py-32 w-full bg-stone-50 relative border-y border-stone-200 z-10 shadow-sm flex-1 flex items-center">
         <div class="max-w-7xl mx-auto px-4 md:px-6 w-full">
             <div class="reveal-on-scroll opacity-0 translate-y-16 scale-95 transition-all duration-1000 ease-out text-center mb-10 md:mb-16" data-delay="0">
@@ -328,7 +310,6 @@
     </section>
 
     <!-- 第 5 區塊：Pricing & CTA (結帳區塊) -->
-    <!-- 移除了左右間隔，讓底色填滿寬度 -->
     <section class="py-24 md:py-32 w-full relative bg-gradient-to-b from-stone-50 to-amber-50/50 z-10 border-y border-stone-200 flex-1 flex items-center">
         <div class="max-w-3xl mx-auto px-4 md:px-6 w-full">
             
@@ -352,21 +333,12 @@
                 <p class="text-stone-600 font-medium text-xs md:text-sm mb-8 md:mb-10 max-w-md mx-auto relative z-10 bg-amber-50/80 py-3 px-4 rounded-xl border border-amber-100">
                     包含：染/燙擇一 + 洗髮及頭皮隔離 + 單劑式深層髮膜護理乙次，再加贈市值 $980 沖洗式護髮素正貨乙瓶！
                 </p>
-
-                <!-- <button class="w-full md:w-3/4 mx-auto py-4 md:py-5 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 text-white font-extrabold text-lg md:text-xl hover:scale-105 hover:shadow-[0_15px_30px_rgba(245,158,11,0.3)] transition-all flex items-center justify-center gap-2 md:gap-3 relative z-10 shadow-lg">
-                    <i data-lucide="ticket" class="w-5 h-5 md:w-6 md:h-6"></i>
-                    前往 KKTIX 立即搶購
-                </button>
-                <p class="text-stone-400 text-[10px] md:text-xs mt-4 md:mt-6 relative z-10 font-bold">
-                    點擊將跳轉至 KKTIX 官方平台進行安全結帳
-                </p> -->
             </div>
 
         </div>
     </section>
 
     <!-- 第 6 區塊：購買須知 -->
-    <!-- 取消了不必要的留白，讓底色平鋪 -->
     <section class="py-16 md:py-24 w-full relative bg-white z-10 flex-1 flex items-center">
         <div class="max-w-5xl mx-auto px-4 md:px-6 w-full">
             <div class="reveal-on-scroll opacity-0 translate-y-16 scale-95 transition-all duration-1000 ease-out bg-stone-50 border border-stone-200 rounded-2xl md:rounded-[2rem] p-6 md:p-12 shadow-sm relative overflow-hidden" data-delay="0">
@@ -434,41 +406,10 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <!-- <footer class="border-t border-stone-200 bg-stone-100 py-12 px-6 z-10 relative">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-            <div class="text-xl font-bold tracking-tighter text-stone-600 flex items-center gap-2">
-                <i data-lucide="scissors" class="w-5 h-5 text-stone-400"></i>
-                <span>Premium Salon</span>
-            </div>
-            <div class="flex gap-6 text-stone-500 text-sm font-bold">
-                <a href="#" class="hover:text-amber-600 transition-colors">隱私權政策</a>
-                <a href="#" class="hover:text-amber-600 transition-colors">服務條款</a>
-            </div>
-            <div class="text-stone-400 text-sm font-medium">
-                © 2026 Your Salon Name. All rights reserved.
-            </div>
-        </div>
-    </footer> -->
-
     <!-- 腳本邏輯 -->
     <script>
         // 1. 初始化 Lucide 圖示
         lucide.createIcons();
-
-        // 2. 導覽列滾動效果 (針對白底調整陰影與背景) - 已註解隱藏
-        /*
-        const navbar = document.getElementById('navbar');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                navbar.classList.add('bg-white/90', 'backdrop-blur-xl', 'border-b', 'border-stone-200', 'py-3', 'shadow-sm');
-                navbar.classList.remove('bg-transparent', 'py-6');
-            } else {
-                navbar.classList.add('bg-transparent', 'py-6');
-                navbar.classList.remove('bg-white/90', 'backdrop-blur-xl', 'border-b', 'border-stone-200', 'py-3', 'shadow-sm');
-            }
-        });
-        */
 
         // 3. 滾動顯示動畫
         const observerOptions = { threshold: 0.1 };
@@ -500,14 +441,12 @@
 
         watermarkContainer.style.gap = gapSize;
 
-        // 在白底設計中，透過 filter: brightness(0) 強制將外部Logo變成純黑，配合 opacity(0.04) 達到隱約的高級浮水印效果
         for (let i = 0; i < 300; i++) {
             const img = document.createElement('img');
             img.src = logoUrl;
             img.style.width = logoWidth;
             img.style.height = 'auto';
             img.style.objectFit = 'contain';
-            // 強制轉換為純黑並降低透明度
             img.style.filter = 'brightness(0) opacity(0.04)'; 
             img.className = 'flex-shrink-0'; 
             watermarkContainer.appendChild(img);
