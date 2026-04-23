@@ -440,19 +440,19 @@
         const gapSize = '180px';   
         /* ======================= */
 
-        watermarkContainer.style.gap = gapSize;
+        // watermarkContainer.style.gap = gapSize;
 
-        // 修改為生成 1000 個，確保能填滿 8500px 高的 iframe 畫布
-        for (let i = 0; i < 1000; i++) {
-            const img = document.createElement('img');
-            img.src = logoUrl;
-            img.style.width = logoWidth;
-            img.style.height = 'auto';
-            img.style.objectFit = 'contain';
-            img.style.filter = 'brightness(0.5) opacity(0.08)'; 
-            img.className = 'flex-shrink-0'; 
-            watermarkContainer.appendChild(img);
-        }
+        // // 修改為生成 1000 個，確保能填滿 8500px 高的 iframe 畫布
+        // for (let i = 0; i < 1000; i++) {
+        //     const img = document.createElement('img');
+        //     img.src = logoUrl;
+        //     img.style.width = logoWidth;
+        //     img.style.height = 'auto';
+        //     img.style.objectFit = 'contain';
+        //     img.style.filter = 'brightness(0.5) opacity(0.08)'; 
+        //     img.className = 'flex-shrink-0'; 
+        //     watermarkContainer.appendChild(img);
+        // }
     </script>
 </body>
 </html>
